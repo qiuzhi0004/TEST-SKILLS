@@ -1,10 +1,24 @@
-import { FilterBar } from "@/components/resource/FilterBar";
-import { ResourceList } from "@/components/resource/ResourceList";
-import { ListPageTemplate } from "@/components/page-templates/ListPageTemplate";
-import { listContents } from "@/lib/api";
+'use client';
 
-export default async function TutorialsPage() {
-  const { items } = await listContents({ type: "tutorial", offset: 0, limit: 8 });
+import { useEffect, useState } from 'react';
+import { FilterBar } from '@/components/resource/FilterBar';
+import { ResourceList } from '@/components/resource/ResourceList';
+import { ListPageTemplate } from '@/components/page-templates/ListPageTemplate';
+import { listContents } from '@/lib/api';
+import type { ContentSummaryVM } from '@/types/content';
+
+export default function TutorialsPage() {
+  const [items, setItems] = useState<ContentSummaryVM[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void listContents({ type: 'tutorial', offset: 0, limit: 50 }).then((res) => {
+      if (!cancelled) setItems(res.items);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <ListPageTemplate

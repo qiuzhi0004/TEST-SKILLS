@@ -3,6 +3,7 @@ import promptsRaw from "@/data/prompts.json";
 import skillsRaw from "@/data/skills.json";
 import taxonomiesRaw from "@/data/taxonomies.json";
 import tutorialsRaw from "@/data/tutorials.json";
+import { loadAuthoringState } from "@/lib/client/storage_authoring";
 import {
   mapContentSummaryDtoToVm,
   mapMcpDetailDtoToVm,
@@ -10,6 +11,7 @@ import {
   mapSkillDetailDtoToVm,
   mapTutorialDetailDtoToVm,
 } from "@/types/adapters";
+import type { AuthoringRecord } from "@/types/authoring";
 import type {
   AuthorDTO,
   ContentStatus,
@@ -110,7 +112,61 @@ function allSummaries(): ContentSummaryVM[] {
     ...tutorials.map((item, index) => toSummaryDTO(item.content, index + 301)),
   ];
 
-  return summariesDto.map(mapContentSummaryDtoToVm);
+  const base = summariesDto.map(mapContentSummaryDtoToVm);
+  return mergeWithAuthoringOverlay(base);
+}
+
+function getAuthoringOverlayRecords(): AuthoringRecord[] {
+  return loadAuthoringState().records;
+}
+
+function recordToSummary(record: AuthoringRecord): ContentSummaryVM {
+  return {
+    id: record.id,
+    type: record.type,
+    status: record.status,
+    title: record.data.content.title,
+    one_liner: record.data.content.one_liner,
+    category_ids: record.data.content.category_ids,
+    tag_ids: record.data.content.tag_ids,
+    author: authorMap[record.data.content.author_id] ?? {
+      id: record.data.content.author_id,
+      nickname: record.data.content.author_id,
+      avatar_asset_id: null,
+    },
+    cover_asset_id: record.data.content.cover_asset_id,
+    stats_7d: {
+      views: 0,
+      up: 0,
+      comments: 0,
+      hot_score: 0,
+    },
+    created_at: record.data.content.created_at,
+    updated_at: record.data.content.updated_at,
+    highlight: {
+      title: null,
+      one_liner: null,
+      document: null,
+    },
+  };
+}
+
+function mergeWithAuthoringOverlay(base: ContentSummaryVM[]): ContentSummaryVM[] {
+  const overlayRecords = getAuthoringOverlayRecords();
+  if (overlayRecords.length === 0) {
+    return base;
+  }
+
+  const merged = new Map<string, ContentSummaryVM>();
+  for (const item of base) {
+    merged.set(`${item.type}:${item.id}`, item);
+  }
+
+  for (const record of overlayRecords) {
+    merged.set(`${record.type}:${record.id}`, recordToSummary(record));
+  }
+
+  return [...merged.values()].sort((a, b) => b.updated_at.localeCompare(a.updated_at));
 }
 
 export async function listContents(
@@ -161,6 +217,13 @@ export async function listContents(
 }
 
 export async function getPrompt(id: string): Promise<PromptDetailVM> {
+  const overlay = getAuthoringOverlayRecords().find(
+    (record) => record.type === "prompt" && record.id === id,
+  );
+  if (overlay) {
+    return overlay.data as PromptDetailVM;
+  }
+
   const found = prompts.find((item) => item.content.id === id);
   if (!found) {
     throw new Error(`Prompt not found: ${id}`);
@@ -169,6 +232,13 @@ export async function getPrompt(id: string): Promise<PromptDetailVM> {
 }
 
 export async function getMcp(id: string): Promise<McpDetailVM> {
+  const overlay = getAuthoringOverlayRecords().find(
+    (record) => record.type === "mcp" && record.id === id,
+  );
+  if (overlay) {
+    return overlay.data as McpDetailVM;
+  }
+
   const found = mcps.find((item) => item.content.id === id);
   if (!found) {
     throw new Error(`MCP not found: ${id}`);
@@ -177,6 +247,13 @@ export async function getMcp(id: string): Promise<McpDetailVM> {
 }
 
 export async function getSkill(id: string): Promise<SkillDetailVM> {
+  const overlay = getAuthoringOverlayRecords().find(
+    (record) => record.type === "skill" && record.id === id,
+  );
+  if (overlay) {
+    return overlay.data as SkillDetailVM;
+  }
+
   const found = skills.find((item) => item.content.id === id);
   if (!found) {
     throw new Error(`Skill not found: ${id}`);
@@ -185,6 +262,13 @@ export async function getSkill(id: string): Promise<SkillDetailVM> {
 }
 
 export async function getTutorial(id: string): Promise<TutorialDetailVM> {
+  const overlay = getAuthoringOverlayRecords().find(
+    (record) => record.type === "tutorial" && record.id === id,
+  );
+  if (overlay) {
+    return overlay.data as TutorialDetailVM;
+  }
+
   const found = tutorials.find((item) => item.content.id === id);
   if (!found) {
     throw new Error(`Tutorial not found: ${id}`);

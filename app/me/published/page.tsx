@@ -1,4 +1,5 @@
 // NOTE: 当前阶段不做守卫（见 /docs/DECISIONS.md）。
+import { MyRecordsPanel } from "@/components/forms/authoring/MyRecordsPanel";
 import { Placeholder } from "@/components/layout/Placeholder";
 import { PageShell } from "@/components/layout/PageShell";
 import { SectionCard } from "@/components/layout/SectionCard";
@@ -18,7 +19,14 @@ export default function MePublishedPage() {
         />
       </SectionCard>
       <SectionCard title="发布列表与操作">
-        <Placeholder title="发布卡片流占位" todos={["编辑", "提交审核", "上架/下架", "删除"]} />
+        <MyRecordsPanel />
+      </SectionCard>
+      <SectionCard title="说明">
+        <Placeholder
+          title="本地作者工作区"
+          description="本阶段 records 存在 localStorage，后续替换为服务端接口。"
+          todos={["审核流后台处理后续实现", "列表筛选联动后续实现"]}
+        />
       </SectionCard>
     </PageShell>
   );

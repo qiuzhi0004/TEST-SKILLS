@@ -5,3 +5,4 @@ export * from "@/types/prompt";
 export * from "@/types/skill";
 export * from "@/types/social";
 export * from "@/types/tutorial";
+export * from "@/types/authoring";
