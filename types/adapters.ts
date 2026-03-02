@@ -14,6 +14,8 @@ function normalizeCategoryIds(input: {
   category_id?: string | null;
   category?: { id: string } | null;
 }): string[] {
+  // NOTE(decision-3): 依据 /docs/DECISIONS.md，前端 VM 统一使用 category_ids[].
+  // 这里兼容 API 的 category_id/category object 并映射成多类目数组。
   if (input.category_ids && input.category_ids.length > 0) {
     return [...new Set(input.category_ids)];
   }
@@ -109,7 +111,8 @@ export function mapPromptDetailDtoToVm(dto: PromptDetailDTO): PromptDetailVM {
 }
 
 export function mapMcpDetailDtoToVm(dto: McpDetailDTO): McpDetailVM {
-  // TODO(decision-4): 后端契约当前只给 object 字段，未来应直接提供三段原样文本字段.
+  // TODO(decision-4): /docs/DECISIONS.md 规定前端使用 how_to_use 三段原样文本；
+  // 后端未来应补齐文本字段，或在 API 层给稳定转换。
   const howToUse = {
     json_config_text:
       dto.howto.json_config_text ?? stringifyAsBlock(dto.howto.standard_config),
@@ -130,7 +133,8 @@ export function mapMcpDetailDtoToVm(dto: McpDetailDTO): McpDetailVM {
 }
 
 export function mapSkillDetailDtoToVm(dto: SkillDetailDTO): SkillDetailVM {
-  // TODO(decision-5): install_commands/usage_doc 应由后端补入正式 API 契约.
+  // TODO(decision-5): /docs/DECISIONS.md 规定前端保留 install_commands/usage_doc；
+  // 后端应补齐 SkillDetail 契约字段。
   // NOTE: zip_asset_id 在前端 VM 侧视为必有字段；mock 中保证有值.
   return {
     content: mapContentBaseDtoToVm(dto.content) as SkillDetailVM["content"],

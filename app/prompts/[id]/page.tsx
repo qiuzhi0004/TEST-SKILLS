@@ -1,3 +1,5 @@
+import { Badge } from "@/components/common/Badge";
+import { CodeBlock } from "@/components/common/CodeBlock";
 import { Placeholder } from "@/components/layout/Placeholder";
 import { TabNav } from "@/components/layout/TabNav";
 import { DetailPageTemplate } from "@/components/page-templates/DetailPageTemplate";
@@ -17,31 +19,58 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
     detail = null;
   }
 
+  if (!detail) {
+    return (
+      <DetailPageTemplate
+        title={`Prompt 详情（未找到：${id}）`}
+        subtitle="未找到对应 mock 数据"
+        tabsSlot={<TabNav items={[{ label: "Overview" }, { label: "Content" }, { label: "Showcase" }]} />}
+        sections={[
+          {
+            title: "空状态",
+            content: <Placeholder title="资源不存在" description="请检查 id 或返回列表页重新选择。" />,
+          },
+          {
+            title: "后续功能",
+            content: <Placeholder title="详情交互占位" todos={["点赞", "收藏", "评论"]} />,
+          },
+        ]}
+      />
+    );
+  }
+
   return (
     <DetailPageTemplate
-      title={detail?.content.title ?? `Prompt 详情（未找到：${id}）`}
+      title={detail.content.title}
       subtitle="低保真块：首屏信息 + Tabs + 右侧元信息 + 评论置底"
       tabsSlot={<TabNav items={[{ label: "Overview" }, { label: "Content" }, { label: "Showcase" }]} />}
       sections={[
         {
-          title: "首屏信息",
+          title: "基础信息",
           content: (
-            <div className="space-y-1 text-sm text-slate-700">
-              <p>ID: {detail?.content.id ?? id}</p>
-              <p>状态: {detail?.content.status ?? "N/A"}</p>
-              <p>模型: {detail?.model_name ?? "N/A"}</p>
-              <p>语言: {detail?.language ?? "N/A"}</p>
+            <div className="space-y-3 text-sm text-slate-700">
+              <p className="text-slate-600">{detail.content.one_liner ?? "暂无描述"}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {detail.content.tag_ids.map((tagId) => (
+                  <Badge key={tagId} tone="info">
+                    #{tagId}
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-3 text-xs text-slate-500">
+                <span>language: {detail.language}</span>
+                <span>model: {detail.model_name}</span>
+                <span>status: {detail.content.status}</span>
+              </div>
             </div>
           ),
         },
         {
-          title: "Prompt 本体",
+          title: "获取资源",
           content: (
             <div className="space-y-3">
-              <pre className="whitespace-pre-wrap rounded bg-slate-50 p-3 text-xs text-slate-700">
-                {detail?.prompt_text ?? "暂无内容"}
-              </pre>
-              <Placeholder title="Tabs 细节待实现" todos={["Overview 字段编排", "Showcase 媒体展示"]} />
+              <CodeBlock title="Prompt 正文" value={detail.prompt_text} />
+              <Placeholder title="Showcase 占位" todos={["showcases 媒体渲染", "预览切换"]} />
             </div>
           ),
         },

@@ -1,5 +1,5 @@
-import { Placeholder } from "@/components/layout/Placeholder";
-import { ContentPreviewList } from "@/components/page-templates/ContentPreviewList";
+import { FilterBar } from "@/components/resource/FilterBar";
+import { ResourceList } from "@/components/resource/ResourceList";
 import { ListPageTemplate } from "@/components/page-templates/ListPageTemplate";
 import { listContents } from "@/lib/api";
 
@@ -10,9 +10,9 @@ export default async function TutorialsPage() {
     <ListPageTemplate
       title="教程列表"
       subtitle="低保真块：列表骨架占位"
-      filterSlot={<Placeholder title="筛选区占位" todos={["q", "tag_ids", "sort/order"]} />}
-      listSlot={<ContentPreviewList items={items} />}
-      paginationSlot={<Placeholder title="分页区占位" />}
+      filterSlot={<FilterBar typeLabel="教程" />}
+      listSlot={<ResourceList items={items} />}
+      paginationSlot={<p className="text-sm text-slate-500">分页 UI 占位（offset/limit/total）</p>}
     />
   );
 }

@@ -1,3 +1,5 @@
+import { Badge } from "@/components/common/Badge";
+import { CodeBlock } from "@/components/common/CodeBlock";
 import { Placeholder } from "@/components/layout/Placeholder";
 import { TabNav } from "@/components/layout/TabNav";
 import { DetailPageTemplate } from "@/components/page-templates/DetailPageTemplate";
@@ -17,28 +19,74 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
     detail = null;
   }
 
+  if (!detail) {
+    return (
+      <DetailPageTemplate
+        title={`Skill 详情（未找到：${id}）`}
+        subtitle="未找到对应 mock 数据"
+        tabsSlot={<TabNav items={[{ label: "Overview" }, { label: "Cases" }, { label: "Files" }]} />}
+        sections={[
+          {
+            title: "空状态",
+            content: <Placeholder title="资源不存在" description="请检查 id 或返回列表页重新选择。" />,
+          },
+          {
+            title: "后续功能",
+            content: <Placeholder title="详情交互占位" todos={["评论", "收藏", "分享"]} />,
+          },
+        ]}
+      />
+    );
+  }
+
   return (
     <DetailPageTemplate
-      title={detail?.content.title ?? `Skill 详情（未找到：${id}）`}
+      title={detail.content.title}
       subtitle="低保真块：详情主体 + 右侧元信息 + 评论区"
       tabsSlot={<TabNav items={[{ label: "Overview" }, { label: "Cases" }, { label: "Files" }]} />}
       sections={[
         {
           title: "基础信息",
           content: (
-            <div className="space-y-1 text-sm text-slate-700">
-              <p>Provider: {detail?.provider_name ?? "N/A"}</p>
-              <p>Repo: {detail?.repo_url ?? "(none)"}</p>
-              <p>Zip Asset: {detail?.zip_asset_id ?? "N/A"}</p>
+            <div className="space-y-3 text-sm text-slate-700">
+              <p className="text-slate-600">{detail.content.one_liner ?? "暂无描述"}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {detail.content.tag_ids.map((tagId) => (
+                  <Badge key={tagId} tone="info">
+                    #{tagId}
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-3 text-xs text-slate-500">
+                <span>repo_url: {detail.repo_url ?? "(none)"}</span>
+                <span>zip_asset_id: {detail.zip_asset_id || "(missing)"}</span>
+              </div>
             </div>
           ),
         },
         {
-          title: "如何使用",
+          title: "安装/使用",
           content: (
-            <div className="space-y-2 text-sm text-slate-700">
-              <p>install_commands: {(detail?.install_commands ?? []).length}</p>
-              <Placeholder title="安装与使用文档占位" todos={["命令复制", "usage_doc 展开", "zip 下载按钮"]} />
+            <div className="space-y-3 text-sm text-slate-700">
+              {/* NOTE(decision-5): install_commands/usage_doc 当前由前端模型补齐，后端契约待补字段。 */}
+              {detail.install_commands.length > 0 ? (
+                <div className="space-y-2">
+                  {detail.install_commands.map((command) => (
+                    <CodeBlock key={command} title="安装命令" value={command} />
+                  ))}
+                </div>
+              ) : (
+                <Placeholder title="安装命令为空" description="当前资源未提供 install_commands。" />
+              )}
+
+              {detail.usage_doc ? (
+                <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                  <p className="mb-2 text-xs font-semibold text-slate-600">usage_doc</p>
+                  <pre className="whitespace-pre-wrap">{detail.usage_doc}</pre>
+                </div>
+              ) : (
+                <Placeholder title="usage_doc 为空" description="有 repo_url 时 usage_doc 可为空。" />
+              )}
             </div>
           ),
         },

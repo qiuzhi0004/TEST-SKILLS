@@ -1,0 +1,36 @@
+'use client';
+
+import { useState } from 'react';
+
+interface CopyButtonProps {
+  value: string;
+  label?: string;
+}
+
+export function CopyButton({ value, label = '复制' }: CopyButtonProps) {
+  const [copied, setCopied] = useState(false);
+
+  const onCopy = async () => {
+    if (!value) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onCopy}
+      className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-700 transition-colors hover:bg-slate-100"
+    >
+      {copied ? '已复制' : label}
+    </button>
+  );
+}
