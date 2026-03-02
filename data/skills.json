@@ -1,14 +1,235 @@
 [
   {
     "content": {
+      "id": "skill_assafelovic-gpt-researcher",
+      "type": "skill",
+      "status": "Listed",
+      "title": "assafelovic/gpt-researcher",
+      "one_liner": "深度研究 Agent（仓库提供 skills 安装入口）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "assafelovic",
+    "repo_url": "https://github.com/assafelovic/gpt-researcher",
+    "zip_asset_id": "TODO",
+    "install_commands": [
+      "npx skills add assafelovic/gpt-researcher"
+    ],
+    "usage_doc": "来自种子数据，仅提供仓库链接。请参考仓库文档：https://github.com/assafelovic/gpt-researcher",
+    "repo_snapshot": {
+      "stars": 25500,
+      "forks": null,
+      "updated_at": null,
+      "synced_at": "2026-03-02T13:55:41.912Z"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 25500,
+      "github_stars_text": "25.5k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "assafelovic/gpt-researcher",
+      "url": "https://github.com/assafelovic/gpt-researcher",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "skill_vercel-labs-agent-skills",
+      "type": "skill",
+      "status": "Listed",
+      "title": "vercel-labs/agent-skills",
+      "one_liner": "Vercel 官方技能集合（大量通用工程/产品类 skills）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "vercel-labs",
+    "repo_url": "https://github.com/vercel-labs/agent-skills",
+    "zip_asset_id": "TODO",
+    "install_commands": [
+      "npx skills add vercel-labs/agent-skills"
+    ],
+    "usage_doc": "来自种子数据，仅提供仓库链接。请参考仓库文档：https://github.com/vercel-labs/agent-skills",
+    "repo_snapshot": {
+      "stars": 21800,
+      "forks": null,
+      "updated_at": null,
+      "synced_at": "2026-03-02T13:55:41.912Z"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 21800,
+      "github_stars_text": "21.8k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "vercel-labs/agent-skills",
+      "url": "https://github.com/vercel-labs/agent-skills",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "skill_coreyhaines31-marketingskills",
+      "type": "skill",
+      "status": "Listed",
+      "title": "coreyhaines31/marketingskills",
+      "one_liner": "营销/增长向技能集合（CRO、文案等）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "coreyhaines31",
+    "repo_url": "https://github.com/coreyhaines31/marketingskills",
+    "zip_asset_id": "TODO",
+    "install_commands": [
+      "npx skills add coreyhaines31/marketingskills"
+    ],
+    "usage_doc": "来自种子数据，仅提供仓库链接。请参考仓库文档：https://github.com/coreyhaines31/marketingskills",
+    "repo_snapshot": {
+      "stars": 10200,
+      "forks": null,
+      "updated_at": null,
+      "synced_at": "2026-03-02T13:55:41.912Z"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 10200,
+      "github_stars_text": "10.2k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "coreyhaines31/marketingskills",
+      "url": "https://github.com/coreyhaines31/marketingskills",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "skill_vercel-labs-skills",
+      "type": "skill",
+      "status": "Listed",
+      "title": "vercel-labs/skills",
+      "one_liner": "skills CLI 官方仓库（含内置/示例 skills）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "vercel-labs",
+    "repo_url": "https://github.com/vercel-labs/skills/blob/main/skills/find-skills/SKILL.md",
+    "zip_asset_id": "TODO",
+    "install_commands": [
+      "npx skills add vercel-labs/skills"
+    ],
+    "usage_doc": "来自种子数据，仅提供仓库链接。请参考仓库文档：https://github.com/vercel-labs/skills/blob/main/skills/find-skills/SKILL.md",
+    "repo_snapshot": {
+      "stars": 7600,
+      "forks": null,
+      "updated_at": null,
+      "synced_at": "2026-03-02T13:55:41.912Z"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 7600,
+      "github_stars_text": "7.6k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "vercel-labs/skills",
+      "url": "https://github.com/vercel-labs/skills/blob/main/skills/find-skills/SKILL.md",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "skill_panniantong-agent-reach",
+      "type": "skill",
+      "status": "Listed",
+      "title": "Panniantong/Agent-Reach",
+      "one_liner": "提供“可作为 Skill 安装”的 Agent 能力包",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "Panniantong",
+    "repo_url": "https://github.com/Panniantong/Agent-Reach/blob/main/docs/README_en.md",
+    "zip_asset_id": "TODO",
+    "install_commands": [
+      "npx skills add Panniantong/Agent-Reach"
+    ],
+    "usage_doc": "来自种子数据，仅提供仓库链接。请参考仓库文档：https://github.com/Panniantong/Agent-Reach/blob/main/docs/README_en.md",
+    "repo_snapshot": {
+      "stars": 3600,
+      "forks": null,
+      "updated_at": null,
+      "synced_at": "2026-03-02T13:55:41.912Z"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 3600,
+      "github_stars_text": "3.6k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "Panniantong/Agent-Reach",
+      "url": "https://github.com/Panniantong/Agent-Reach/blob/main/docs/README_en.md",
+      "note": null
+    }
+  },
+  {
+    "content": {
       "id": "skill-001",
       "type": "skill",
       "status": "Listed",
       "title": "Next.js Skeleton Generator",
       "one_liner": "快速生成 Next.js 项目骨架和约定目录",
       "category_id": "cat-coding",
-      "category_ids": ["cat-coding", "cat-automation"],
-      "tag_ids": ["tag-open-source", "tag-productivity"],
+      "category_ids": [
+        "cat-coding",
+        "cat-automation"
+      ],
+      "tag_ids": [
+        "tag-open-source",
+        "tag-productivity"
+      ],
       "author_id": "user-001",
       "cover_asset_id": null,
       "created_at": "2026-01-18T11:00:00.000Z",
@@ -49,8 +270,13 @@
       "title": "API Contract Validator",
       "one_liner": "校验前后端接口契约与字段一致性",
       "category_id": "cat-coding",
-      "category_ids": ["cat-coding"],
-      "tag_ids": ["tag-workflow", "tag-agent"],
+      "category_ids": [
+        "cat-coding"
+      ],
+      "tag_ids": [
+        "tag-workflow",
+        "tag-agent"
+      ],
       "author_id": "user-002",
       "cover_asset_id": null,
       "created_at": "2026-02-06T07:20:00.000Z",
@@ -60,7 +286,9 @@
     "provider": "Platform Team",
     "repo_url": "https://github.com/example/contract-validator",
     "zip_asset_id": "asset-skill-zip-002",
-    "install_commands": ["pnpm dlx contract-validator-skill"],
+    "install_commands": [
+      "pnpm dlx contract-validator-skill"
+    ],
     "usage_doc": "执行后会扫描 OpenAPI 与前端 types，输出差异报告。",
     "repo_snapshot": {
       "stars": 92,
@@ -88,8 +316,13 @@
       "title": "Offline Prompt Pack Builder",
       "one_liner": "离线打包 Prompt 资源用于内网部署",
       "category_id": "cat-automation",
-      "category_ids": ["cat-automation", "cat-learning"],
-      "tag_ids": ["tag-workflow"],
+      "category_ids": [
+        "cat-automation",
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "tag-workflow"
+      ],
       "author_id": "user-003",
       "cover_asset_id": null,
       "created_at": "2026-02-28T04:00:00.000Z",

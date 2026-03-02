@@ -1,14 +1,273 @@
 [
   {
     "content": {
+      "id": "mcp_modelcontextprotocol-servers",
+      "type": "mcp",
+      "status": "Listed",
+      "title": "modelcontextprotocol/servers",
+      "one_liner": "官方“服务器合集/参考实现 + 社区服务器索引”",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "modelcontextprotocol",
+    "repo_url": "https://github.com/modelcontextprotocol/servers/blob/main/src/filesystem/README.md",
+    "howto": {
+      "standard_config": {},
+      "clients": {},
+      "runtime": {},
+      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
+      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 79800,
+      "github_stars_text": "79.8k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "modelcontextprotocol/servers",
+      "url": "https://github.com/modelcontextprotocol/servers/blob/main/src/filesystem/README.md",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "mcp_microsoft-playwright-mcp",
+      "type": "mcp",
+      "status": "Listed",
+      "title": "microsoft/playwright-mcp",
+      "one_liner": "Playwright 浏览器自动化 MCP",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "microsoft",
+    "repo_url": "https://github.com/microsoft/playwright-mcp",
+    "howto": {
+      "standard_config": {},
+      "clients": {},
+      "runtime": {},
+      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
+      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 28000,
+      "github_stars_text": "28k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "microsoft/playwright-mcp",
+      "url": "https://github.com/microsoft/playwright-mcp",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "mcp_glips-figma-context-mcp",
+      "type": "mcp",
+      "status": "Listed",
+      "title": "GLips/Figma-Context-MCP",
+      "one_liner": "让 IDE/Agent 读 Figma 设计数据的 MCP",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "GLips",
+    "repo_url": "https://github.com/GLips/Figma-Context-MCP",
+    "howto": {
+      "standard_config": {},
+      "clients": {},
+      "runtime": {},
+      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
+      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 13300,
+      "github_stars_text": "13.3k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "GLips/Figma-Context-MCP",
+      "url": "https://github.com/GLips/Figma-Context-MCP",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "mcp_beehiveinnovations-pal-mcp-server",
+      "type": "mcp",
+      "status": "Listed",
+      "title": "BeehiveInnovations/pal-mcp-server",
+      "one_liner": "“一站式”MCP/Agent 组合服务器（面向多 CLI/多模型）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "BeehiveInnovations",
+    "repo_url": "https://github.com/BeehiveInnovations/pal-mcp-server",
+    "howto": {
+      "standard_config": {},
+      "clients": {},
+      "runtime": {},
+      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
+      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 11200,
+      "github_stars_text": "11.2k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "BeehiveInnovations/pal-mcp-server",
+      "url": "https://github.com/BeehiveInnovations/pal-mcp-server",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "mcp_idosal-git-mcp",
+      "type": "mcp",
+      "status": "Listed",
+      "title": "idosal/git-mcp",
+      "one_liner": "把 GitHub 项目变成可被 Agent 直接读的远程 MCP 文档/代码上下文",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "source": "user",
+    "provider": "idosal",
+    "repo_url": "https://github.com/idosal/git-mcp",
+    "howto": {
+      "standard_config": {},
+      "clients": {},
+      "runtime": {},
+      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
+      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
+    },
+    "cases": [],
+    "metrics": {
+      "github_stars": 7700,
+      "github_stars_text": "7.7k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "idosal/git-mcp",
+      "url": "https://github.com/idosal/git-mcp",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "mcp-002",
+      "type": "mcp",
+      "status": "Unlisted",
+      "title": "Figma Tokens MCP",
+      "one_liner": "把 Figma 变量映射到前端 design tokens",
+      "category_id": "cat-design",
+      "category_ids": [
+        "cat-design",
+        "cat-frontend"
+      ],
+      "tag_ids": [
+        "tag-workflow",
+        "tag-frontend"
+      ],
+      "author_id": "user-002",
+      "cover_asset_id": null,
+      "created_at": "2026-01-20T02:30:00.000Z",
+      "updated_at": "2026-02-28T08:12:00.000Z"
+    },
+    "source": "user",
+    "provider": "DesignOps Lab",
+    "repo_url": "https://github.com/example/figma-token-mcp",
+    "howto": {
+      "standard_config": {
+        "command": "bunx",
+        "args": [
+          "figma-token-mcp"
+        ]
+      },
+      "clients": {
+        "claude_desktop": true
+      },
+      "runtime": {
+        "mode": "stdio"
+      },
+      "json_config_text": "{\n  \"command\": \"bunx\",\n  \"args\": [\"figma-token-mcp\"]\n}",
+      "common_clients_json": "{\n  \"claude_desktop\": true\n}",
+      "runtime_modes_json": "{\n  \"mode\": \"stdio\"\n}"
+    },
+    "cases": [
+      {
+        "id": "mcp-case-002",
+        "title": "同步变量到 CSS",
+        "input_text": "导出主题变量",
+        "process_text": "读取变量树，转换命名，输出 css 变量",
+        "output_text": "生成 128 个变量",
+        "media": [],
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
       "id": "mcp-001",
       "type": "mcp",
       "status": "Listed",
       "title": "GitHub Issue MCP",
       "one_liner": "让 Agent 直接读取和创建 GitHub Issue",
       "category_id": "cat-automation",
-      "category_ids": ["cat-automation", "cat-coding"],
-      "tag_ids": ["tag-agent", "tag-open-source"],
+      "category_ids": [
+        "cat-automation",
+        "cat-coding"
+      ],
+      "tag_ids": [
+        "tag-agent",
+        "tag-open-source"
+      ],
       "author_id": "user-001",
       "cover_asset_id": null,
       "created_at": "2026-02-05T10:20:00.000Z",
@@ -20,11 +279,21 @@
     "howto": {
       "standard_config": {
         "command": "npx",
-        "args": ["-y", "@example/github-issue-mcp"],
-        "env": { "GITHUB_TOKEN": "${GITHUB_TOKEN}" }
+        "args": [
+          "-y",
+          "@example/github-issue-mcp"
+        ],
+        "env": {
+          "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+        }
       },
-      "clients": { "claude_desktop": true, "cursor": true },
-      "runtime": { "mode": "stdio" },
+      "clients": {
+        "claude_desktop": true,
+        "cursor": true
+      },
+      "runtime": {
+        "mode": "stdio"
+      },
       "json_config_text": "{\n  \"command\": \"npx\",\n  \"args\": [\"-y\", \"@example/github-issue-mcp\"],\n  \"env\": {\"GITHUB_TOKEN\": \"${GITHUB_TOKEN}\"}\n}",
       "common_clients_json": "{\n  \"claude_desktop\": true,\n  \"cursor\": true\n}",
       "runtime_modes_json": "{\n  \"mode\": \"stdio\"\n}"
@@ -51,52 +320,19 @@
   },
   {
     "content": {
-      "id": "mcp-002",
-      "type": "mcp",
-      "status": "Unlisted",
-      "title": "Figma Tokens MCP",
-      "one_liner": "把 Figma 变量映射到前端 design tokens",
-      "category_id": "cat-design",
-      "category_ids": ["cat-design", "cat-frontend"],
-      "tag_ids": ["tag-workflow", "tag-frontend"],
-      "author_id": "user-002",
-      "cover_asset_id": null,
-      "created_at": "2026-01-20T02:30:00.000Z",
-      "updated_at": "2026-02-28T08:12:00.000Z"
-    },
-    "source": "user",
-    "provider": "DesignOps Lab",
-    "repo_url": "https://github.com/example/figma-token-mcp",
-    "howto": {
-      "standard_config": { "command": "bunx", "args": ["figma-token-mcp"] },
-      "clients": { "claude_desktop": true },
-      "runtime": { "mode": "stdio" },
-      "json_config_text": "{\n  \"command\": \"bunx\",\n  \"args\": [\"figma-token-mcp\"]\n}",
-      "common_clients_json": "{\n  \"claude_desktop\": true\n}",
-      "runtime_modes_json": "{\n  \"mode\": \"stdio\"\n}"
-    },
-    "cases": [
-      {
-        "id": "mcp-case-002",
-        "title": "同步变量到 CSS",
-        "input_text": "导出主题变量",
-        "process_text": "读取变量树，转换命名，输出 css 变量",
-        "output_text": "生成 128 个变量",
-        "media": [],
-        "sort_order": 1
-      }
-    ]
-  },
-  {
-    "content": {
       "id": "mcp-003",
       "type": "mcp",
       "status": "PendingReview",
       "title": "Notion Knowledge MCP",
       "one_liner": "检索 Notion 知识库并给出结构化答案",
       "category_id": "cat-learning",
-      "category_ids": ["cat-learning"],
-      "tag_ids": ["tag-agent", "tag-productivity"],
+      "category_ids": [
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "tag-agent",
+        "tag-productivity"
+      ],
       "author_id": "user-003",
       "cover_asset_id": null,
       "created_at": "2026-02-25T01:00:00.000Z",
@@ -106,9 +342,21 @@
     "provider": "Knowledge Team",
     "repo_url": "https://github.com/example/notion-mcp",
     "howto": {
-      "standard_config": { "command": "pnpm", "args": ["dlx", "notion-mcp"] },
-      "clients": { "cursor": true, "windsurf": true },
-      "runtime": { "mode": "http", "port": 8088 },
+      "standard_config": {
+        "command": "pnpm",
+        "args": [
+          "dlx",
+          "notion-mcp"
+        ]
+      },
+      "clients": {
+        "cursor": true,
+        "windsurf": true
+      },
+      "runtime": {
+        "mode": "http",
+        "port": 8088
+      },
       "json_config_text": "{\n  \"command\": \"pnpm\",\n  \"args\": [\"dlx\", \"notion-mcp\"]\n}",
       "common_clients_json": "{\n  \"cursor\": true,\n  \"windsurf\": true\n}",
       "runtime_modes_json": "{\n  \"mode\": \"http\",\n  \"port\": 8088\n}"

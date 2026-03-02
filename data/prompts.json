@@ -1,31 +1,498 @@
 [
   {
     "content": {
-      "id": "prompt-001",
+      "id": "prompt_f-prompts-chat",
       "type": "prompt",
       "status": "Listed",
-      "title": "结构化需求拆解助手",
-      "one_liner": "把模糊需求拆成可执行任务清单",
-      "category_id": "cat-coding",
-      "category_ids": ["cat-coding", "cat-learning"],
-      "tag_ids": ["tag-productivity", "tag-workflow"],
-      "author_id": "user-001",
-      "cover_asset_id": "asset-cover-prompt-001",
-      "created_at": "2026-02-15T10:00:00.000Z",
-      "updated_at": "2026-02-20T09:20:00.000Z"
+      "title": "f/prompts.chat",
+      "one_liner": "社区提示词库（可自托管）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_text"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
     },
-    "model_name": "GPT-4.1",
-    "language": "zh-CN",
-    "prompt_text": "你是资深工程经理，请把以下需求拆解为里程碑、任务和验收标准：{{input}}",
-    "showcases": [
-      {
-        "id": "showcase-prompt-001-1",
-        "asset_id": "asset-showcase-001",
-        "media_type": "image",
-        "caption": "任务拆解结果示例",
-        "sort_order": 1
-      }
-    ]
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：f/prompts.chat\n链接：https://github.com/f/prompts.chat\n说明：社区提示词库（可自托管）",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 150000,
+      "github_stars_text": "150k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "f/prompts.chat",
+      "url": "https://github.com/f/prompts.chat",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_x1xhlol-system-prompts-and-models-of-ai-tools",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "x1xhlol/system-prompts-and-models-of-ai-tools",
+      "one_liner": "大量工具/Agent 的 system prompts 与配置集合",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_text"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：x1xhlol/system-prompts-and-models-of-ai-tools\n链接：https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools\n说明：大量工具/Agent 的 system prompts 与配置集合",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 127000,
+      "github_stars_text": "127k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "x1xhlol/system-prompts-and-models-of-ai-tools",
+      "url": "https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_openai-openai-cookbook",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "openai/openai-cookbook",
+      "one_liner": "官方示例里有 Sora 提示词/结构化写法",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：openai/openai-cookbook\n链接：https://github.com/openai/openai-cookbook/blob/main/examples/sora/sora2_prompting_guide.ipynb\n说明：官方示例里有 Sora 提示词/结构化写法",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 71800,
+      "github_stars_text": "71.8k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "openai/openai-cookbook",
+      "url": "https://github.com/openai/openai-cookbook/blob/main/examples/sora/sora2_prompting_guide.ipynb",
+      "note": "含 Sora Prompting Guide"
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_dair-ai-prompt-engineering-guide",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "dair-ai/Prompt-Engineering-Guide",
+      "one_liner": "提示词工程全套资料+例子",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_text"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：dair-ai/Prompt-Engineering-Guide\n链接：https://github.com/dair-ai/Prompt-Engineering-Guide/blob/main/guides/prompts-intro.md\n说明：提示词工程全套资料+例子",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 71000,
+      "github_stars_text": "71k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "dair-ai/Prompt-Engineering-Guide",
+      "url": "https://github.com/dair-ai/Prompt-Engineering-Guide/blob/main/guides/prompts-intro.md",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_plexpt-awesome-chatgpt-prompts-zh",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "PlexPt/awesome-chatgpt-prompts-zh",
+      "one_liner": "中文场景提示词合集",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_text"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：PlexPt/awesome-chatgpt-prompts-zh\n链接：https://github.com/PlexPt/awesome-chatgpt-prompts-zh/discussions/categories/ideas\n说明：中文场景提示词合集",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 58400,
+      "github_stars_text": "58.4k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "PlexPt/awesome-chatgpt-prompts-zh",
+      "url": "https://github.com/PlexPt/awesome-chatgpt-prompts-zh/discussions/categories/ideas",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_danielmiessler-fabric",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "danielmiessler/Fabric",
+      "one_liner": "大量可复用“pattern prompts”（命令行可直接调用）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_text"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：danielmiessler/Fabric\n链接：https://github.com/danielmiessler/Fabric/blob/main/data/patterns/improve_prompt/system.md\n说明：大量可复用“pattern prompts”（命令行可直接调用）",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 39400,
+      "github_stars_text": "39.4k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "danielmiessler/Fabric",
+      "url": "https://github.com/danielmiessler/Fabric/blob/main/data/patterns/improve_prompt/system.md",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_hpcaitech-open-sora",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "hpcaitech/Open-Sora",
+      "one_liner": "开源视频生成体系（文档含 text-to-video 用法与示例）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：hpcaitech/Open-Sora\n链接：https://github.com/hpcaitech/Open-Sora\n说明：开源视频生成体系（文档含 text-to-video 用法与示例）",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 28600,
+      "github_stars_text": "28.6k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "hpcaitech/Open-Sora",
+      "url": "https://github.com/hpcaitech/Open-Sora",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_wan-video-wan2-1",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "Wan-Video/Wan2.1",
+      "one_liner": "开源视频生成模型（含 prompt 生成示例入口）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：Wan-Video/Wan2.1\n链接：https://github.com/Wan-Video/Wan2.1\n说明：开源视频生成模型（含 prompt 生成示例入口）",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 15500,
+      "github_stars_text": "15.5k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "Wan-Video/Wan2.1",
+      "url": "https://github.com/Wan-Video/Wan2.1",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_googlecloudplatform-generative-ai",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "GoogleCloudPlatform/generative-ai",
+      "one_liner": "视频生成提示词/示例 notebook",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：GoogleCloudPlatform/generative-ai\n链接：https://github.com/GoogleCloudPlatform/generative-ai/blob/main/vision/getting-started/veo3_reference_to_video.ipynb\n说明：视频生成提示词/示例 notebook",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 12800,
+      "github_stars_text": "12.8k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "GoogleCloudPlatform/generative-ai",
+      "url": "https://github.com/GoogleCloudPlatform/generative-ai/blob/main/vision/getting-started/veo3_reference_to_video.ipynb",
+      "note": "含 Veo3 reference_to_video"
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_willwulfken-midjourney-styles-and-keywords-reference",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "willwulfken/MidJourney-Styles-and-Keywords-Reference",
+      "one_liner": "MJ 风格/关键词参考库",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：willwulfken/MidJourney-Styles-and-Keywords-Reference\n链接：https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference\n说明：MJ 风格/关键词参考库",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 12300,
+      "github_stars_text": "12.3k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "willwulfken/MidJourney-Styles-and-Keywords-Reference",
+      "url": "https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_showlab-awesome-video-diffusion",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "showlab/Awesome-Video-Diffusion",
+      "one_liner": "视频生成资源/方法合集（含大量 prompt 相关论文与工具链接）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：showlab/Awesome-Video-Diffusion\n链接：https://github.com/showlab/Awesome-Video-Diffusion\n说明：视频生成资源/方法合集（含大量 prompt 相关论文与工具链接）",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 5500,
+      "github_stars_text": "5.5k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "showlab/Awesome-Video-Diffusion",
+      "url": "https://github.com/showlab/Awesome-Video-Diffusion",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_google-prompt-to-prompt",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "google/prompt-to-prompt",
+      "one_liner": "Stable Diffusion 的“Prompt 编辑/对齐”方法与示例",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：google/prompt-to-prompt\n链接：https://github.com/google/prompt-to-prompt\n说明：Stable Diffusion 的“Prompt 编辑/对齐”方法与示例",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 3400,
+      "github_stars_text": "3.4k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "google/prompt-to-prompt",
+      "url": "https://github.com/google/prompt-to-prompt",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_furkangozukara-stable-diffusion",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "FurkanGozukara/Stable-Diffusion",
+      "one_liner": "SD 提示词清单/教程合集",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：FurkanGozukara/Stable-Diffusion\n链接：https://github.com/FurkanGozukara/Stable-Diffusion/blob/main/Amazing-Prompts-List-For-Stable-Diffusion.md\n说明：SD 提示词清单/教程合集",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 2600,
+      "github_stars_text": "2.6k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "FurkanGozukara/Stable-Diffusion",
+      "url": "https://github.com/FurkanGozukara/Stable-Diffusion/blob/main/Amazing-Prompts-List-For-Stable-Diffusion.md",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_adieyal-sd-dynamic-prompts",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "adieyal/sd-dynamic-prompts",
+      "one_liner": "SD 动态/模板化 prompts（随机/组合）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：adieyal/sd-dynamic-prompts\n链接：https://github.com/adieyal/sd-dynamic-prompts\n说明：SD 动态/模板化 prompts（随机/组合）",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 2300,
+      "github_stars_text": "2.3k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "adieyal/sd-dynamic-prompts",
+      "url": "https://github.com/adieyal/sd-dynamic-prompts",
+      "note": null
+    }
+  },
+  {
+    "content": {
+      "id": "prompt_hako-mikan-sd-webui-regional-prompter",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "hako-mikan/sd-webui-regional-prompter",
+      "one_liner": "区域分块 prompts（WebUI 扩展）",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "github",
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-03-02T13:55:41.912Z",
+      "updated_at": "2026-03-02T13:55:41.912Z"
+    },
+    "model_name": "seed-import",
+    "language": "multi",
+    "prompt_text": "【来自种子数据】该仓库是提示词资源/合集，不是单条可执行 prompt。\n仓库：hako-mikan/sd-webui-regional-prompter\n链接：https://github.com/hako-mikan/sd-webui-regional-prompter\n说明：区域分块 prompts（WebUI 扩展）",
+    "showcases": [],
+    "metrics": {
+      "github_stars": 1800,
+      "github_stars_text": "1.8k"
+    },
+    "source_meta": {
+      "kind": "github",
+      "repo": "hako-mikan/sd-webui-regional-prompter",
+      "url": "https://github.com/hako-mikan/sd-webui-regional-prompter",
+      "note": null
+    }
   },
   {
     "content": {
@@ -35,8 +502,14 @@
       "title": "前端重构审查 Prompt",
       "one_liner": "针对 React 重构输出风险和回归点",
       "category_id": "cat-frontend",
-      "category_ids": ["cat-coding", "cat-design"],
-      "tag_ids": ["tag-frontend", "tag-workflow"],
+      "category_ids": [
+        "cat-coding",
+        "cat-design"
+      ],
+      "tag_ids": [
+        "tag-frontend",
+        "tag-workflow"
+      ],
       "author_id": "user-002",
       "cover_asset_id": null,
       "created_at": "2026-02-10T08:30:00.000Z",
@@ -63,8 +536,13 @@
       "title": "教程脚本自动生成器",
       "one_liner": "根据知识点自动生成分章节教学脚本",
       "category_id": "cat-learning",
-      "category_ids": ["cat-learning"],
-      "tag_ids": ["tag-beginner", "tag-productivity"],
+      "category_ids": [
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "tag-beginner",
+        "tag-productivity"
+      ],
       "author_id": "user-003",
       "cover_asset_id": null,
       "created_at": "2026-01-29T03:00:00.000Z",
@@ -79,6 +557,40 @@
         "asset_id": "asset-showcase-003",
         "media_type": "image",
         "caption": null,
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "prompt-001",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "结构化需求拆解助手",
+      "one_liner": "把模糊需求拆成可执行任务清单",
+      "category_id": "cat-coding",
+      "category_ids": [
+        "cat-coding",
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "tag-productivity",
+        "tag-workflow"
+      ],
+      "author_id": "user-001",
+      "cover_asset_id": "asset-cover-prompt-001",
+      "created_at": "2026-02-15T10:00:00.000Z",
+      "updated_at": "2026-02-20T09:20:00.000Z"
+    },
+    "model_name": "GPT-4.1",
+    "language": "zh-CN",
+    "prompt_text": "你是资深工程经理，请把以下需求拆解为里程碑、任务和验收标准：{{input}}",
+    "showcases": [
+      {
+        "id": "showcase-prompt-001-1",
+        "asset_id": "asset-showcase-001",
+        "media_type": "image",
+        "caption": "任务拆解结果示例",
         "sort_order": 1
       }
     ]

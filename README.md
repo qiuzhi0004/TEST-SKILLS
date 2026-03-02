@@ -70,6 +70,44 @@ public/                 # robots.txt / sitemap.xml
 
 ## 数据与 API 约定
 
+### 种子数据导入（docs/数据源信息.md）
+
+运行：
+
+```bash
+pnpm import:seed
+```
+
+脚本：`scripts/import_seed_from_docs.js`  
+数据源：`docs/数据源信息.md`
+
+导入规则（可重复执行，合并去重）：
+
+- 解析引用式链接：`[GitHub][n]` + 底部 `[n]: URL`
+- 清洗 URL：去除 `utm_*` 参数，保留 canonical URL
+- stars 解析：
+  - `79.8k -> 79800`
+  - `28k -> 28000`
+  - 同时保留原串到 `metrics.github_stars_text`
+- repo 解析：
+  - `owner/repo（备注）` 拆成 `repo=owner/repo`
+  - 括号内容写入 `source_meta.note`
+- 去重键优先级：
+  1. `source_meta.repo`
+  2. `url/repo_url`
+  3. `title`
+- Prompt 自动加类型标签：
+  - `prompt_image` / `prompt_video` / `prompt_text`
+- taxonomies 自动补齐 tags：
+  - `prompt_image` / `prompt_video` / `prompt_text` / `github`
+
+占位字段说明（按 DECISIONS 保持现口径）：
+
+- MCP `how_to_use.*` 三段文本：种子数据缺失时写占位文案
+- Skill `zip_asset_id`：种子数据无压缩包时写 `"TODO"`
+- Skill `install_commands[]`：默认 `npx skills add owner/repo`（不保证仓库真实支持）
+- Prompt `prompt_text`：写“仓库型提示词资源”占位正文，附仓库链接
+
 ### 内容读取（前台）
 
 统一从 `lib/api/index.ts` 导出：
