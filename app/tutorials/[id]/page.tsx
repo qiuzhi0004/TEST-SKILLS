@@ -2,6 +2,8 @@ import { Badge } from "@/components/common/Badge";
 import { Placeholder } from "@/components/layout/Placeholder";
 import { TabNav } from "@/components/layout/TabNav";
 import { DetailPageTemplate } from "@/components/page-templates/DetailPageTemplate";
+import { CommentThread } from "@/components/social/CommentThread";
+import { SocialBar } from "@/components/social/SocialBar";
 import { getTutorial } from "@/lib/api";
 
 interface TutorialDetailPageProps {
@@ -10,6 +12,7 @@ interface TutorialDetailPageProps {
 
 export default async function TutorialDetailPage({ params }: TutorialDetailPageProps) {
   const { id } = await params;
+  const target = { target_type: "tutorial" as const, target_id: id };
   let detail = null;
 
   try {
@@ -85,8 +88,8 @@ export default async function TutorialDetailPage({ params }: TutorialDetailPageP
           ),
         },
       ]}
-      metaSlot={<Placeholder title="右侧元信息占位" />}
-      commentsSlot={<Placeholder title="评论区占位" />}
+      metaSlot={<SocialBar target={target} />}
+      commentsSlot={<CommentThread target={target} />}
     />
   );
 }

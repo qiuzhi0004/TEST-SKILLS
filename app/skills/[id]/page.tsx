@@ -3,6 +3,8 @@ import { CodeBlock } from "@/components/common/CodeBlock";
 import { Placeholder } from "@/components/layout/Placeholder";
 import { TabNav } from "@/components/layout/TabNav";
 import { DetailPageTemplate } from "@/components/page-templates/DetailPageTemplate";
+import { CommentThread } from "@/components/social/CommentThread";
+import { SocialBar } from "@/components/social/SocialBar";
 import { getSkill } from "@/lib/api";
 
 interface SkillDetailPageProps {
@@ -11,6 +13,7 @@ interface SkillDetailPageProps {
 
 export default async function SkillDetailPage({ params }: SkillDetailPageProps) {
   const { id } = await params;
+  const target = { target_type: "skill" as const, target_id: id };
   let detail = null;
 
   try {
@@ -91,8 +94,8 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
           ),
         },
       ]}
-      metaSlot={<Placeholder title="右侧动作占位" todos={["点赞", "收藏", "分享"]} />}
-      commentsSlot={<Placeholder title="评论区占位" />}
+      metaSlot={<SocialBar target={target} />}
+      commentsSlot={<CommentThread target={target} />}
     />
   );
 }

@@ -3,6 +3,8 @@ import { CodeBlock } from "@/components/common/CodeBlock";
 import { Placeholder } from "@/components/layout/Placeholder";
 import { TabNav } from "@/components/layout/TabNav";
 import { DetailPageTemplate } from "@/components/page-templates/DetailPageTemplate";
+import { CommentThread } from "@/components/social/CommentThread";
+import { SocialBar } from "@/components/social/SocialBar";
 import { getPrompt } from "@/lib/api";
 
 interface PromptDetailPageProps {
@@ -11,6 +13,7 @@ interface PromptDetailPageProps {
 
 export default async function PromptDetailPage({ params }: PromptDetailPageProps) {
   const { id } = await params;
+  const target = { target_type: "prompt" as const, target_id: id };
   let detail = null;
 
   try {
@@ -75,8 +78,8 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
           ),
         },
       ]}
-      metaSlot={<Placeholder title="轻动作占位" todos={["点赞", "收藏", "分享"]} />}
-      commentsSlot={<Placeholder title="评论区占位" todos={["评论树", "发评论", "删除评论"]} />}
+      metaSlot={<SocialBar target={target} />}
+      commentsSlot={<CommentThread target={target} />}
     />
   );
 }
