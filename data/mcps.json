@@ -1,0 +1,128 @@
+[
+  {
+    "content": {
+      "id": "mcp-001",
+      "type": "mcp",
+      "status": "Listed",
+      "title": "GitHub Issue MCP",
+      "one_liner": "让 Agent 直接读取和创建 GitHub Issue",
+      "category_id": "cat-automation",
+      "category_ids": ["cat-automation", "cat-coding"],
+      "tag_ids": ["tag-agent", "tag-open-source"],
+      "author_id": "user-001",
+      "cover_asset_id": null,
+      "created_at": "2026-02-05T10:20:00.000Z",
+      "updated_at": "2026-02-27T14:00:00.000Z"
+    },
+    "source": "official",
+    "provider": "OpenMCP",
+    "repo_url": "https://github.com/example/github-issue-mcp",
+    "howto": {
+      "standard_config": {
+        "command": "npx",
+        "args": ["-y", "@example/github-issue-mcp"],
+        "env": { "GITHUB_TOKEN": "${GITHUB_TOKEN}" }
+      },
+      "clients": { "claude_desktop": true, "cursor": true },
+      "runtime": { "mode": "stdio" },
+      "json_config_text": "{\n  \"command\": \"npx\",\n  \"args\": [\"-y\", \"@example/github-issue-mcp\"],\n  \"env\": {\"GITHUB_TOKEN\": \"${GITHUB_TOKEN}\"}\n}",
+      "common_clients_json": "{\n  \"claude_desktop\": true,\n  \"cursor\": true\n}",
+      "runtime_modes_json": "{\n  \"mode\": \"stdio\"\n}"
+    },
+    "cases": [
+      {
+        "id": "mcp-case-001",
+        "title": "自动创建缺陷工单",
+        "input_text": "把当前报错整理成 issue",
+        "process_text": "读取 stack trace，归类标签，生成 issue 模板",
+        "output_text": "已创建 issue #321",
+        "media": [
+          {
+            "id": "mcp-case-media-001",
+            "asset_id": "asset-mcp-case-001",
+            "external_url": null,
+            "media_type": "image",
+            "sort_order": 1
+          }
+        ],
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "mcp-002",
+      "type": "mcp",
+      "status": "Unlisted",
+      "title": "Figma Tokens MCP",
+      "one_liner": "把 Figma 变量映射到前端 design tokens",
+      "category_id": "cat-design",
+      "category_ids": ["cat-design", "cat-frontend"],
+      "tag_ids": ["tag-workflow", "tag-frontend"],
+      "author_id": "user-002",
+      "cover_asset_id": null,
+      "created_at": "2026-01-20T02:30:00.000Z",
+      "updated_at": "2026-02-28T08:12:00.000Z"
+    },
+    "source": "user",
+    "provider": "DesignOps Lab",
+    "repo_url": "https://github.com/example/figma-token-mcp",
+    "howto": {
+      "standard_config": { "command": "bunx", "args": ["figma-token-mcp"] },
+      "clients": { "claude_desktop": true },
+      "runtime": { "mode": "stdio" },
+      "json_config_text": "{\n  \"command\": \"bunx\",\n  \"args\": [\"figma-token-mcp\"]\n}",
+      "common_clients_json": "{\n  \"claude_desktop\": true\n}",
+      "runtime_modes_json": "{\n  \"mode\": \"stdio\"\n}"
+    },
+    "cases": [
+      {
+        "id": "mcp-case-002",
+        "title": "同步变量到 CSS",
+        "input_text": "导出主题变量",
+        "process_text": "读取变量树，转换命名，输出 css 变量",
+        "output_text": "生成 128 个变量",
+        "media": [],
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "mcp-003",
+      "type": "mcp",
+      "status": "PendingReview",
+      "title": "Notion Knowledge MCP",
+      "one_liner": "检索 Notion 知识库并给出结构化答案",
+      "category_id": "cat-learning",
+      "category_ids": ["cat-learning"],
+      "tag_ids": ["tag-agent", "tag-productivity"],
+      "author_id": "user-003",
+      "cover_asset_id": null,
+      "created_at": "2026-02-25T01:00:00.000Z",
+      "updated_at": "2026-03-01T16:40:00.000Z"
+    },
+    "source": "user",
+    "provider": "Knowledge Team",
+    "repo_url": "https://github.com/example/notion-mcp",
+    "howto": {
+      "standard_config": { "command": "pnpm", "args": ["dlx", "notion-mcp"] },
+      "clients": { "cursor": true, "windsurf": true },
+      "runtime": { "mode": "http", "port": 8088 },
+      "json_config_text": "{\n  \"command\": \"pnpm\",\n  \"args\": [\"dlx\", \"notion-mcp\"]\n}",
+      "common_clients_json": "{\n  \"cursor\": true,\n  \"windsurf\": true\n}",
+      "runtime_modes_json": "{\n  \"mode\": \"http\",\n  \"port\": 8088\n}"
+    },
+    "cases": [
+      {
+        "id": "mcp-case-003",
+        "title": "回答项目规范问答",
+        "input_text": "我们的 PR 模板要求是什么？",
+        "process_text": "检索文档 -> 抽取段落 -> 生成摘要",
+        "output_text": "返回模板必填项与示例",
+        "media": [],
+        "sort_order": 1
+      }
+    ]
+  }
+]

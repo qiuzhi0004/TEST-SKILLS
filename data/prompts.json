@@ -1,0 +1,86 @@
+[
+  {
+    "content": {
+      "id": "prompt-001",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "结构化需求拆解助手",
+      "one_liner": "把模糊需求拆成可执行任务清单",
+      "category_id": "cat-coding",
+      "category_ids": ["cat-coding", "cat-learning"],
+      "tag_ids": ["tag-productivity", "tag-workflow"],
+      "author_id": "user-001",
+      "cover_asset_id": "asset-cover-prompt-001",
+      "created_at": "2026-02-15T10:00:00.000Z",
+      "updated_at": "2026-02-20T09:20:00.000Z"
+    },
+    "model_name": "GPT-4.1",
+    "language": "zh-CN",
+    "prompt_text": "你是资深工程经理，请把以下需求拆解为里程碑、任务和验收标准：{{input}}",
+    "showcases": [
+      {
+        "id": "showcase-prompt-001-1",
+        "asset_id": "asset-showcase-001",
+        "media_type": "image",
+        "caption": "任务拆解结果示例",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "prompt-002",
+      "type": "prompt",
+      "status": "PendingReview",
+      "title": "前端重构审查 Prompt",
+      "one_liner": "针对 React 重构输出风险和回归点",
+      "category_id": "cat-frontend",
+      "category_ids": ["cat-coding", "cat-design"],
+      "tag_ids": ["tag-frontend", "tag-workflow"],
+      "author_id": "user-002",
+      "cover_asset_id": null,
+      "created_at": "2026-02-10T08:30:00.000Z",
+      "updated_at": "2026-02-25T12:00:00.000Z"
+    },
+    "model_name": "Claude 3.7 Sonnet",
+    "language": "zh-CN",
+    "prompt_text": "对以下改动进行 code review，优先指出高风险回归与测试缺口：{{diff}}",
+    "showcases": [
+      {
+        "id": "showcase-prompt-002-1",
+        "asset_id": "asset-showcase-002",
+        "media_type": "image",
+        "caption": "审查报告样例",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "prompt-003",
+      "type": "prompt",
+      "status": "Draft",
+      "title": "教程脚本自动生成器",
+      "one_liner": "根据知识点自动生成分章节教学脚本",
+      "category_id": "cat-learning",
+      "category_ids": ["cat-learning"],
+      "tag_ids": ["tag-beginner", "tag-productivity"],
+      "author_id": "user-003",
+      "cover_asset_id": null,
+      "created_at": "2026-01-29T03:00:00.000Z",
+      "updated_at": "2026-02-28T18:40:00.000Z"
+    },
+    "model_name": "Gemini 2.5 Pro",
+    "language": "zh-CN",
+    "prompt_text": "面向初学者输出教程大纲、讲解话术、练习题与答案：{{topic}}",
+    "showcases": [
+      {
+        "id": "showcase-prompt-003-1",
+        "asset_id": "asset-showcase-003",
+        "media_type": "image",
+        "caption": null,
+        "sort_order": 1
+      }
+    ]
+  }
+]

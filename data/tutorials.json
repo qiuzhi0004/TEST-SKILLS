@@ -1,0 +1,63 @@
+[
+  {
+    "content": {
+      "id": "tutorial-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "从 0 搭建 Mock API 分层",
+      "one_liner": "演示 DTO、VM、Adapter 的三层结构",
+      "category_id": "cat-learning",
+      "category_ids": ["cat-learning", "cat-coding"],
+      "tag_ids": ["tag-beginner", "tag-workflow"],
+      "author_id": "user-001",
+      "cover_asset_id": null,
+      "created_at": "2026-02-11T05:00:00.000Z",
+      "updated_at": "2026-02-19T14:30:00.000Z"
+    },
+    "body_markdown": "# Mock API 分层\n\n先定义 DTO，再定义 VM，最后在 adapter 做映射。",
+    "media": [
+      {
+        "id": "tutorial-media-001",
+        "asset_id": "asset-tutorial-001",
+        "media_type": "image",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-002",
+      "type": "tutorial",
+      "status": "PendingReview",
+      "title": "Next.js App Router 路由骨架实践",
+      "one_liner": "先搭 layout shell，再逐页填业务块",
+      "category_id": "cat-coding",
+      "category_ids": ["cat-coding"],
+      "tag_ids": ["tag-frontend", "tag-beginner"],
+      "author_id": "user-002",
+      "cover_asset_id": null,
+      "created_at": "2026-02-17T12:00:00.000Z",
+      "updated_at": "2026-02-27T06:00:00.000Z"
+    },
+    "body_markdown": "# 路由骨架\n\n本教程先实现顶层 layout 与占位导航，不直接展开页面逻辑。",
+    "media": []
+  },
+  {
+    "content": {
+      "id": "tutorial-003",
+      "type": "tutorial",
+      "status": "Draft",
+      "title": "内容平台状态机冲突处理",
+      "one_liner": "当文档冲突时如何固定执行口径",
+      "category_id": "cat-learning",
+      "category_ids": ["cat-learning"],
+      "tag_ids": ["tag-productivity"],
+      "author_id": "user-003",
+      "cover_asset_id": null,
+      "created_at": "2026-02-23T01:00:00.000Z",
+      "updated_at": "2026-03-01T02:30:00.000Z"
+    },
+    "body_markdown": "# 冲突处理\n\n用 DECISIONS.md 固化执行口径，adapter 里写 NOTE/TODO。",
+    "media": []
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "categories": [
+    { "id": "cat-writing", "name": "写作" },
+    { "id": "cat-coding", "name": "编程" },
+    { "id": "cat-automation", "name": "自动化" },
+    { "id": "cat-learning", "name": "学习" },
+    { "id": "cat-design", "name": "设计" },
+    { "id": "cat-frontend", "name": "前端" }
+  ],
+  "tags": [
+    { "id": "tag-beginner", "name": "新手友好" },
+    { "id": "tag-productivity", "name": "效率" },
+    { "id": "tag-agent", "name": "Agent" },
+    { "id": "tag-workflow", "name": "工作流" },
+    { "id": "tag-open-source", "name": "开源" },
+    { "id": "tag-frontend", "name": "前端" }
+  ]
+}
