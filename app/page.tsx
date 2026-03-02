@@ -1,17 +1,28 @@
+import { Placeholder } from "@/components/layout/Placeholder";
+import { PageShell } from "@/components/layout/PageShell";
+import { SectionCard } from "@/components/layout/SectionCard";
 import { listContents } from "@/lib/api";
 
 export default async function HomePage() {
   const { items, meta } = await listContents({ type: "all", offset: 0, limit: 6 });
   return (
-    <div className="space-y-4">
-      <section className="rounded-lg border border-slate-200 bg-white p-6">
-        <h1 className="text-2xl font-semibold text-slate-900">Home 占位</h1>
-        <p className="mt-2 text-sm text-slate-600">
-          当前仅完成第1步基础工程：项目骨架、类型契约、Mock API 与全站 layout shell。
-        </p>
-      </section>
-
-      <section className="rounded-lg border border-slate-200 bg-white p-6">
+    <PageShell title="首页" subtitle="低保真块：大搜索 + 混合卡片结果区">
+      <SectionCard title="首页大搜索">
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <input
+              className="flex-1 rounded border border-slate-300 px-3 py-2 text-sm"
+              placeholder="输入关键词开始全站搜索（占位）"
+              disabled
+            />
+            <button className="rounded border border-slate-300 px-3 py-2 text-sm" type="button">
+              搜索
+            </button>
+          </div>
+          <Placeholder title="首页搜索逻辑占位" todos={["混合流检索", "highlight", "加载更多"]} />
+        </div>
+      </SectionCard>
+      <SectionCard title="搜索结果区（占位预览）">
         <h2 className="text-sm font-semibold text-slate-900">Mock API 预览（前 6 条）</h2>
         <p className="mt-1 text-xs text-slate-500">total: {meta.total}</p>
         <ul className="mt-3 space-y-2 text-sm text-slate-700">
@@ -23,7 +34,7 @@ export default async function HomePage() {
             </li>
           ))}
         </ul>
-      </section>
-    </div>
+      </SectionCard>
+    </PageShell>
   );
 }
