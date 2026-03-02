@@ -11,6 +11,7 @@ interface DetailSection {
 interface DetailPageTemplateProps {
   title: string;
   subtitle?: string;
+  bannerSlot?: ReactNode;
   metaSlot?: ReactNode;
   tabsSlot?: ReactNode;
   sections: DetailSection[];
@@ -20,6 +21,7 @@ interface DetailPageTemplateProps {
 export function DetailPageTemplate({
   title,
   subtitle,
+  bannerSlot,
   metaSlot,
   tabsSlot,
   sections,
@@ -27,6 +29,7 @@ export function DetailPageTemplate({
 }: DetailPageTemplateProps) {
   return (
     <PageShell title={title} subtitle={subtitle}>
+      {bannerSlot ? <div>{bannerSlot}</div> : null}
       <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="space-y-4">
           {tabsSlot}

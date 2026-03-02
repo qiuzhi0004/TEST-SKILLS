@@ -9,6 +9,7 @@ import { TabNav } from '@/components/layout/TabNav';
 import { DetailPageTemplate } from '@/components/page-templates/DetailPageTemplate';
 import { CommentThread } from '@/components/social/CommentThread';
 import { SocialBar } from '@/components/social/SocialBar';
+import { StatusBanner } from '@/components/admin/StatusBanner';
 import { getMcp } from '@/lib/api';
 import type { McpDetailVM } from '@/types/mcp';
 
@@ -56,6 +57,7 @@ export default function McpDetailPage() {
     <DetailPageTemplate
       title={detail.content.title}
       subtitle="低保真块：HowTo + Cases + 右侧元信息"
+      bannerSlot={<StatusBanner type="mcp" id={id} status={detail.content.status} />}
       tabsSlot={<TabNav items={[{ label: 'Overview' }, { label: 'HowTo' }, { label: 'Cases' }]} />}
       sections={[
         {

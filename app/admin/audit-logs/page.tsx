@@ -1,16 +1,18 @@
 // NOTE: 当前阶段不做守卫（见 /docs/DECISIONS.md）。
-import { Placeholder } from "@/components/layout/Placeholder";
-import { PageShell } from "@/components/layout/PageShell";
-import { SectionCard } from "@/components/layout/SectionCard";
+'use client';
+
+import { AuditLogPanel } from '@/components/admin/AuditLogPanel';
+import { PageShell } from '@/components/layout/PageShell';
+import { SectionCard } from '@/components/layout/SectionCard';
 
 export default function AdminAuditLogsPage() {
   return (
-    <PageShell title="审计日志" subtitle="低保真块：audit logs 查询">
-      <SectionCard title="查询条件">
-        <Placeholder title="审计筛选占位" todos={["action_type", "target_type", "target_id", "actor", "时间范围"]} />
-      </SectionCard>
+    <PageShell title="审计日志" subtitle="本地审计日志（倒序）">
       <SectionCard title="日志列表">
-        <Placeholder title="审计表格占位" />
+        <AuditLogPanel />
+      </SectionCard>
+      <SectionCard title="说明">
+        <p className="text-sm text-slate-600">每次审核动作（approve/reject/list/unlist/rollback）都会写入本地审计日志。</p>
       </SectionCard>
     </PageShell>
   );

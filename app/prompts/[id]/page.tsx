@@ -9,6 +9,7 @@ import { TabNav } from '@/components/layout/TabNav';
 import { DetailPageTemplate } from '@/components/page-templates/DetailPageTemplate';
 import { CommentThread } from '@/components/social/CommentThread';
 import { SocialBar } from '@/components/social/SocialBar';
+import { StatusBanner } from '@/components/admin/StatusBanner';
 import { getPrompt } from '@/lib/api';
 import type { PromptDetailVM } from '@/types/prompt';
 
@@ -58,6 +59,7 @@ export default function PromptDetailPage() {
     <DetailPageTemplate
       title={detail.content.title}
       subtitle="低保真块：首屏信息 + Tabs + 右侧元信息 + 评论置底"
+      bannerSlot={<StatusBanner type="prompt" id={id} status={detail.content.status} />}
       tabsSlot={<TabNav items={[{ label: 'Overview' }, { label: 'Content' }, { label: 'Showcase' }]} />}
       sections={[
         {

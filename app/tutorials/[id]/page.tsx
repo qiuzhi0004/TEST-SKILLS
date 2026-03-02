@@ -8,6 +8,7 @@ import { TabNav } from '@/components/layout/TabNav';
 import { DetailPageTemplate } from '@/components/page-templates/DetailPageTemplate';
 import { CommentThread } from '@/components/social/CommentThread';
 import { SocialBar } from '@/components/social/SocialBar';
+import { StatusBanner } from '@/components/admin/StatusBanner';
 import { getTutorial } from '@/lib/api';
 import type { TutorialDetailVM } from '@/types/tutorial';
 
@@ -55,6 +56,7 @@ export default function TutorialDetailPage() {
     <DetailPageTemplate
       title={detail.content.title}
       subtitle="低保真块：正文 + Media + 评论"
+      bannerSlot={<StatusBanner type="tutorial" id={id} status={detail.content.status} />}
       tabsSlot={<TabNav items={[{ label: 'Overview' }, { label: 'Content' }, { label: 'Media' }]} />}
       sections={[
         {

@@ -9,6 +9,7 @@ import { TabNav } from '@/components/layout/TabNav';
 import { DetailPageTemplate } from '@/components/page-templates/DetailPageTemplate';
 import { CommentThread } from '@/components/social/CommentThread';
 import { SocialBar } from '@/components/social/SocialBar';
+import { StatusBanner } from '@/components/admin/StatusBanner';
 import { getSkill } from '@/lib/api';
 import type { SkillDetailVM } from '@/types/skill';
 
@@ -56,6 +57,7 @@ export default function SkillDetailPage() {
     <DetailPageTemplate
       title={detail.content.title}
       subtitle="低保真块：详情主体 + 右侧元信息 + 评论区"
+      bannerSlot={<StatusBanner type="skill" id={id} status={detail.content.status} />}
       tabsSlot={<TabNav items={[{ label: 'Overview' }, { label: 'Cases' }, { label: 'Files' }]} />}
       sections={[
         {
