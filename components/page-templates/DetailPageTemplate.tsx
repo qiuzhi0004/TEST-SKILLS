@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { EmptyState } from "@/components/feedback/EmptyState";
 import { PageShell } from "@/components/layout/PageShell";
 import { SectionCard } from "@/components/layout/SectionCard";
 
@@ -48,7 +49,7 @@ export function DetailPageTemplate({
         </div>
         <div className="space-y-4">
           <SectionCard title="右侧元信息栏">
-            {metaSlot ?? <p className="text-sm text-slate-500">元信息占位</p>}
+            {metaSlot ?? <EmptyState title="元信息占位" description="后续可补充作者、来源、版本、许可证等信息。" />}
           </SectionCard>
         </div>
       </div>

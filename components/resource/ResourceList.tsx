@@ -1,4 +1,5 @@
 import { ResourceCard } from '@/components/resource/ResourceCard';
+import { EmptyState } from '@/components/feedback/EmptyState';
 import type { ContentSummaryVM } from '@/types/content';
 
 interface ResourceListProps {
@@ -7,7 +8,7 @@ interface ResourceListProps {
 
 export function ResourceList({ items }: ResourceListProps) {
   if (items.length === 0) {
-    return <p className="text-sm text-slate-500">暂无内容</p>;
+    return <EmptyState title="暂无内容" description="请稍后重试，或切换到其他资源类型。" />;
   }
 
   return (

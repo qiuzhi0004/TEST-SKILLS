@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://localhost:3000/</loc></url>
+  <url><loc>http://localhost:3000/prompts</loc></url>
+  <url><loc>http://localhost:3000/mcps</loc></url>
+  <url><loc>http://localhost:3000/skills</loc></url>
+  <url><loc>http://localhost:3000/tutorials</loc></url>
+  <url><loc>http://localhost:3000/ranks</loc></url>
+  <url><loc>http://localhost:3000/me/favorites</loc></url>
+  <url><loc>http://localhost:3000/me/published</loc></url>
+  <url><loc>http://localhost:3000/admin</loc></url>
+  <url><loc>http://localhost:3000/admin/moderation/cases</loc></url>
+</urlset>

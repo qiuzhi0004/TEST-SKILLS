@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { TopNav } from "@/components/TopNav";
+import { siteMeta } from "@/components/seo/metadata";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,8 +15,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI 资源站",
-  description: "第1步：项目骨架 + Mock API 层 + 类型契约",
+  metadataBase: new URL(siteMeta.base),
+  title: {
+    default: "AI 资源站",
+    template: "%s | AI 资源站",
+  },
+  description: "面向 Prompt / MCP / Skill / 教程 的可扩展资源站。",
+  openGraph: {
+    title: "AI 资源站",
+    description: "面向 Prompt / MCP / Skill / 教程 的可扩展资源站。",
+    type: "website",
+    locale: "zh_CN",
+    siteName: "AI 资源站",
+  },
 };
 
 export default function RootLayout({
@@ -24,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TopNav />
         <main className="mx-auto w-full max-w-6xl px-4 py-6">{children}</main>

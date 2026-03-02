@@ -20,7 +20,7 @@ export function StatusBanner({ type, id, status }: StatusBannerProps) {
     void listAuditLogs({ target_type: type, target_id: id, limit: 20, offset: 0 }).then((res) => {
       if (cancelled) return;
       const latestReject = res.items.find((item) => item.action === 'reject');
-      setReason(latestReject?.reason ?? '无驳回原因');
+      setReason(latestReject?.reason ?? '暂无原因');
     });
 
     return () => {
@@ -36,7 +36,7 @@ export function StatusBanner({ type, id, status }: StatusBannerProps) {
   if (status === 'PendingReview') {
     text = '当前内容待审核，尚未上架。';
   } else if (status === 'Reject') {
-    text = `当前内容已驳回。原因：${reason}`;
+    text = `当前内容已驳回。原因：${reason || '暂无原因'}`;
   } else if (status === 'Unlisted') {
     text = '当前内容已下架（Unlisted）。';
   } else if (status === 'Draft') {

@@ -9,7 +9,7 @@ import { TabNav } from '@/components/layout/TabNav';
 import { DetailPageTemplate } from '@/components/page-templates/DetailPageTemplate';
 import { CommentThread } from '@/components/social/CommentThread';
 import { SocialBar } from '@/components/social/SocialBar';
-import { StatusBanner } from '@/components/admin/StatusBanner';
+import { StatusBanner } from '@/components/layout/StatusBanner';
 import { getMcp } from '@/lib/api';
 import type { McpDetailVM } from '@/types/mcp';
 

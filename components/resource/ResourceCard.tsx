@@ -36,7 +36,7 @@ export function ResourceCard({ item, maxTags = 4, showStatus = true }: ResourceC
   return (
     <Link
       href={href}
-      className="group block rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+      className="group block rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">

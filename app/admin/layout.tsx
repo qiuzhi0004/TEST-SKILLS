@@ -1,6 +1,12 @@
 // NOTE: 当前阶段不做守卫（见 /docs/DECISIONS.md）。
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import { SideNav } from "@/components/layout/SideNav";
+
+export const metadata: Metadata = {
+  title: "后台控制台",
+  description: "审核、审计与运营管理后台。",
+};
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (

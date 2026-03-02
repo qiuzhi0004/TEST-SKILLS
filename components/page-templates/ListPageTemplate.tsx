@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { InlineNotice } from "@/components/feedback/InlineNotice";
 import { PageShell } from "@/components/layout/PageShell";
 import { SectionCard } from "@/components/layout/SectionCard";
 
@@ -23,7 +24,9 @@ export function ListPageTemplate({
         <SectionCard title="筛选与排序">{filterSlot}</SectionCard>
         <SectionCard title="内容列表">{listSlot}</SectionCard>
       </div>
-      <SectionCard title="分页区">{paginationSlot ?? <p className="text-sm text-slate-500">分页控件占位</p>}</SectionCard>
+      <SectionCard title="分页区">
+        {paginationSlot ?? <InlineNotice title="分页控件占位" description="后续补齐 offset/limit 翻页交互。" tone="warn" />}
+      </SectionCard>
     </PageShell>
   );
 }
