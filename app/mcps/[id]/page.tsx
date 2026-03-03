@@ -421,7 +421,7 @@ export default function McpDetailPage() {
         </div>
 
         <div className="space-y-4">
-          <SectionCard title="右侧元信息栏">
+          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="space-y-4">
               <div className="space-y-3 text-sm text-slate-700">
                 <h3 className="text-base font-semibold text-slate-900">基础信息</h3>
@@ -470,7 +470,7 @@ export default function McpDetailPage() {
               </div>
               <SocialBar target={target} />
             </div>
-          </SectionCard>
+          </section>
         </div>
       </div>
     </div>
