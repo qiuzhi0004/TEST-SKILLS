@@ -43,12 +43,14 @@ export function ResourceCard({
   return (
     <Link
       href={href}
-      className="group flex h-full flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
+      className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="line-clamp-2 text-sm font-semibold text-slate-900 group-hover:text-slate-700">{item.title}</p>
-          <p className="line-clamp-2 text-xs text-slate-600">{item.one_liner ?? '暂无简介'}</p>
+      <div className="flex min-w-0 items-start justify-between gap-3">
+        <div className="min-w-0 space-y-1">
+          <p className="line-clamp-2 break-words text-sm font-semibold text-slate-900 group-hover:text-slate-700">
+            {item.title}
+          </p>
+          <p className="line-clamp-2 break-words text-xs text-slate-600">{item.one_liner ?? '暂无简介'}</p>
         </div>
         {showTypeBadge ? <Badge tone="muted">{item.type.toUpperCase()}</Badge> : null}
       </div>
