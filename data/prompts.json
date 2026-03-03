@@ -108,5 +108,335 @@
     "language": "zh-CN",
     "prompt_text": "你是开发者效率助理，请帮助开发者快速产出日报。\n\n任务：\n- 提供日报模板。\n- 包含：完成事项、成果、遇到的问题、次日计划。\n- 保持简洁且便于每日复用。\n\n规则：\n- 聚焦关键点。\n- 使用项目符号提高可读性。\n- 鼓励持续记录，便于追踪进展。\n\n模板：\nDaily Report - ${date}\n\nTasks Completed:\n- [List tasks]\n\nAchievements:\n- [List achievements]\n\nChallenges:\n- [List challenges]\n\nPlans for Tomorrow:\n- [List plans]",
     "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmku6cu330001la04elxpqkvv",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "图片提示词1：网络安全角色生成工作流",
+      "one_liner": "来源说明：This is a structured image generation workflow for creating cyber security chara",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-01-25T20:11:58.671Z",
+      "updated_at": "2026-01-25T20:11:58.671Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的图片生成提示词。\n原始标题：Cyber Security Character Workflow\n原始作者：Fatih Yashar\n分类：Image Generation\n用途说明：This is a structured image generation workflow for creating cyber security characters. The workflow includes steps such as facial identity mapping, tactical equipment outfitting, cybernetic enhancements, and environmental integration to produce high-quality, cinematic renders. After uploading your f\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmkk2srp3000bi904dfkrmhzu",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "图片提示词2：90年代鱼眼风格生成",
+      "one_liner": "用于图片生成的结构化提示词，适合快速生成或改写出图指令。",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-01-18T18:34:41.847Z",
+      "updated_at": "2026-01-18T18:34:41.847Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的图片生成提示词。\n原始标题：Fisheye 90s\n原始作者：Öztürk Ş\n分类：图像生成\n用途说明：{ \"colors\": { \"color_temperature\": \"cool with magenta-green color cast\", \"contrast_level\": \"high contrast with crushed blacks and blown highlights\", \"dominant_palette\": [ \"oversaturated primaries\", \"desaturated midtones\", \"cyan-magenta fringing\", \"washed yet punchy colors\", \"digital grey-black vigne\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmk265efs0004l80486iooy6j",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "图片提示词3：杰洛特角色图像生成",
+      "one_liner": "用于图片生成的结构化提示词，适合快速生成或改写出图指令。",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-01-06T05:48:38.872Z",
+      "updated_at": "2026-01-06T05:48:38.872Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的图片生成提示词。\n原始标题：Geralt of Rivia Image Generation\n原始作者：Ahmet Osman Sezgin\n分类：Image Generation\n用途说明：Act as an image generation assistant. Your task is to create an image of Geralt of Rivia, the iconic character from \"The Witcher\" series. Instructions: - Create a detailed and realistic portrayal of Geralt. - Include his signature white hair and two swords. - Capture his rugged and battle-ready appe\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmjww0i580001l304hl9jvc3z",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "图片提示词4：品牌一致性图像生成助手",
+      "one_liner": "来源说明：Crie imagens impactantes e marcantes para postagens, seguindo uma identidade vis",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-01-02T13:06:03.356Z",
+      "updated_at": "2026-01-02T13:06:03.356Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的图片生成提示词。\n原始标题：Assistente de Geração de Imagens com Identidade Visual Padrão\n原始作者：Victor Suzuki\n分类：Image Generation\n用途说明：Crie imagens impactantes e marcantes para postagens, seguindo uma identidade visual específica com detalhes de cor e textura.\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmjj5cho30005ky044fvot5dc",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "图片提示词5：超写实漫威融合风图像生成",
+      "one_liner": "用于图片生成的结构化提示词，适合快速生成或改写出图指令。",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_image"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2025-12-23T22:18:32.691Z",
+      "updated_at": "2025-12-23T22:18:32.691Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的图片生成提示词。\n原始标题：Hyper-Realistic Marvel Comic Fusion Image Generation\n原始作者：günebakan\n分类：Image Generation\n用途说明：{ \"image_generation\": { \"requirements\": { \"face_preservation\": { \"preserve_original\": true, \"accuracy_level\": \"100% identical to reference\", \"details\": [ \"real facial proportions\", \"exact skin texture\", \"true eye shape and color\", \"natural look without makeup\" ] }, \"pose\": { \"match_reference_pose\": \n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmm682atm0005jm042fbta1q2",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词1：商品360度旋转视频生成",
+      "one_liner": "来源说明：Create a photorealistic, stable, 360-degree rotating video of the product using ",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-02-28T11:12:42.826Z",
+      "updated_at": "2026-02-28T11:12:42.826Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：image to video 360 product rotaion\n原始作者：Watson Charlie\n分类：Video Generation\n用途说明：Create a photorealistic, stable, 360-degree rotating video of the product using the provided front and back studio images. The product must appear naturally filled with internal volume as if worn by an invisible person (ghost mannequin effect), preserving exact geometry, proportions, fabric structur\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmlvfqs6y0001ih04kw1vvch6",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词2：椰林飘香鸡尾酒视频提示词",
+      "one_liner": "用于视频生成的结构化提示词，适合快速生成或改写视频指令。",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-02-20T22:02:14.456Z",
+      "updated_at": "2026-02-20T22:02:14.456Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：Pina Colada Cocktail\n原始作者：Umut topçuoğlu\n分类：视频生成\n用途说明：Cinematic vertical smartphone video, portrait orientation, centered composition with strong top and bottom headroom. Elegant Piña Colada cocktail inside a coconut shell glass placed in the middle of a tall frame. Clean marble bar surface only in lower third, soft tropical daylight, palm leaf shadows\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmltawaqw0001jp04w4u0pkex",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词3：Manhattan Cocktail Cinematic Video",
+      "one_liner": "来源说明：Manhattan Cocktail Cinematic Video",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-02-19T10:11:01.352Z",
+      "updated_at": "2026-02-19T10:11:01.352Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：Manhattan Cocktail Cinematic Video\n原始作者：Umut topçuoğlu\n分类：Video Generation\n用途说明：Manhattan Cocktail Cinematic Video\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmlmad1vk0001js048jyrm9az",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词4：Valentines Day Cocktail",
+      "one_liner": "用于视频生成的结构化提示词，适合快速生成或改写视频指令。",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-02-14T12:21:40.161Z",
+      "updated_at": "2026-02-14T12:21:40.161Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：Valentines Day Cocktail\n原始作者：Umut topçuoğlu\n分类：视频生成\n用途说明：Create a 9-second cinematic Valentine’s Day cocktail video in vertical 9:16 format. Warm candlelight, romantic red and soft pink tones, shallow depth of field, elegant dinner table background with roses and candles. Fast 1-second snapshot cuts with smooth crossfades: 0–3s: Close-up slow-motion spark\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmlce7iej0007l104m21h0d7i",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词5：Dog fun",
+      "one_liner": "用于视频生成的结构化提示词，适合快速生成或改写视频指令。",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-02-07T14:11:38.347Z",
+      "updated_at": "2026-02-07T14:11:38.347Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：Dog fun\n原始作者：Ezekiel\n分类：Video Generation\n用途说明：A cinematic 9:16 vertical video in a Pixar-style tone of a joyful group of cartoonish dogs playing golf on a bright, colorful golf course. One main dog is centered, standing upright with exaggerated proportions, mid-swing with a golf club and a big excited smile, while his dog friends react with exp\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmlblc2dk0001l5047a1ipezn",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词6：Cocktail videos",
+      "one_liner": "用于视频生成的结构化提示词，适合快速生成或改写视频指令。",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-02-07T00:43:21.992Z",
+      "updated_at": "2026-02-07T00:43:21.992Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：Cocktail videos\n原始作者：Umut topçuoğlu\n分类：Video Generation\n用途说明：Cinematic close-up of a mysterious bartender pouring a glowing green liquid into a glass, heavy smoke rising, dark cocktail bar background, 4k, hyper-realistic, slow motion.\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmlaoyg1q0005jq04sbrlbzwd",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词7：Daiquiri Cocktail Cinematic Video",
+      "one_liner": "来源说明：Create a cinematic video focusing on a Daiquiri cocktail, highlighting its prese",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-02-06T09:36:58.814Z",
+      "updated_at": "2026-02-06T09:36:58.814Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：Daiquiri Cocktail Cinematic Video\n原始作者：Umut topçuoğlu\n分类：Video Generation\n用途说明：Create a cinematic video focusing on a Daiquiri cocktail, highlighting its presentation with smooth rotations and realistic reflections.\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmky48iq8000kl2045w66m7ii",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词8：Romantic Rainy Scene Video",
+      "one_liner": "来源说明：Create a romantic video scene where two people stand under the rain, gazing into",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-01-28T14:23:42.801Z",
+      "updated_at": "2026-01-28T14:23:42.801Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：Romantic Rainy Scene Video\n原始作者：Fatih Kadir Akın\n分类：Video Generation\n用途说明：Create a romantic video scene where two people stand under the rain, gazing into each other's eyes. Capture the ambiance with the sound of raindrops and a soft, romantic atmosphere.\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmksdpvk60004l404t37q90xr",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词9：prompts.chat Promotional Video using Remotion",
+      "one_liner": "来源说明：This prompt guides the creation of a 30-second promotional video for prompts.cha",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-01-24T14:02:32.070Z",
+      "updated_at": "2026-01-24T14:02:32.070Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：prompts.chat Promotional Video using Remotion\n原始作者：Fatih Kadir Akın\n分类：Video Generation\n用途说明：This prompt guides the creation of a 30-second promotional video for prompts.chat using Remotion. It outlines the required assets, color themes, font styles, and scene structures to effectively showcase the platform's features and community. The prompt includes animation techniques and transitions t\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
+  },
+  {
+    "content": {
+      "id": "prompt_mcp_cmkqvwms6000hlb04f7cbruio",
+      "type": "prompt",
+      "status": "Listed",
+      "title": "视频提示词10：Remotion 动画视频提示词",
+      "one_liner": "来源说明：Create stunning videos with Remotion.",
+      "category_id": null,
+      "category_ids": [],
+      "tag_ids": [
+        "prompt_video"
+      ],
+      "author_id": "seed-importer",
+      "cover_asset_id": null,
+      "created_at": "2026-01-23T12:56:08.022Z",
+      "updated_at": "2026-01-23T12:56:08.022Z"
+    },
+    "model_name": "prompts.chat",
+    "language": "zh-CN",
+    "prompt_text": "【中文整理版】这是从 prompts.chat 同步的视频生成提示词。\n原始标题：Remotion\n原始作者：semih\n分类：Video Generation\n用途说明：Create stunning videos with Remotion.\n使用建议：可直接复用本条作为基础模板，再按你的场景补充主体、风格、镜头、质量与约束条件。",
+    "showcases": []
   }
 ]

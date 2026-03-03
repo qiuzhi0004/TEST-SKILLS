@@ -14,9 +14,9 @@ const TOOL_OPTIONS = [
 
 function promptCategoryMatcher(item: ContentSummaryVM, category: string): boolean {
   const haystack = `${item.title} ${item.one_liner ?? ''} ${item.tag_ids.join(' ')}`.toLowerCase();
-  if (category === '视频') return haystack.includes('video') || haystack.includes('sora') || haystack.includes('prompt_video');
-  if (category === '图像' || category === '图片') return haystack.includes('image') || haystack.includes('prompt_image');
-  return !haystack.includes('video') && !haystack.includes('prompt_video');
+  if (category === '视频') return haystack.includes('prompt_video') || haystack.includes('video') || haystack.includes('sora');
+  if (category === '图像' || category === '图片') return haystack.includes('prompt_image') || haystack.includes('image');
+  return haystack.includes('prompt_text') && !haystack.includes('prompt_image') && !haystack.includes('prompt_video');
 }
 
 function promptToolMatcher(item: ContentSummaryVM, tool: string): boolean {
