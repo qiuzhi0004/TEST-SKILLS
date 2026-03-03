@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Badge } from '@/components/common/Badge';
-import { CodeBlock } from '@/components/common/CodeBlock';
 import { CopyButton } from '@/components/common/CopyButton';
 import { Placeholder } from '@/components/layout/Placeholder';
 import { SectionCard } from '@/components/layout/SectionCard';
@@ -19,6 +18,7 @@ type OsOption = 'generic' | 'mac' | 'windows';
 type IdeOption = 'generic' | 'cursor' | 'vscode';
 type QuickClient = 'codex' | 'claude-code';
 type QuickOs = 'mac' | 'windows';
+type RuntimeIde = 'cursor' | 'vscode';
 
 interface BaseServerSpec {
   command?: string;
@@ -163,6 +163,47 @@ function buildQuickCommand({
   return `codex mcp add ${serverName} ${actualRunner} "${packageRef}"`;
 }
 
+function buildRunCommand({ packageRef }: { packageRef: string }): string {
+  return `npx ${packageRef} --port 8931`;
+}
+
+function buildRemoteUrlConfig({
+  ide,
+  serverName,
+  port = 8931,
+}: {
+  ide: RuntimeIde;
+  serverName: string;
+  port?: number;
+}): string {
+  const url = `http://localhost:${port}/mcp`;
+  if (ide === 'vscode') {
+    return JSON.stringify(
+      {
+        servers: {
+          [serverName]: {
+            url,
+          },
+        },
+      },
+      null,
+      2,
+    );
+  }
+
+  return JSON.stringify(
+    {
+      mcpServers: {
+        [serverName]: {
+          url,
+        },
+      },
+    },
+    null,
+    2,
+  );
+}
+
 export default function McpDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
@@ -173,6 +214,7 @@ export default function McpDetailPage() {
   const [ide, setIde] = useState<IdeOption>('generic');
   const [quickClient, setQuickClient] = useState<QuickClient>('codex');
   const [quickOs, setQuickOs] = useState<QuickOs>('mac');
+  const [runtimeIde, setRuntimeIde] = useState<RuntimeIde>('cursor');
 
   useEffect(() => {
     let cancelled = false;
@@ -207,6 +249,9 @@ export default function McpDetailPage() {
   const quickServerName = deriveServerName(detail, parsedBaseSpec);
   const quickPackageRef = extractPackageRef(parsedBaseSpec);
   const quickRunner = pickRunner(parsedBaseSpec);
+  const runtimePackageRef = quickPackageRef ?? quickServerName;
+  const runCommand = buildRunCommand({ packageRef: runtimePackageRef });
+  const runtimeConfigText = buildRemoteUrlConfig({ ide: runtimeIde, serverName: quickServerName, port: 8931 });
   const quickCommand = quickPackageRef
     ? buildQuickCommand({
         client: quickClient,
@@ -334,7 +379,40 @@ export default function McpDetailPage() {
                   {quickCommand}
                 </pre>
               </div>
-              <CodeBlock title="运行形态" value={detail.how_to_use.runtime_modes_json} />
+              <div className="space-y-3 rounded-md border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-700">运行形态补充</p>
+
+                <div className="space-y-2 rounded-md border border-slate-200 bg-white p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs font-semibold text-slate-700">运行：</p>
+                    <CopyButton value={runCommand} />
+                  </div>
+                  <pre className="overflow-auto whitespace-pre rounded bg-slate-50 p-3 text-xs leading-relaxed text-slate-700">
+                    {`# Bash\n${runCommand}`}
+                  </pre>
+                </div>
+
+                <div className="space-y-2 rounded-md border border-slate-200 bg-white p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs font-semibold text-slate-700">配置：</p>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <Select
+                        aria-label="运行形态配置 IDE 选择"
+                        value={runtimeIde}
+                        onChange={(event) => setRuntimeIde(event.target.value as RuntimeIde)}
+                        className="h-8 w-28 text-xs"
+                      >
+                        <option value="cursor">Cursor</option>
+                        <option value="vscode">VS Code</option>
+                      </Select>
+                      <CopyButton value={runtimeConfigText} />
+                    </div>
+                  </div>
+                  <pre className="max-h-72 overflow-auto whitespace-pre rounded bg-slate-50 p-3 text-xs leading-relaxed text-slate-700">
+                    {runtimeConfigText}
+                  </pre>
+                </div>
+              </div>
             </div>
           </SectionCard>
           <SectionCard title="评论区">
