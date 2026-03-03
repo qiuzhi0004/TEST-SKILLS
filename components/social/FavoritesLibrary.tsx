@@ -1,9 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Badge } from '@/components/common/Badge';
 import { ResourceCard } from '@/components/resource/ResourceCard';
-import { FavoriteButton } from '@/components/social/FavoriteButton';
 import { getMcp, getPrompt, getSkill, getTutorial } from '@/lib/api';
 import { listFavoriteTargets } from '@/lib/api/social';
 import type { ContentSummaryVM, ContentType } from '@/types/content';
@@ -126,6 +124,7 @@ async function resolveTarget(target: SocialTarget): Promise<ContentSummaryVM | n
 
 export function FavoritesLibrary() {
   const [items, setItems] = useState<ContentSummaryVM[]>([]);
+  const [activeType, setActiveType] = useState<'all' | ContentType>('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -149,29 +148,73 @@ export function FavoritesLibrary() {
   }
 
   if (items.length === 0) {
-    return <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">暂无收藏内容</p>;
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: '全部', value: 'all' as const },
+            { label: 'Prompt', value: 'prompt' as const },
+            { label: 'Skill', value: 'skill' as const },
+            { label: 'MCP', value: 'mcp' as const },
+            { label: '教程', value: 'tutorial' as const },
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => setActiveType(tab.value)}
+              className={`rounded-md border px-3 py-1.5 text-sm transition ${
+                activeType === tab.value
+                  ? 'border-sky-300 bg-sky-50 text-sky-700'
+                  : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">暂无收藏内容</p>
+      </div>
+    );
   }
 
+  const filteredItems = activeType === 'all' ? items : items.filter((item) => item.type === activeType);
+
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      {items.map((item) => (
-        <div key={`${item.type}:${item.id}`} className="rounded-lg border border-slate-200 bg-white p-4">
-          <ResourceCard item={item} />
-          <div className="mt-3 flex items-center justify-between">
-            <span className="text-xs text-slate-500">
-              <Badge tone="muted">{item.type} · {item.status}</Badge>
-            </span>
-            <FavoriteButton
-              target={{ target_type: item.type, target_id: item.id }}
-              onChanged={(next) => {
-                if (!next) {
-                  setItems((prev) => prev.filter((p) => !(p.type === item.type && p.id === item.id)));
-                }
-              }}
-            />
-          </div>
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2">
+        {[
+          { label: '全部', value: 'all' as const },
+          { label: 'Prompt', value: 'prompt' as const },
+          { label: 'Skill', value: 'skill' as const },
+          { label: 'MCP', value: 'mcp' as const },
+          { label: '教程', value: 'tutorial' as const },
+        ].map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => setActiveType(tab.value)}
+            className={`rounded-md border px-3 py-1.5 text-sm transition ${
+              activeType === tab.value
+                ? 'border-sky-300 bg-sky-50 text-sky-700'
+                : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {filteredItems.length === 0 ? (
+        <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">当前筛选下暂无收藏内容</p>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {filteredItems.map((item) => (
+            <div key={`${item.type}:${item.id}`} className="rounded-lg border border-slate-200 bg-white p-4">
+              <ResourceCard item={item} />
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }

@@ -185,6 +185,16 @@ export async function changeStatus(type: ContentType, id: string, nextStatus: Co
   saveAuthoringState(state);
 }
 
+export async function deleteMyRecord(type: ContentType, id: string): Promise<void> {
+  const state = loadAuthoringState();
+  const index = findRecordIndex(state.records, type, id);
+  if (index < 0) {
+    throw new Error(`Record not found: ${type}/${id}`);
+  }
+  state.records.splice(index, 1);
+  saveAuthoringState(state);
+}
+
 export async function listMyRecords(type?: ContentType): Promise<AuthoringRecord[]> {
   const state = loadAuthoringState();
   const records = type ? state.records.filter((item) => item.type === type) : state.records;

@@ -14,7 +14,7 @@ export function FieldText({ label, value, onChange, placeholder, required }: Fie
         {required ? <span className="ml-1 text-rose-500">*</span> : null}
       </span>
       <input
-        value={value}
+        value={value ?? ''}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="rounded-md border border-slate-300 bg-white px-3 py-2"

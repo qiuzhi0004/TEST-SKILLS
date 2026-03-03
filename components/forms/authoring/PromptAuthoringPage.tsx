@@ -19,7 +19,7 @@ import {
 } from '@/lib/api/authoring';
 import { getPrompt } from '@/lib/api';
 import type { ContentStatus } from '@/types/content';
-import type { PromptDetailVM } from '@/types/prompt';
+import type { PromptDetailVM, PromptMediaType } from '@/types/prompt';
 
 interface PromptAuthoringPageProps {
   mode: 'new' | 'edit';
@@ -29,8 +29,13 @@ interface PromptAuthoringPageProps {
 interface PromptFormState {
   title: string;
   description: string;
-  language: string;
+  model_name: string;
   prompt_body: string;
+  showcases: Array<{
+    id: string;
+    asset_id: string;
+    media_type: PromptMediaType;
+  }>;
   category_ids: string[];
   tag_ids: string[];
 }
@@ -38,8 +43,9 @@ interface PromptFormState {
 const EMPTY_FORM: PromptFormState = {
   title: '',
   description: '',
-  language: 'zh-CN',
+  model_name: 'Custom',
   prompt_body: '',
+  showcases: [],
   category_ids: [],
   tag_ids: [],
 };
@@ -60,21 +66,32 @@ function formToDetail(id: string, status: ContentStatus, form: PromptFormState):
       created_at: now,
       updated_at: now,
     },
-    model_name: 'Custom',
-    language: form.language,
+    model_name: form.model_name,
+    language: 'zh-CN',
     prompt_text: form.prompt_body,
-    showcases: [],
+    showcases: form.showcases.map((item, index) => ({
+      id: `${id}-showcase-${index + 1}`,
+      asset_id: item.asset_id,
+      media_type: item.media_type,
+      caption: null,
+      sort_order: index + 1,
+    })),
   };
 }
 
 function detailToForm(detail: PromptDetailVM): PromptFormState {
   return {
-    title: detail.content.title,
+    title: detail.content.title ?? '',
     description: detail.content.one_liner ?? '',
-    language: detail.language,
-    prompt_body: detail.prompt_text,
-    category_ids: detail.content.category_ids,
-    tag_ids: detail.content.tag_ids,
+    model_name: detail.model_name || 'Custom',
+    prompt_body: detail.prompt_text ?? '',
+    showcases: detail.showcases.map((item, index) => ({
+      id: item.id || `showcase-${index + 1}`,
+      asset_id: item.asset_id,
+      media_type: item.media_type,
+    })),
+    category_ids: detail.content.category_ids ?? [],
+    tag_ids: detail.content.tag_ids ?? [],
   };
 }
 
@@ -125,11 +142,35 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
   }, [id, mode]);
 
   const validationError = useMemo(() => {
-    if (!form.title.trim()) return 'title 必填';
-    if (!form.language.trim()) return 'language 必填';
-    if (!form.prompt_body.trim()) return 'prompt_body 必填';
+    if (!form.title.trim()) return '标题必填';
+    if (!form.model_name.trim()) return '模型名称必填';
+    if (!form.prompt_body.trim()) return 'Prompt 正文必填';
     return '';
   }, [form]);
+
+  async function handleUploadShowcases(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const next = await Promise.all(
+      Array.from(files)
+        .filter((file) => file.type.startsWith('image/') || file.type.startsWith('video/'))
+        .map(
+          (file) =>
+            new Promise<PromptFormState['showcases'][number]>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                resolve({
+                  id: `upload-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                  asset_id: String(reader.result ?? ''),
+                  media_type: file.type.startsWith('video/') ? 'video' : 'image',
+                });
+              };
+              reader.onerror = () => reject(new Error('read file failed'));
+              reader.readAsDataURL(file);
+            }),
+        ),
+    );
+    setForm((prev) => ({ ...prev, showcases: [...prev.showcases, ...next.filter((item) => item.asset_id)] }));
+  }
 
   const persist = async (intent: 'save' | 'submit') => {
     if (validationError) {
@@ -174,7 +215,6 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
   return (
     <FormPageTemplate
       title={mode === 'new' ? 'Prompt 创建' : `Prompt 编辑：${id}`}
-      subtitle="NOTE: 当前阶段不做守卫（见 /docs/DECISIONS.md）。"
       formSlot={
         loading ? (
           <p className="text-sm text-slate-500">加载中...</p>
@@ -182,31 +222,70 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
           <div className="space-y-4">
             <FieldText label="标题" required value={form.title} onChange={(title) => setForm((p) => ({ ...p, title }))} />
             <FieldTextarea
-              label="描述"
+              label="一句话描述"
               value={form.description}
               onChange={(description) => setForm((p) => ({ ...p, description }))}
               rows={3}
             />
-            <FieldText label="language" required value={form.language} onChange={(language) => setForm((p) => ({ ...p, language }))} />
+            <FieldText label="模型名称" required value={form.model_name} onChange={(model_name) => setForm((p) => ({ ...p, model_name }))} />
             <FieldTextarea
-              label="prompt_body"
+              label="Prompt 正文"
               required
               value={form.prompt_body}
               onChange={(prompt_body) => setForm((p) => ({ ...p, prompt_body }))}
               rows={8}
             />
+            <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+              <p className="text-sm font-medium text-slate-800">案例上传区（可选）</p>
+              <input
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                onChange={(event) => void handleUploadShowcases(event.target.files)}
+                className="block w-full text-sm text-slate-700 file:mr-3 file:rounded-md file:border file:border-slate-300 file:bg-white file:px-3 file:py-1.5 file:text-sm"
+              />
+              {form.showcases.length > 0 ? (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {form.showcases.map((item, index) => (
+                    <div key={item.id} className="overflow-hidden rounded border border-slate-200 bg-white p-2">
+                      {item.media_type === 'video' ? (
+                        <video src={item.asset_id} controls className="h-28 w-full rounded object-cover" />
+                      ) : (
+                        <img src={item.asset_id} alt={`案例 ${index + 1}`} className="h-28 w-full rounded object-cover" />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            showcases: prev.showcases.filter((s) => s.id !== item.id),
+                          }))
+                        }
+                        className="mt-2 rounded border border-slate-300 px-2 py-1 text-xs text-slate-700"
+                      >
+                        删除
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-500">可上传多个图片或视频，用于详情页案例展示区。</p>
+              )}
+            </div>
             <FieldMultiSelect
-              label="category_ids[]"
+              label="分类（可多选）"
               required
               value={form.category_ids}
               options={categoryOptions}
               onChange={(category_ids) => setForm((p) => ({ ...p, category_ids }))}
             />
             <FieldMultiSelect
-              label="tag_ids[]"
+              label="标签（可多选）"
               value={form.tag_ids}
               options={tagOptions}
               onChange={(tag_ids) => setForm((p) => ({ ...p, tag_ids }))}
+              allowCustom
+              customPlaceholder="输入自定义标签后点击添加"
             />
           </div>
         )
@@ -216,13 +295,13 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
           <Badge tone="info">状态：{status}</Badge>
           {recordId ? <p className="text-xs text-slate-500">记录ID：{recordId}</p> : null}
           {tip ? <p className="text-xs text-slate-600">{tip}</p> : null}
-          <Placeholder title="最小校验" todos={['title', 'language', 'prompt_body']} />
+          <Placeholder title="必填项" todos={['标题', '模型名称', 'Prompt 正文']} />
         </div>
       }
       actionSlot={
         <FormActions
           status={status}
-          hint="保存草稿/提交审核为本地实现；后续可平滑替换服务端 API。"
+          hint="保存草稿/提交审核目前为本地实现；后续可平滑替换服务端 API。"
           onSaveDraft={() => void persist('save')}
           onSubmitReview={() => void persist('submit')}
           onList={

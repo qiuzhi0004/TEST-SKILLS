@@ -4,7 +4,7 @@ import type {
   ContentType,
 } from "@/types/content";
 
-export type PromptMediaType = "image" | "video";
+export type PromptMediaType = "text" | "image" | "video";
 
 export interface PromptShowcaseDTO {
   id: string;

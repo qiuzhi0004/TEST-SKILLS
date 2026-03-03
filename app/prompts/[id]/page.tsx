@@ -25,6 +25,7 @@ function toDisplayLanguage(language: string): string {
 function toShowcaseSrc(assetId?: string | null, externalUrl?: string | null): string | null {
   if (externalUrl) return externalUrl;
   if (!assetId) return null;
+  if (assetId.startsWith('data:')) return assetId;
   if (assetId.startsWith('/')) return assetId;
   if (assetId.startsWith('http://') || assetId.startsWith('https://')) return assetId;
   if (assetId.startsWith('data/images/')) return `/${assetId.replace(/^data\//, '')}`;
@@ -81,49 +82,52 @@ export default function PromptDetailPage() {
         <div className="space-y-4">
           {!isTextPrompt ? (
             <SectionCard title="案例展示">
-              <div className="space-y-4">
-                {(detail.showcases.length > 0 ? detail.showcases : [{ id: 'prompt-showcase-fallback' }]).map((item) => (
-                  <article
-                    key={item.id}
-                    className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/50 p-4"
-                  >
-                    {(() => {
-                      const src = toShowcaseSrc(
-                        'asset_id' in item ? item.asset_id : null,
-                        'external_url' in item ? (item as { external_url?: string | null }).external_url ?? null : null,
-                      );
-                      if (!src) {
-                        return (
-                          <div className="rounded-md border border-slate-200 bg-slate-100 px-4 py-6 text-center text-sm text-slate-600">
-                            案例效果展示区（图片/视频占位，暂无内容）
+              <div className="space-y-2">
+                <p className="text-xs text-slate-500">可左右滑动查看多个案例素材</p>
+                <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1">
+                  {(detail.showcases.length > 0 ? detail.showcases : [{ id: 'prompt-showcase-fallback' }]).map((item) => (
+                    <article
+                      key={item.id}
+                      className="w-full min-w-full snap-start space-y-3 rounded-lg border border-slate-200 bg-slate-50/50 p-4"
+                    >
+                      {(() => {
+                        const src = toShowcaseSrc(
+                          'asset_id' in item ? item.asset_id : null,
+                          'external_url' in item ? (item as { external_url?: string | null }).external_url ?? null : null,
+                        );
+                        if (!src) {
+                          return (
+                            <div className="rounded-md border border-slate-200 bg-slate-100 px-4 py-6 text-center text-sm text-slate-600">
+                              案例效果展示区（图片/视频占位，暂无内容）
+                            </div>
+                          );
+                        }
+
+                        const mediaType = 'media_type' in item ? item.media_type : 'image';
+                        return mediaType === 'video' ? (
+                          <div className="overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+                            <video
+                              src={src}
+                              controls
+                              playsInline
+                              className="h-auto w-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+                            <Image
+                              src={src}
+                              alt="案例效果图"
+                              width={1200}
+                              height={700}
+                              className="h-auto w-full object-cover"
+                            />
                           </div>
                         );
-                      }
-
-                      const mediaType = 'media_type' in item ? item.media_type : 'image';
-                      return mediaType === 'video' ? (
-                        <div className="overflow-hidden rounded-md border border-slate-200 bg-slate-100">
-                          <video
-                            src={src}
-                            controls
-                            playsInline
-                            className="h-auto w-full object-cover"
-                          />
-                        </div>
-                      ) : (
-                        <div className="overflow-hidden rounded-md border border-slate-200 bg-slate-100">
-                          <Image
-                            src={src}
-                            alt="案例效果图"
-                            width={1200}
-                            height={700}
-                            className="h-auto w-full object-cover"
-                          />
-                        </div>
-                      );
-                    })()}
-                  </article>
-                ))}
+                      })()}
+                    </article>
+                  ))}
+                </div>
               </div>
             </SectionCard>
           ) : null}
