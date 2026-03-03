@@ -23,8 +23,8 @@
       "standard_config": {},
       "clients": {},
       "runtime": {},
-      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
-      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "json_config_text": "{\n  \"command\": \"npx\",\n  \"args\": [\n    \"-y\",\n    \"@modelcontextprotocol/server-filesystem@latest\",\n    \"/path/to/allowed/dir\"\n  ]\n}",
+      "common_clients_json": "{\n  \"codex\": true,\n  \"claude_code\": true\n}",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
     "cases": [
@@ -73,8 +73,8 @@
       "standard_config": {},
       "clients": {},
       "runtime": {},
-      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
-      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "json_config_text": "{\n  \"command\": \"npx\",\n  \"args\": [\n    \"@playwright/mcp@latest\"\n  ]\n}",
+      "common_clients_json": "{\n  \"codex\": true,\n  \"claude_code\": true\n}",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
     "cases": [
@@ -123,8 +123,8 @@
       "standard_config": {},
       "clients": {},
       "runtime": {},
-      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
-      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "json_config_text": "{\n  \"command\": \"npx\",\n  \"args\": [\n    \"-y\",\n    \"figma-developer-mcp\",\n    \"--figma-api-key=${FIGMA_API_KEY}\",\n    \"--stdio\"\n  ],\n  \"env\": {\n    \"FIGMA_API_KEY\": \"${FIGMA_API_KEY}\"\n  }\n}",
+      "common_clients_json": "{\n  \"codex\": true,\n  \"claude_code\": true\n}",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
     "cases": [
@@ -173,8 +173,8 @@
       "standard_config": {},
       "clients": {},
       "runtime": {},
-      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
-      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "json_config_text": "{\n  \"command\": \"npx\",\n  \"args\": [\n    \"-y\",\n    \"pal-mcp-server\"\n  ]\n}",
+      "common_clients_json": "{\n  \"codex\": true,\n  \"claude_code\": true\n}",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
     "cases": [
@@ -223,8 +223,8 @@
       "standard_config": {},
       "clients": {},
       "runtime": {},
-      "json_config_text": "来自种子数据，仅提供仓库链接，JSON 配置待补充。",
-      "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
+      "json_config_text": "{\n  \"command\": \"npx\",\n  \"args\": [\n    \"mcp-remote\",\n    \"https://gitmcp.io/{owner}/{repo}\"\n  ]\n}",
+      "common_clients_json": "{\n  \"codex\": true,\n  \"claude_code\": true\n}",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
     "cases": [
