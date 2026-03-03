@@ -25,11 +25,23 @@ interface SkillFormState {
   description: string;
   category_ids: string[];
   tag_ids: string[];
-  provider_name: string;
   repo_url: string;
   zip_asset_id: string;
+  zip_file_name: string;
   install_commands: string[];
   usage_doc: string;
+  cases: Array<{
+    id: string;
+    title: string;
+    user_input: string;
+    execution_process: string;
+    agent_output: string;
+    media: Array<{
+      id: string;
+      asset_id: string;
+      media_type: 'image' | 'video';
+    }>;
+  }>;
 }
 
 const EMPTY_FORM: SkillFormState = {
@@ -37,11 +49,12 @@ const EMPTY_FORM: SkillFormState = {
   description: '',
   category_ids: [],
   tag_ids: [],
-  provider_name: '',
   repo_url: '',
   zip_asset_id: '',
+  zip_file_name: '',
   install_commands: [''],
   usage_doc: '',
+  cases: [],
 };
 
 function formToDetail(id: string, status: ContentStatus, form: SkillFormState): SkillDetailVM {
@@ -61,7 +74,7 @@ function formToDetail(id: string, status: ContentStatus, form: SkillFormState): 
       updated_at: now,
     },
     source: 'user',
-    provider_name: form.provider_name || 'Unknown',
+    provider_name: 'user-001',
     repo_url: form.repo_url || null,
     zip_asset_id: form.zip_asset_id,
     install_commands: form.install_commands.filter((item) => item.trim()),
@@ -72,21 +85,49 @@ function formToDetail(id: string, status: ContentStatus, form: SkillFormState): 
       updated_at: null,
       synced_at: null,
     },
-    cases: [],
+    cases: form.cases
+      .filter((item) => item.title.trim() || item.user_input.trim() || item.execution_process.trim() || item.agent_output.trim())
+      .map((item, index) => ({
+        id: `${id}-case-${index + 1}`,
+        title: item.title || `案例 ${index + 1}`,
+        user_input: item.user_input,
+        execution_process: item.execution_process,
+        agent_output: item.agent_output,
+        media: item.media.map((media, mediaIndex) => ({
+          id: `${id}-case-${index + 1}-media-${mediaIndex + 1}`,
+          asset_id: media.asset_id,
+          external_url: null,
+          media_type: media.media_type,
+          sort_order: mediaIndex + 1,
+        })),
+        sort_order: index + 1,
+      })),
   };
 }
 
 function detailToForm(detail: SkillDetailVM): SkillFormState {
   return {
-    title: detail.content.title,
+    title: detail.content.title ?? '',
     description: detail.content.one_liner ?? '',
-    category_ids: detail.content.category_ids,
-    tag_ids: detail.content.tag_ids,
-    provider_name: detail.provider_name,
+    category_ids: detail.content.category_ids ?? [],
+    tag_ids: detail.content.tag_ids ?? [],
     repo_url: detail.repo_url ?? '',
-    zip_asset_id: detail.zip_asset_id,
+    zip_asset_id: detail.zip_asset_id ?? '',
+    zip_file_name: detail.zip_asset_id ? (detail.zip_asset_id.startsWith('data:') ? '已上传 zip 文件' : detail.zip_asset_id) : '',
     install_commands: detail.install_commands.length > 0 ? detail.install_commands : [''],
     usage_doc: detail.usage_doc ?? '',
+    cases: detail.cases.map((item, index) => ({
+      id: item.id || `case-${index + 1}`,
+      title: item.title,
+      user_input: item.user_input,
+      execution_process: item.execution_process,
+      agent_output: item.agent_output,
+      media: item.media.map((media, mediaIndex) => ({
+        id: media.id || `case-${index + 1}-media-${mediaIndex + 1}`,
+        asset_id: media.asset_id ?? '',
+        media_type: media.media_type === 'video' ? 'video' : 'image',
+      })),
+    })),
   };
 }
 
@@ -134,15 +175,59 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
   }, [id, mode]);
 
   const validationError = useMemo(() => {
-    if (!form.title.trim()) return 'title 必填';
-    if (!form.zip_asset_id.trim()) return 'zip_asset_id 必填';
+    if (!form.title.trim()) return '标题必填';
+    if (!form.zip_asset_id.trim()) return 'Zip 文件必传';
     const commands = form.install_commands.filter((item) => item.trim());
-    if (commands.length === 0) return 'install_commands 至少 1 条';
+    if (commands.length === 0) return '安装命令至少 1 条';
     if (!form.repo_url.trim() && !form.usage_doc.trim()) {
-      return 'repo_url 为空时 usage_doc 必填';
+      return '仓库地址为空时，使用文档必填';
     }
     return '';
   }, [form]);
+
+  async function readFileAsDataUrl(file: File): Promise<string> {
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ''));
+      reader.onerror = () => reject(new Error('read file failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleUploadZip(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const asset = await readFileAsDataUrl(file);
+    setForm((prev) => ({
+      ...prev,
+      zip_asset_id: asset,
+      zip_file_name: file.name,
+    }));
+  }
+
+  async function handleUploadCaseMedia(caseId: string, files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const mediaItems = await Promise.all(
+      Array.from(files)
+        .filter((file) => file.type.startsWith('image/') || file.type.startsWith('video/'))
+        .map(async (file) => ({
+          id: `${caseId}-media-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          asset_id: await readFileAsDataUrl(file),
+          media_type: file.type.startsWith('video/') ? ('video' as const) : ('image' as const),
+        })),
+    );
+    setForm((prev) => ({
+      ...prev,
+      cases: prev.cases.map((item) =>
+        item.id === caseId
+          ? {
+              ...item,
+              media: [...item.media, ...mediaItems],
+            }
+          : item,
+      ),
+    }));
+  }
 
   const persist = async (intent: 'save' | 'submit') => {
     if (validationError) {
@@ -187,21 +272,186 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
   return (
     <FormPageTemplate
       title={mode === 'new' ? 'Skill 创建' : `Skill 编辑：${id}`}
-      subtitle="NOTE: 当前阶段不做守卫（见 /docs/DECISIONS.md）。"
+      hideActionTitle
       formSlot={
         loading ? (
           <p className="text-sm text-slate-500">加载中...</p>
         ) : (
           <div className="space-y-4">
             <FieldText label="标题" required value={form.title} onChange={(title) => setForm((p) => ({ ...p, title }))} />
-            <FieldTextarea label="描述" value={form.description} onChange={(description) => setForm((p) => ({ ...p, description }))} rows={3} />
-            <FieldText label="provider_name" value={form.provider_name} onChange={(provider_name) => setForm((p) => ({ ...p, provider_name }))} />
-            <FieldText label="repo_url" value={form.repo_url} onChange={(repo_url) => setForm((p) => ({ ...p, repo_url }))} />
-            <FieldText label="zip_asset_id" required value={form.zip_asset_id} onChange={(zip_asset_id) => setForm((p) => ({ ...p, zip_asset_id }))} />
-            <RepeatableListInput label="install_commands[]" required value={form.install_commands} onChange={(install_commands) => setForm((p) => ({ ...p, install_commands }))} />
-            <FieldTextarea label="usage_doc" value={form.usage_doc} onChange={(usage_doc) => setForm((p) => ({ ...p, usage_doc }))} rows={6} />
-            <FieldMultiSelect label="category_ids[]" required value={form.category_ids} options={categoryOptions} onChange={(category_ids) => setForm((p) => ({ ...p, category_ids }))} />
-            <FieldMultiSelect label="tag_ids[]" value={form.tag_ids} options={tagOptions} onChange={(tag_ids) => setForm((p) => ({ ...p, tag_ids }))} />
+            <FieldTextarea label="一句话描述" value={form.description} onChange={(description) => setForm((p) => ({ ...p, description }))} rows={3} />
+            <FieldText label="仓库地址" value={form.repo_url} onChange={(repo_url) => setForm((p) => ({ ...p, repo_url }))} />
+            <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+              <p className="text-sm font-medium text-slate-800">
+                Zip 上传区
+                <span className="ml-1 text-rose-500">*</span>
+              </p>
+              <input
+                type="file"
+                accept=".zip,application/zip,application/x-zip-compressed"
+                onChange={(event) => void handleUploadZip(event.target.files)}
+                className="block w-full text-sm text-slate-700 file:mr-3 file:rounded-md file:border file:border-slate-300 file:bg-white file:px-3 file:py-1.5 file:text-sm"
+              />
+              {form.zip_file_name ? (
+                <div className="flex items-center justify-between rounded border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
+                  <span>已上传：{form.zip_file_name}</span>
+                  <button
+                    type="button"
+                    onClick={() => setForm((prev) => ({ ...prev, zip_asset_id: '', zip_file_name: '' }))}
+                    className="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700"
+                  >
+                    移除
+                  </button>
+                </div>
+              ) : null}
+            </div>
+            <RepeatableListInput label="安装命令（填写仓库地址后可自动生成）" required value={form.install_commands} onChange={(install_commands) => setForm((p) => ({ ...p, install_commands }))} />
+            <FieldTextarea label="使用文档（仓库地址为空时必填）" value={form.usage_doc} onChange={(usage_doc) => setForm((p) => ({ ...p, usage_doc }))} rows={6} />
+            <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-slate-800">案例展示（可多条）</p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      cases: [
+                        ...prev.cases,
+                        {
+                          id: `case-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                          title: '',
+                          user_input: '',
+                          execution_process: '',
+                          agent_output: '',
+                          media: [],
+                        },
+                      ],
+                    }))
+                  }
+                  className="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700"
+                >
+                  新增案例
+                </button>
+              </div>
+              {form.cases.length === 0 ? <p className="text-xs text-slate-500">暂无案例，详情页会显示“暂无案例”。</p> : null}
+              <div className="space-y-3">
+                {form.cases.map((item, index) => (
+                  <div key={item.id} className="space-y-2 rounded border border-slate-200 bg-white p-3">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-slate-600">案例 {index + 1}</p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            cases: prev.cases.filter((c) => c.id !== item.id),
+                          }))
+                        }
+                        className="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700"
+                      >
+                        删除
+                      </button>
+                    </div>
+                    <FieldText
+                      label="案例标题"
+                      value={item.title}
+                      onChange={(title) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          cases: prev.cases.map((c) => (c.id === item.id ? { ...c, title } : c)),
+                        }))
+                      }
+                    />
+                    <FieldTextarea
+                      label="用户输入"
+                      value={item.user_input}
+                      onChange={(user_input) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          cases: prev.cases.map((c) => (c.id === item.id ? { ...c, user_input } : c)),
+                        }))
+                      }
+                      rows={2}
+                    />
+                    <FieldTextarea
+                      label="执行过程"
+                      value={item.execution_process}
+                      onChange={(execution_process) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          cases: prev.cases.map((c) => (c.id === item.id ? { ...c, execution_process } : c)),
+                        }))
+                      }
+                      rows={2}
+                    />
+                    <FieldTextarea
+                      label="结果输出"
+                      value={item.agent_output}
+                      onChange={(agent_output) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          cases: prev.cases.map((c) => (c.id === item.id ? { ...c, agent_output } : c)),
+                        }))
+                      }
+                      rows={2}
+                    />
+                    <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-2">
+                      <p className="text-xs font-medium text-slate-700">图片/视频上传区（可多选）</p>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        multiple
+                        onChange={(event) => void handleUploadCaseMedia(item.id, event.target.files)}
+                        className="block w-full text-xs text-slate-700 file:mr-2 file:rounded-md file:border file:border-slate-300 file:bg-white file:px-2 file:py-1"
+                      />
+                      {item.media.length > 0 ? (
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {item.media.map((media) => (
+                            <div key={media.id} className="overflow-hidden rounded border border-slate-200 bg-white p-2">
+                              {media.media_type === 'video' ? (
+                                <video src={media.asset_id} controls className="h-24 w-full rounded object-cover" />
+                              ) : (
+                                <img src={media.asset_id} alt="案例素材" className="h-24 w-full rounded object-cover" />
+                              )}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    cases: prev.cases.map((c) =>
+                                      c.id === item.id
+                                        ? {
+                                            ...c,
+                                            media: c.media.filter((m) => m.id !== media.id),
+                                          }
+                                        : c,
+                                    ),
+                                  }))
+                                }
+                                className="mt-2 rounded border border-slate-300 px-2 py-1 text-xs text-slate-700"
+                              >
+                                删除素材
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-slate-500">未上传案例素材。</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <FieldMultiSelect label="分类（可多选）" required value={form.category_ids} options={categoryOptions} onChange={(category_ids) => setForm((p) => ({ ...p, category_ids }))} />
+            <FieldMultiSelect
+              label="标签（可多选）"
+              value={form.tag_ids}
+              options={tagOptions}
+              onChange={(tag_ids) => setForm((p) => ({ ...p, tag_ids }))}
+              allowCustom
+              customPlaceholder="输入自定义标签后点击添加"
+            />
           </div>
         )
       }
@@ -211,7 +461,7 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
           {recordId ? <p className="text-xs text-slate-500">记录ID：{recordId}</p> : null}
           {tip ? <p className="text-xs text-slate-600">{tip}</p> : null}
           {/* NOTE(decision-4): Skill install_commands/usage_doc 当前前端补齐，后端契约待补。 */}
-          <Placeholder title="最小校验" todos={['zip_asset_id', 'install_commands>=1', 'repo_url为空时usage_doc必填']} />
+          <Placeholder title="必填项" todos={['标题', 'Zip 文件', '安装命令至少 1 条']} />
         </div>
       }
       actionSlot={

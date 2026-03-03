@@ -25,11 +25,22 @@ interface McpFormState {
   description: string;
   category_ids: string[];
   tag_ids: string[];
-  provider_name: string;
   repo_url: string;
   json_config_text: string;
   common_clients_json: string;
   runtime_modes_json: string;
+  cases: Array<{
+    id: string;
+    title: string;
+    user_input: string;
+    execution_process: string;
+    agent_output: string;
+    media: Array<{
+      id: string;
+      asset_id: string;
+      media_type: 'image' | 'video';
+    }>;
+  }>;
 }
 
 const EMPTY_FORM: McpFormState = {
@@ -37,11 +48,11 @@ const EMPTY_FORM: McpFormState = {
   description: '',
   category_ids: [],
   tag_ids: [],
-  provider_name: '',
   repo_url: '',
   json_config_text: '',
   common_clients_json: '',
   runtime_modes_json: '',
+  cases: [],
 };
 
 function formToDetail(id: string, status: ContentStatus, form: McpFormState): McpDetailVM {
@@ -61,7 +72,7 @@ function formToDetail(id: string, status: ContentStatus, form: McpFormState): Mc
       updated_at: now,
     },
     source: 'user',
-    provider_name: form.provider_name,
+    provider_name: 'user-001',
     repo_url: form.repo_url,
     how_to_use: {
       // NOTE(decision-3): 按字段文档 A 使用三段原样文本存储。
@@ -69,21 +80,48 @@ function formToDetail(id: string, status: ContentStatus, form: McpFormState): Mc
       common_clients_json: form.common_clients_json,
       runtime_modes_json: form.runtime_modes_json,
     },
-    cases: [],
+    cases: form.cases
+      .filter((item) => item.title.trim() || item.user_input.trim() || item.execution_process.trim() || item.agent_output.trim())
+      .map((item, index) => ({
+        id: `${id}-case-${index + 1}`,
+        title: item.title || `案例 ${index + 1}`,
+        user_input: item.user_input,
+        execution_process: item.execution_process,
+        agent_output: item.agent_output,
+        media: item.media.map((media, mediaIndex) => ({
+          id: `${id}-case-${index + 1}-media-${mediaIndex + 1}`,
+          asset_id: media.asset_id,
+          external_url: null,
+          media_type: media.media_type,
+          sort_order: mediaIndex + 1,
+        })),
+        sort_order: index + 1,
+      })),
   };
 }
 
 function detailToForm(detail: McpDetailVM): McpFormState {
   return {
-    title: detail.content.title,
+    title: detail.content.title ?? '',
     description: detail.content.one_liner ?? '',
-    category_ids: detail.content.category_ids,
-    tag_ids: detail.content.tag_ids,
-    provider_name: detail.provider_name,
-    repo_url: detail.repo_url,
-    json_config_text: detail.how_to_use.json_config_text,
-    common_clients_json: detail.how_to_use.common_clients_json,
-    runtime_modes_json: detail.how_to_use.runtime_modes_json,
+    category_ids: detail.content.category_ids ?? [],
+    tag_ids: detail.content.tag_ids ?? [],
+    repo_url: detail.repo_url ?? '',
+    json_config_text: detail.how_to_use.json_config_text ?? '',
+    common_clients_json: detail.how_to_use.common_clients_json ?? '',
+    runtime_modes_json: detail.how_to_use.runtime_modes_json ?? '',
+    cases: detail.cases.map((item, index) => ({
+      id: item.id || `case-${index + 1}`,
+      title: item.title,
+      user_input: item.user_input,
+      execution_process: item.execution_process,
+      agent_output: item.agent_output,
+      media: (item.media ?? []).map((media, mediaIndex) => ({
+        id: media.id || `case-${index + 1}-media-${mediaIndex + 1}`,
+        asset_id: media.asset_id ?? '',
+        media_type: media.media_type === 'video' ? 'video' : 'image',
+      })),
+    })),
   };
 }
 
@@ -131,12 +169,44 @@ export function McpAuthoringPage({ mode, id }: McpAuthoringPageProps) {
   }, [id, mode]);
 
   const validationError = useMemo(() => {
-    if (!form.title.trim()) return 'title 必填';
-    if (!form.provider_name.trim()) return 'provider_name 必填';
-    if (!form.repo_url.trim()) return 'repo_url 必填';
-    if (!form.json_config_text.trim()) return 'how_to_use.json_config_text 必填';
+    if (!form.title.trim()) return '标题必填';
+    if (!form.repo_url.trim()) return '仓库地址必填';
+    if (!form.json_config_text.trim()) return '标准配置必填';
     return '';
   }, [form]);
+
+  async function readFileAsDataUrl(file: File): Promise<string> {
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ''));
+      reader.onerror = () => reject(new Error('read file failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleUploadCaseMedia(caseId: string, files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const mediaItems = await Promise.all(
+      Array.from(files)
+        .filter((file) => file.type.startsWith('image/') || file.type.startsWith('video/'))
+        .map(async (file) => ({
+          id: `${caseId}-media-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          asset_id: await readFileAsDataUrl(file),
+          media_type: file.type.startsWith('video/') ? ('video' as const) : ('image' as const),
+        })),
+    );
+    setForm((prev) => ({
+      ...prev,
+      cases: prev.cases.map((item) =>
+        item.id === caseId
+          ? {
+              ...item,
+              media: [...(item.media ?? []), ...mediaItems],
+            }
+          : item,
+      ),
+    }));
+  }
 
   const persist = async (intent: 'save' | 'submit') => {
     if (validationError) {
@@ -181,22 +251,164 @@ export function McpAuthoringPage({ mode, id }: McpAuthoringPageProps) {
   return (
     <FormPageTemplate
       title={mode === 'new' ? 'MCP 创建' : `MCP 编辑：${id}`}
-      subtitle="NOTE: 当前阶段不做守卫（见 /docs/DECISIONS.md）。"
+      hideActionTitle
       formSlot={
         loading ? (
           <p className="text-sm text-slate-500">加载中...</p>
         ) : (
           <div className="space-y-4">
             <FieldText label="标题" required value={form.title} onChange={(title) => setForm((p) => ({ ...p, title }))} />
-            <FieldTextarea label="描述" value={form.description} onChange={(description) => setForm((p) => ({ ...p, description }))} rows={3} />
-            <FieldText label="provider_name" required value={form.provider_name} onChange={(provider_name) => setForm((p) => ({ ...p, provider_name }))} />
-            <FieldText label="repo_url" required value={form.repo_url} onChange={(repo_url) => setForm((p) => ({ ...p, repo_url }))} />
-            <FieldMultiSelect label="category_ids[]" required value={form.category_ids} options={categoryOptions} onChange={(category_ids) => setForm((p) => ({ ...p, category_ids }))} />
-            <FieldMultiSelect label="tag_ids[]" value={form.tag_ids} options={tagOptions} onChange={(tag_ids) => setForm((p) => ({ ...p, tag_ids }))} />
+            <FieldTextarea label="一句话描述" value={form.description} onChange={(description) => setForm((p) => ({ ...p, description }))} rows={3} />
+            <FieldText label="仓库地址" required value={form.repo_url} onChange={(repo_url) => setForm((p) => ({ ...p, repo_url }))} />
+            <FieldMultiSelect label="分类（可多选）" required value={form.category_ids} options={categoryOptions} onChange={(category_ids) => setForm((p) => ({ ...p, category_ids }))} />
+            <FieldMultiSelect
+              label="标签（可多选）"
+              value={form.tag_ids}
+              options={tagOptions}
+              onChange={(tag_ids) => setForm((p) => ({ ...p, tag_ids }))}
+              allowCustom
+              customPlaceholder="输入自定义标签后点击添加"
+            />
             {/* NOTE(decision-3): how_to_use 三段均按原样文本收集，不解析 object。 */}
-            <FieldCodeText label="how_to_use.json_config_text" required value={form.json_config_text} onChange={(json_config_text) => setForm((p) => ({ ...p, json_config_text }))} />
-            <FieldCodeText label="how_to_use.common_clients_json" value={form.common_clients_json} onChange={(common_clients_json) => setForm((p) => ({ ...p, common_clients_json }))} />
-            <FieldCodeText label="how_to_use.runtime_modes_json" value={form.runtime_modes_json} onChange={(runtime_modes_json) => setForm((p) => ({ ...p, runtime_modes_json }))} />
+            <FieldCodeText label="标准配置（JSON 文本）" required value={form.json_config_text} onChange={(json_config_text) => setForm((p) => ({ ...p, json_config_text }))} />
+            <FieldCodeText label="常用客户端（JSON 文本）" value={form.common_clients_json} onChange={(common_clients_json) => setForm((p) => ({ ...p, common_clients_json }))} />
+            <FieldCodeText label="运行形态补充（JSON 文本）" value={form.runtime_modes_json} onChange={(runtime_modes_json) => setForm((p) => ({ ...p, runtime_modes_json }))} />
+            <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-slate-800">案例展示（可多条）</p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      cases: [
+                        ...prev.cases,
+                        {
+                          id: `case-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                          title: '',
+                          user_input: '',
+                          execution_process: '',
+                          agent_output: '',
+                          media: [],
+                        },
+                      ],
+                    }))
+                  }
+                  className="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700"
+                >
+                  新增案例
+                </button>
+              </div>
+              {form.cases.length === 0 ? <p className="text-xs text-slate-500">暂无案例，详情页会显示“暂无案例”。</p> : null}
+              <div className="space-y-3">
+                {form.cases.map((item, index) => (
+                  <div key={item.id} className="space-y-2 rounded border border-slate-200 bg-white p-3">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-slate-600">案例 {index + 1}</p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            cases: prev.cases.filter((c) => c.id !== item.id),
+                          }))
+                        }
+                        className="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700"
+                      >
+                        删除
+                      </button>
+                    </div>
+                    <FieldText
+                      label="案例标题"
+                      value={item.title}
+                      onChange={(title) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          cases: prev.cases.map((c) => (c.id === item.id ? { ...c, title } : c)),
+                        }))
+                      }
+                    />
+                    <FieldTextarea
+                      label="用户输入"
+                      value={item.user_input}
+                      onChange={(user_input) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          cases: prev.cases.map((c) => (c.id === item.id ? { ...c, user_input } : c)),
+                        }))
+                      }
+                      rows={2}
+                    />
+                    <FieldTextarea
+                      label="执行过程"
+                      value={item.execution_process}
+                      onChange={(execution_process) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          cases: prev.cases.map((c) => (c.id === item.id ? { ...c, execution_process } : c)),
+                        }))
+                      }
+                      rows={2}
+                    />
+                    <FieldTextarea
+                      label="结果输出"
+                      value={item.agent_output}
+                      onChange={(agent_output) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          cases: prev.cases.map((c) => (c.id === item.id ? { ...c, agent_output } : c)),
+                        }))
+                      }
+                      rows={2}
+                    />
+                    <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-2">
+                      <p className="text-xs font-medium text-slate-700">图片/视频上传区（可多选）</p>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        multiple
+                        onChange={(event) => void handleUploadCaseMedia(item.id, event.target.files)}
+                        className="block w-full text-xs text-slate-700 file:mr-2 file:rounded-md file:border file:border-slate-300 file:bg-white file:px-2 file:py-1"
+                      />
+                      {(item.media ?? []).length > 0 ? (
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {(item.media ?? []).map((media) => (
+                            <div key={media.id} className="overflow-hidden rounded border border-slate-200 bg-white p-2">
+                              {media.media_type === 'video' ? (
+                                <video src={media.asset_id} controls className="h-24 w-full rounded object-cover" />
+                              ) : (
+                                <img src={media.asset_id} alt="案例素材" className="h-24 w-full rounded object-cover" />
+                              )}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    cases: prev.cases.map((c) =>
+                                      c.id === item.id
+                                        ? {
+                                            ...c,
+                                            media: (c.media ?? []).filter((m) => m.id !== media.id),
+                                          }
+                                        : c,
+                                    ),
+                                  }))
+                                }
+                                className="mt-2 rounded border border-slate-300 px-2 py-1 text-xs text-slate-700"
+                              >
+                                删除素材
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-slate-500">未上传案例素材。</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )
       }
@@ -205,7 +417,7 @@ export function McpAuthoringPage({ mode, id }: McpAuthoringPageProps) {
           <Badge tone="info">状态：{status}</Badge>
           {recordId ? <p className="text-xs text-slate-500">记录ID：{recordId}</p> : null}
           {tip ? <p className="text-xs text-slate-600">{tip}</p> : null}
-          <Placeholder title="最小校验" todos={['title', 'provider_name', 'repo_url', 'json_config_text']} />
+          <Placeholder title="必填项" todos={['标题', '仓库地址', '标准配置（JSON）']} />
         </div>
       }
       actionSlot={

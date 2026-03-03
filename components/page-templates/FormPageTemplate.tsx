@@ -8,6 +8,7 @@ interface FormPageTemplateProps {
   formSlot: ReactNode;
   sideSlot?: ReactNode;
   actionSlot?: ReactNode;
+  hideActionTitle?: boolean;
 }
 
 export function FormPageTemplate({
@@ -16,6 +17,7 @@ export function FormPageTemplate({
   formSlot,
   sideSlot,
   actionSlot,
+  hideActionTitle = false,
 }: FormPageTemplateProps) {
   return (
     <PageShell title={title} subtitle={subtitle}>
@@ -25,9 +27,15 @@ export function FormPageTemplate({
           {sideSlot ?? <p className="text-sm text-slate-500">状态/校验提示占位</p>}
         </SectionCard>
       </div>
-      <SectionCard title="底部按钮区">
-        {actionSlot ?? <p className="text-sm text-slate-500">保存 / 提交审核 / 上下架 / 删除（占位）</p>}
-      </SectionCard>
+      {hideActionTitle ? (
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          {actionSlot ?? <p className="text-sm text-slate-500">保存 / 提交审核 / 上下架 / 删除（占位）</p>}
+        </section>
+      ) : (
+        <SectionCard title="底部按钮区">
+          {actionSlot ?? <p className="text-sm text-slate-500">保存 / 提交审核 / 上下架 / 删除（占位）</p>}
+        </SectionCard>
+      )}
     </PageShell>
   );
 }

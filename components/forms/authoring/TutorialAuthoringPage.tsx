@@ -58,11 +58,11 @@ function formToDetail(id: string, status: ContentStatus, form: TutorialFormState
 
 function detailToForm(detail: TutorialDetailVM): TutorialFormState {
   return {
-    title: detail.content.title,
+    title: detail.content.title ?? '',
     description: detail.content.one_liner ?? '',
-    body_markdown: detail.body_markdown,
-    category_ids: detail.content.category_ids,
-    tag_ids: detail.content.tag_ids,
+    body_markdown: detail.body_markdown ?? '',
+    category_ids: detail.content.category_ids ?? [],
+    tag_ids: detail.content.tag_ids ?? [],
   };
 }
 
@@ -110,8 +110,8 @@ export function TutorialAuthoringPage({ mode, id }: TutorialAuthoringPageProps) 
   }, [id, mode]);
 
   const validationError = useMemo(() => {
-    if (!form.title.trim()) return 'title 必填';
-    if (!form.body_markdown.trim()) return 'body_markdown 必填';
+    if (!form.title.trim()) return '标题必填';
+    if (!form.body_markdown.trim()) return '教程正文必填';
     return '';
   }, [form]);
 
@@ -158,17 +158,24 @@ export function TutorialAuthoringPage({ mode, id }: TutorialAuthoringPageProps) 
   return (
     <FormPageTemplate
       title={mode === 'new' ? '教程创建' : `教程编辑：${id}`}
-      subtitle="NOTE: 当前阶段不做守卫（见 /docs/DECISIONS.md）。"
+      hideActionTitle
       formSlot={
         loading ? (
           <p className="text-sm text-slate-500">加载中...</p>
         ) : (
           <div className="space-y-4">
             <FieldText label="标题" required value={form.title} onChange={(title) => setForm((p) => ({ ...p, title }))} />
-            <FieldTextarea label="描述" value={form.description} onChange={(description) => setForm((p) => ({ ...p, description }))} rows={3} />
-            <FieldTextarea label="body_markdown" required value={form.body_markdown} onChange={(body_markdown) => setForm((p) => ({ ...p, body_markdown }))} rows={10} />
-            <FieldMultiSelect label="category_ids[]" required value={form.category_ids} options={categoryOptions} onChange={(category_ids) => setForm((p) => ({ ...p, category_ids }))} />
-            <FieldMultiSelect label="tag_ids[]" value={form.tag_ids} options={tagOptions} onChange={(tag_ids) => setForm((p) => ({ ...p, tag_ids }))} />
+            <FieldTextarea label="一句话描述" value={form.description} onChange={(description) => setForm((p) => ({ ...p, description }))} rows={3} />
+            <FieldTextarea label="教程正文（Markdown）" required value={form.body_markdown} onChange={(body_markdown) => setForm((p) => ({ ...p, body_markdown }))} rows={10} />
+            <FieldMultiSelect label="分类（可多选）" required value={form.category_ids} options={categoryOptions} onChange={(category_ids) => setForm((p) => ({ ...p, category_ids }))} />
+            <FieldMultiSelect
+              label="标签（可多选）"
+              value={form.tag_ids}
+              options={tagOptions}
+              onChange={(tag_ids) => setForm((p) => ({ ...p, tag_ids }))}
+              allowCustom
+              customPlaceholder="输入自定义标签后点击添加"
+            />
           </div>
         )
       }
@@ -177,7 +184,7 @@ export function TutorialAuthoringPage({ mode, id }: TutorialAuthoringPageProps) 
           <Badge tone="info">状态：{status}</Badge>
           {recordId ? <p className="text-xs text-slate-500">记录ID：{recordId}</p> : null}
           {tip ? <p className="text-xs text-slate-600">{tip}</p> : null}
-          <Placeholder title="最小校验" todos={['title', 'body_markdown']} />
+          <Placeholder title="必填项" todos={['标题', '教程正文（Markdown）']} />
         </div>
       }
       actionSlot={

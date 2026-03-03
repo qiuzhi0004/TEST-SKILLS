@@ -215,6 +215,7 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
   return (
     <FormPageTemplate
       title={mode === 'new' ? 'Prompt 创建' : `Prompt 编辑：${id}`}
+      hideActionTitle
       formSlot={
         loading ? (
           <p className="text-sm text-slate-500">加载中...</p>
