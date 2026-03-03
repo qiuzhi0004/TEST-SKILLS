@@ -43,7 +43,7 @@ export function ResourceCard({
   return (
     <Link
       href={href}
-      className="group block rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
+      className="group flex h-full flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
@@ -63,7 +63,7 @@ export function ResourceCard({
         </div>
       ) : null}
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+      <div className="mt-auto pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
         <span>作者：{item.author.nickname}</span>
         <span>更新：{formatDate(item.updated_at)}</span>
       </div>
