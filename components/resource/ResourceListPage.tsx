@@ -7,17 +7,18 @@ import { ResourceCard } from '@/components/resource/ResourceCard';
 import { Select } from '@/components/ui/Select';
 import type { ContentSummaryVM, ContentType } from '@/types/content';
 
-type ListType = Extract<ContentType, 'prompt' | 'mcp' | 'skill'>;
+type ListType = Extract<ContentType, 'prompt' | 'mcp' | 'skill' | 'tutorial'>;
 type SortValue = 'hot_score' | 'created_at' | 'views_7d';
 type OrderValue = 'asc' | 'desc';
 type StatusValue = '' | 'verified';
 
 interface ResourceListPageConfig {
   type: ListType;
-  categoryOptions: string[];
+  categoryOptions?: string[];
   toolOptions?: string[];
   matchCategory?: (item: ContentSummaryVM, category: string) => boolean;
   matchTool?: (item: ContentSummaryVM, tool: string) => boolean;
+  showFilters?: boolean;
 }
 
 const SORT_VALUES: SortValue[] = ['hot_score', 'created_at', 'views_7d'];
@@ -72,6 +73,8 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const showFilters = config.showFilters ?? true;
+  const categoryOptions = config.categoryOptions ?? [];
   const q = searchParams.get('q')?.trim() ?? '';
   const sort: SortValue = isSortValue(searchParams.get('sort'))
     ? (searchParams.get('sort') as SortValue)
@@ -79,13 +82,13 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
   const order: OrderValue = isOrderValue(searchParams.get('order'))
     ? (searchParams.get('order') as OrderValue)
     : 'desc';
-  const status: StatusValue = searchParams.get('status') === 'verified' ? 'verified' : '';
-  const category = config.categoryOptions.includes(searchParams.get('categories') ?? '')
+  const status: StatusValue = showFilters && searchParams.get('status') === 'verified' ? 'verified' : '';
+  const category = showFilters && categoryOptions.includes(searchParams.get('categories') ?? '')
     ? (searchParams.get('categories') ?? '')
     : '';
   const tools = useMemo(
-    () => (searchParams.getAll('tool') ?? []).filter((tool) => config.toolOptions?.includes(tool)),
-    [config.toolOptions, searchParams],
+    () => (showFilters ? searchParams.getAll('tool') : []).filter((tool) => config.toolOptions?.includes(tool)),
+    [config.toolOptions, searchParams, showFilters],
   );
   const toolsKey = tools.join('|');
 
@@ -220,93 +223,95 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
                   })
                 }
               >
-                <option value="hot_score">hot_score</option>
-                <option value="created_at">created_at</option>
-                <option value="views_7d">views_7d</option>
+                <option value="hot_score">热度</option>
+                <option value="created_at">创建时间</option>
+                <option value="views_7d">近7日浏览</option>
               </Select>
               <Select
                 aria-label="排序方向"
                 value={order}
                 onChange={(event) => updateUrl((params) => params.set('order', event.target.value))}
               >
-                <option value="desc">desc</option>
-                <option value="asc">asc</option>
+                <option value="desc">降序</option>
+                <option value="asc">升序</option>
               </Select>
             </div>
           </section>
 
-          <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-sm font-semibold text-slate-900">条件筛选区</h2>
-            <div className="space-y-3">
-              <div>
-                <p className="mb-1 text-xs text-slate-500">状态</p>
-                <Select
-                  aria-label="状态筛选"
-                  value={statusValue}
-                  onChange={(event) =>
-                    updateUrl((params) => {
-                      if (event.target.value === 'verified') params.set('status', 'verified');
-                      else params.delete('status');
-                    })
-                  }
-                >
-                  <option value="all">全部</option>
-                  <option value="verified">已认证</option>
-                </Select>
-              </div>
-
-              <div>
-                <p className="mb-1 text-xs text-slate-500">分类</p>
-                <Select
-                  aria-label="分类筛选"
-                  value={categoryValue}
-                  onChange={(event) =>
-                    updateUrl((params) => {
-                      if (event.target.value === 'all') params.delete('categories');
-                      else params.set('categories', event.target.value);
-                    })
-                  }
-                >
-                  <option value="all">全部</option>
-                  {config.categoryOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              {config.toolOptions && config.toolOptions.length > 0 ? (
+          {showFilters ? (
+            <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-sm font-semibold text-slate-900">条件筛选区</h2>
+              <div className="space-y-3">
                 <div>
-                  <p className="mb-1 text-xs text-slate-500">工具（多选）</p>
-                  <div className="space-y-1.5">
-                    {config.toolOptions.map((option) => {
-                      const checked = tools.includes(option);
-                      return (
-                        <label key={option} className="flex items-center gap-2 text-sm text-slate-700">
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() =>
-                              updateUrl((params) => {
-                                const next = new Set(params.getAll('tool'));
-                                if (checked) next.delete(option);
-                                else next.add(option);
-                                params.delete('tool');
-                                [...next].forEach((tool) => params.append('tool', tool));
-                              })
-                            }
-                            className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
-                          />
-                          <span>{option}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
+                  <p className="mb-1 text-xs text-slate-500">状态</p>
+                  <Select
+                    aria-label="状态筛选"
+                    value={statusValue}
+                    onChange={(event) =>
+                      updateUrl((params) => {
+                        if (event.target.value === 'verified') params.set('status', 'verified');
+                        else params.delete('status');
+                      })
+                    }
+                  >
+                    <option value="all">全部</option>
+                    <option value="verified">已认证</option>
+                  </Select>
                 </div>
-              ) : null}
-            </div>
-          </section>
+
+                <div>
+                  <p className="mb-1 text-xs text-slate-500">分类</p>
+                  <Select
+                    aria-label="分类筛选"
+                    value={categoryValue}
+                    onChange={(event) =>
+                      updateUrl((params) => {
+                        if (event.target.value === 'all') params.delete('categories');
+                        else params.set('categories', event.target.value);
+                      })
+                    }
+                  >
+                    <option value="all">全部</option>
+                    {categoryOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+
+                {config.toolOptions && config.toolOptions.length > 0 ? (
+                  <div>
+                    <p className="mb-1 text-xs text-slate-500">工具（多选）</p>
+                    <div className="space-y-1.5">
+                      {config.toolOptions.map((option) => {
+                        const checked = tools.includes(option);
+                        return (
+                          <label key={option} className="flex items-center gap-2 text-sm text-slate-700">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() =>
+                                updateUrl((params) => {
+                                  const next = new Set(params.getAll('tool'));
+                                  if (checked) next.delete(option);
+                                  else next.add(option);
+                                  params.delete('tool');
+                                  [...next].forEach((tool) => params.append('tool', tool));
+                                })
+                              }
+                              className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+                            />
+                            <span>{option}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </section>
+          ) : null}
         </aside>
 
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
