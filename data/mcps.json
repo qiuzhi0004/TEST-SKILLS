@@ -4,12 +4,14 @@
       "id": "mcp_modelcontextprotocol-servers",
       "type": "mcp",
       "status": "Listed",
-      "title": "modelcontextprotocol/servers",
+      "title": "MCP 官方服务器集合",
       "one_liner": "官方“服务器合集/参考实现 + 社区服务器索引”",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-open-source",
+        "tag-workflow",
+        "tag-agent"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -54,12 +56,14 @@
       "id": "mcp_microsoft-playwright-mcp",
       "type": "mcp",
       "status": "Listed",
-      "title": "microsoft/playwright-mcp",
+      "title": "Playwright 浏览器自动化 MCP",
       "one_liner": "Playwright 浏览器自动化 MCP",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-frontend",
+        "tag-workflow",
+        "tag-open-source"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -104,12 +108,14 @@
       "id": "mcp_glips-figma-context-mcp",
       "type": "mcp",
       "status": "Listed",
-      "title": "GLips/Figma-Context-MCP",
+      "title": "Figma 设计上下文 MCP",
       "one_liner": "让 IDE/Agent 读 Figma 设计数据的 MCP",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-frontend",
+        "tag-productivity",
+        "tag-workflow"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -154,12 +160,14 @@
       "id": "mcp_beehiveinnovations-pal-mcp-server",
       "type": "mcp",
       "status": "Listed",
-      "title": "BeehiveInnovations/pal-mcp-server",
+      "title": "PAL 一站式 MCP 组合服务器",
       "one_liner": "“一站式”MCP/Agent 组合服务器（面向多 CLI/多模型）",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-agent",
+        "tag-workflow",
+        "tag-open-source"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -204,12 +212,14 @@
       "id": "mcp_idosal-git-mcp",
       "type": "mcp",
       "status": "Listed",
-      "title": "idosal/git-mcp",
+      "title": "Git 仓库上下文 MCP",
       "one_liner": "把 GitHub 项目变成可被 Agent 直接读的远程 MCP 文档/代码上下文",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-agent",
+        "tag-open-source",
+        "tag-productivity"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -254,7 +264,7 @@
       "id": "mcp-002",
       "type": "mcp",
       "status": "Unlisted",
-      "title": "Figma Tokens MCP",
+      "title": "Figma 令牌管理 MCP",
       "one_liner": "把 Figma 变量映射到前端 design tokens",
       "category_id": "cat-design",
       "category_ids": [
@@ -262,8 +272,9 @@
         "cat-frontend"
       ],
       "tag_ids": [
+        "tag-frontend",
         "tag-workflow",
-        "tag-frontend"
+        "tag-productivity"
       ],
       "author_id": "user-002",
       "cover_asset_id": null,
@@ -307,7 +318,7 @@
       "id": "mcp-001",
       "type": "mcp",
       "status": "Listed",
-      "title": "GitHub Issue MCP",
+      "title": "GitHub Issue 管理 MCP",
       "one_liner": "让 Agent 直接读取和创建 GitHub Issue",
       "category_id": "cat-automation",
       "category_ids": [
@@ -316,7 +327,8 @@
       ],
       "tag_ids": [
         "tag-agent",
-        "tag-open-source"
+        "tag-open-source",
+        "tag-workflow"
       ],
       "author_id": "user-001",
       "cover_asset_id": null,
@@ -373,7 +385,7 @@
       "id": "mcp-003",
       "type": "mcp",
       "status": "PendingReview",
-      "title": "Notion Knowledge MCP",
+      "title": "Notion 知识库 MCP",
       "one_liner": "检索 Notion 知识库并给出结构化答案",
       "category_id": "cat-learning",
       "category_ids": [
@@ -381,7 +393,8 @@
       ],
       "tag_ids": [
         "tag-agent",
-        "tag-productivity"
+        "tag-productivity",
+        "tag-workflow"
       ],
       "author_id": "user-003",
       "cover_asset_id": null,

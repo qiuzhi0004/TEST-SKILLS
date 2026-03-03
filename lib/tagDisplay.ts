@@ -4,7 +4,7 @@ interface DisplayTag {
 }
 
 const TAG_LABEL_MAP: Record<string, string> = {
-  'tag-agent': 'Agent',
+  'tag-agent': '智能体',
   'tag-beginner': '入门',
   'tag-frontend': '前端',
   'tag-open-source': '开源',

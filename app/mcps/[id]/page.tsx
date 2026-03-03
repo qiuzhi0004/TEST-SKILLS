@@ -324,7 +324,7 @@ export default function McpDetailPage() {
                       aria-label="系统选择"
                       value={os}
                       onChange={(event) => setOs(event.target.value as OsOption)}
-                      className="h-8 w-24 text-xs"
+                      className="h-8 !w-32 text-xs"
                     >
                       <option value="generic">通用</option>
                       <option value="mac">mac</option>
@@ -334,7 +334,7 @@ export default function McpDetailPage() {
                       aria-label="IDE 选择"
                       value={ide}
                       onChange={(event) => setIde(event.target.value as IdeOption)}
-                      className="h-8 w-24 text-xs"
+                      className="h-8 !w-32 text-xs"
                     >
                       <option value="generic">通用</option>
                       <option value="cursor">cursor</option>
@@ -355,22 +355,22 @@ export default function McpDetailPage() {
                   <p className="text-xs font-semibold text-slate-700">常用客户端</p>
                   <div className="flex shrink-0 items-center gap-2">
                     <Select
-                      aria-label="客户端选择"
-                      value={quickClient}
-                      onChange={(event) => setQuickClient(event.target.value as QuickClient)}
-                      className="h-8 w-32 text-xs"
-                    >
-                      <option value="codex">Codex</option>
-                      <option value="claude-code">Claude Code</option>
-                    </Select>
-                    <Select
                       aria-label="客户端系统选择"
                       value={quickOs}
                       onChange={(event) => setQuickOs(event.target.value as QuickOs)}
-                      className="h-8 w-24 text-xs"
+                      className="h-8 !w-32 text-xs"
                     >
                       <option value="mac">mac</option>
                       <option value="windows">windows</option>
+                    </Select>
+                    <Select
+                      aria-label="客户端选择"
+                      value={quickClient}
+                      onChange={(event) => setQuickClient(event.target.value as QuickClient)}
+                      className="h-8 !w-32 text-xs"
+                    >
+                      <option value="codex">Codex</option>
+                      <option value="claude-code">Claude Code</option>
                     </Select>
                     <CopyButton value={quickCommand} />
                   </div>
@@ -400,7 +400,7 @@ export default function McpDetailPage() {
                         aria-label="运行形态配置 IDE 选择"
                         value={runtimeIde}
                         onChange={(event) => setRuntimeIde(event.target.value as RuntimeIde)}
-                        className="h-8 w-28 text-xs"
+                        className="h-8 !w-32 text-xs"
                       >
                         <option value="cursor">Cursor</option>
                         <option value="vscode">VS Code</option>

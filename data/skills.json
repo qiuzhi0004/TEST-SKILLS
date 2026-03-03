@@ -4,12 +4,14 @@
       "id": "skill_assafelovic-gpt-researcher",
       "type": "skill",
       "status": "Listed",
-      "title": "assafelovic/gpt-researcher",
+      "title": "深度研究助手技能集",
       "one_liner": "深度研究 Agent（仓库提供 skills 安装入口）",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-agent",
+        "tag-workflow",
+        "tag-productivity"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -57,12 +59,14 @@
       "id": "skill_vercel-labs-agent-skills",
       "type": "skill",
       "status": "Listed",
-      "title": "vercel-labs/agent-skills",
+      "title": "Vercel 官方智能体技能库",
       "one_liner": "Vercel 官方技能集合（大量通用工程/产品类 skills）",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-agent",
+        "tag-open-source",
+        "tag-productivity"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -110,12 +114,14 @@
       "id": "skill_coreyhaines31-marketingskills",
       "type": "skill",
       "status": "Listed",
-      "title": "coreyhaines31/marketingskills",
+      "title": "营销增长技能集合",
       "one_liner": "营销/增长向技能集合（CRO、文案等）",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-workflow",
+        "tag-productivity",
+        "tag-open-source"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -163,12 +169,14 @@
       "id": "skill_vercel-labs-skills",
       "type": "skill",
       "status": "Listed",
-      "title": "vercel-labs/skills",
+      "title": "Vercel Skills 工具仓库",
       "one_liner": "skills CLI 官方仓库（含内置/示例 skills）",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-open-source",
+        "tag-workflow",
+        "tag-agent"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -216,12 +224,14 @@
       "id": "skill_panniantong-agent-reach",
       "type": "skill",
       "status": "Listed",
-      "title": "Panniantong/Agent-Reach",
+      "title": "Agent-Reach 能力包",
       "one_liner": "提供“可作为 Skill 安装”的 Agent 能力包",
       "category_id": null,
       "category_ids": [],
       "tag_ids": [
-        "github"
+        "tag-agent",
+        "tag-workflow",
+        "tag-open-source"
       ],
       "author_id": "seed-importer",
       "cover_asset_id": null,
@@ -269,7 +279,7 @@
       "id": "skill-001",
       "type": "skill",
       "status": "Listed",
-      "title": "Next.js Skeleton Generator",
+      "title": "Next.js 项目骨架生成器",
       "one_liner": "快速生成 Next.js 项目骨架和约定目录",
       "category_id": "cat-coding",
       "category_ids": [
@@ -278,7 +288,8 @@
       ],
       "tag_ids": [
         "tag-open-source",
-        "tag-productivity"
+        "tag-productivity",
+        "tag-workflow"
       ],
       "author_id": "user-001",
       "cover_asset_id": null,
@@ -317,7 +328,7 @@
       "id": "skill-002",
       "type": "skill",
       "status": "Approved",
-      "title": "API Contract Validator",
+      "title": "API 契约校验器",
       "one_liner": "校验前后端接口契约与字段一致性",
       "category_id": "cat-coding",
       "category_ids": [
@@ -325,7 +336,8 @@
       ],
       "tag_ids": [
         "tag-workflow",
-        "tag-agent"
+        "tag-agent",
+        "tag-productivity"
       ],
       "author_id": "user-002",
       "cover_asset_id": null,
@@ -363,7 +375,7 @@
       "id": "skill-003",
       "type": "skill",
       "status": "Draft",
-      "title": "Offline Prompt Pack Builder",
+      "title": "离线 Prompt 打包工具",
       "one_liner": "离线打包 Prompt 资源用于内网部署",
       "category_id": "cat-automation",
       "category_ids": [
@@ -371,7 +383,9 @@
         "cat-learning"
       ],
       "tag_ids": [
-        "tag-workflow"
+        "tag-workflow",
+        "tag-productivity",
+        "tag-open-source"
       ],
       "author_id": "user-003",
       "cover_asset_id": null,
