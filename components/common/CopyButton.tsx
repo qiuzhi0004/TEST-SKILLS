@@ -29,7 +29,7 @@ export function CopyButton({ value, label = '复制' }: CopyButtonProps) {
       type="button"
       onClick={onCopy}
       aria-label={label}
-      className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-700 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
+      className="h-8 shrink-0 whitespace-nowrap rounded-md border border-slate-300 bg-white px-2.5 text-xs text-slate-700 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
     >
       {copied ? '已复制' : label}
     </button>
