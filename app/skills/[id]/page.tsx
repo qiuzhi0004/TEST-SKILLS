@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Badge } from '@/components/common/Badge';
-import { CodeBlock } from '@/components/common/CodeBlock';
+import { CopyButton } from '@/components/common/CopyButton';
 import { Placeholder } from '@/components/layout/Placeholder';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { CommentThread } from '@/components/social/CommentThread';
@@ -12,6 +12,26 @@ import { StatusBanner } from '@/components/layout/StatusBanner';
 import { getSkill } from '@/lib/api';
 import { toDisplayTags } from '@/lib/tagDisplay';
 import type { SkillDetailVM } from '@/types/skill';
+
+function parseRepoRef(repoUrl: string | null, title: string): string {
+  if (repoUrl) {
+    try {
+      const url = new URL(repoUrl);
+      const parts = url.pathname.split('/').filter(Boolean);
+      if (parts.length >= 2) {
+        return `${parts[0]}/${parts[1]}`;
+      }
+    } catch {
+      // noop
+    }
+  }
+  if (title.includes('/')) return title;
+  return title
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-_]/g, '');
+}
 
 export default function SkillDetailPage() {
   const params = useParams<{ id: string }>();
@@ -48,6 +68,12 @@ export default function SkillDetailPage() {
   }
 
   const displayTags = toDisplayTags(detail.content.tag_ids, 3);
+  const repoRef = parseRepoRef(detail.repo_url, detail.content.title);
+  const installCommands = [
+    `npx skills add ${repoRef}`,
+    `bunx skills add ${repoRef}`,
+    `pnpm dlx skills add ${repoRef}`,
+  ];
 
   return (
     <div className="space-y-4">
@@ -82,27 +108,35 @@ export default function SkillDetailPage() {
             )}
           </SectionCard>
 
-          <SectionCard title="如何使用">
+          <SectionCard
+            title="如何使用"
+            headerRight={(
+              <button
+                type="button"
+                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-100"
+                onClick={() => {}}
+              >
+                一键下载Zip
+              </button>
+            )}
+          >
             <div className="space-y-3 text-sm text-slate-700">
-              {/* NOTE(decision-4): Skill install_commands/usage_doc 由前端模型补齐，后端契约待补。 */}
-              {detail.install_commands.length > 0 ? (
-                <div className="space-y-2">
-                  {detail.install_commands.map((command) => (
-                    <CodeBlock key={command} title="安装命令" value={command} />
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                <p className="text-sm font-medium text-slate-600">一键复制安装指令（npx / bunx / pnpm）</p>
+                <div className="mt-3 space-y-2">
+                  {installCommands.map((command, index) => (
+                    <div
+                      key={command}
+                      className="flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 py-2"
+                    >
+                      <p className="font-mono text-sm text-slate-800">
+                        {index + 1}. {command}
+                      </p>
+                      <CopyButton value={command} />
+                    </div>
                   ))}
                 </div>
-              ) : (
-                <Placeholder title="安装命令为空" description="当前资源未提供 install_commands。" />
-              )}
-
-              {detail.usage_doc ? (
-                <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                  <p className="mb-2 text-xs font-semibold text-slate-600">usage_doc</p>
-                  <pre className="whitespace-pre-wrap">{detail.usage_doc}</pre>
-                </div>
-              ) : (
-                <Placeholder title="usage_doc 为空" description="有 repo_url 时 usage_doc 可为空。" />
-              )}
+              </div>
             </div>
           </SectionCard>
 
