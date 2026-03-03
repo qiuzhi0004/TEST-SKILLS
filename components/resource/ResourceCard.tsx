@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import { Badge } from '@/components/common/Badge';
+import { toDisplayTags } from '@/lib/tagDisplay';
 import type { ContentStatus, ContentSummaryVM, ContentType } from '@/types/content';
 
 interface ResourceCardProps {
   item: ContentSummaryVM;
   maxTags?: number;
   showStatus?: boolean;
+  showTypeBadge?: boolean;
 }
 
 function getDetailPath(type: ContentType, id: string): string {
@@ -29,9 +31,14 @@ function formatDate(iso: string) {
   return d.toLocaleDateString('zh-CN');
 }
 
-export function ResourceCard({ item, maxTags = 4, showStatus = true }: ResourceCardProps) {
+export function ResourceCard({
+  item,
+  maxTags = 3,
+  showStatus = false,
+  showTypeBadge = true,
+}: ResourceCardProps) {
   const href = getDetailPath(item.type, item.id);
-  const tags = item.tag_ids.slice(0, maxTags);
+  const tags = toDisplayTags(item.tag_ids, maxTags);
 
   return (
     <Link
@@ -40,19 +47,21 @@ export function ResourceCard({ item, maxTags = 4, showStatus = true }: ResourceC
     >
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">{item.title}</p>
+          <p className="line-clamp-2 text-sm font-semibold text-slate-900 group-hover:text-slate-700">{item.title}</p>
           <p className="line-clamp-2 text-xs text-slate-600">{item.one_liner ?? '暂无简介'}</p>
         </div>
-        <Badge tone="muted">{item.type.toUpperCase()}</Badge>
+        {showTypeBadge ? <Badge tone="muted">{item.type.toUpperCase()}</Badge> : null}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {tags.map((tagId) => (
-          <Badge key={tagId} tone="info">
-            #{tagId}
-          </Badge>
-        ))}
-      </div>
+      {tags.length > 0 ? (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <Badge key={tag.id} tone="info">
+              {tag.label}
+            </Badge>
+          ))}
+        </div>
+      ) : null}
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
         <span>作者：{item.author.nickname}</span>

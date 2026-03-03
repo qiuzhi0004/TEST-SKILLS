@@ -24,6 +24,7 @@ interface ResourceListPageConfig {
 const SORT_VALUES: SortValue[] = ['hot_score', 'created_at', 'views_7d'];
 const ORDER_VALUES: OrderValue[] = ['asc', 'desc'];
 const VERIFIED_STATUS = 'Listed';
+const PUBLIC_VISIBLE_STATUS = 'Listed';
 
 function isSortValue(value: string | null): value is SortValue {
   return value !== null && SORT_VALUES.includes(value as SortValue);
@@ -140,7 +141,7 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
       .then((res) => {
         if (cancelled) return;
 
-        let filtered = res.items;
+        let filtered = res.items.filter((item) => item.status === PUBLIC_VISIBLE_STATUS);
         if (status === 'verified') {
           filtered = filtered.filter((item) => item.status === VERIFIED_STATUS);
         }
@@ -332,7 +333,7 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
           {!loading && !error && items.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {items.map((item) => (
-                <ResourceCard key={item.id} item={item} />
+                <ResourceCard key={item.id} item={item} showStatus={false} showTypeBadge={false} />
               ))}
             </div>
           ) : null}
