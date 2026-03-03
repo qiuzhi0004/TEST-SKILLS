@@ -19,6 +19,9 @@ interface ResourceListPageConfig {
   matchCategory?: (item: ContentSummaryVM, category: string) => boolean;
   matchTool?: (item: ContentSummaryVM, tool: string) => boolean;
   showFilters?: boolean;
+  showSidebarCategoryFilter?: boolean;
+  mediaTabs?: string[];
+  defaultMediaTab?: string;
 }
 
 const SORT_VALUES: SortValue[] = ['hot_score', 'created_at', 'views_7d'];
@@ -75,7 +78,11 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
   const searchParams = useSearchParams();
 
   const showFilters = config.showFilters ?? true;
+  const showSidebarCategoryFilter = config.showSidebarCategoryFilter ?? true;
   const categoryOptions = config.categoryOptions ?? [];
+  const mediaTabs = config.mediaTabs ?? [];
+  const defaultMediaTab = config.defaultMediaTab ?? mediaTabs[0] ?? '';
+
   const q = searchParams.get('q')?.trim() ?? '';
   const sort: SortValue = isSortValue(searchParams.get('sort'))
     ? (searchParams.get('sort') as SortValue)
@@ -87,6 +94,10 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
   const category = showFilters && categoryOptions.includes(searchParams.get('categories') ?? '')
     ? (searchParams.get('categories') ?? '')
     : '';
+  const mediaTab = mediaTabs.includes(searchParams.get('media') ?? '')
+    ? (searchParams.get('media') ?? '')
+    : defaultMediaTab;
+
   const tools = useMemo(
     () => (showFilters ? searchParams.getAll('tool') : []).filter((tool) => config.toolOptions?.includes(tool)),
     [config.toolOptions, searchParams, showFilters],
@@ -146,9 +157,10 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
           filtered = filtered.filter((item) => item.status === VERIFIED_STATUS);
         }
 
-        if (category) {
+        const activeCategory = mediaTab || category;
+        if (activeCategory) {
           const categoryMatcher = config.matchCategory ?? defaultCategoryMatcher;
-          filtered = filtered.filter((item) => categoryMatcher(item, category));
+          filtered = filtered.filter((item) => categoryMatcher(item, activeCategory));
         }
 
         if (tools.length > 0) {
@@ -170,7 +182,7 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
     return () => {
       cancelled = true;
     };
-  }, [category, config, order, q, reloadTick, sort, status, tools, toolsKey]);
+  }, [category, config, mediaTab, order, q, reloadTick, sort, status, tools, toolsKey]);
 
   const statusValue = status || 'all';
   const categoryValue = category || 'all';
@@ -260,26 +272,28 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
                   </Select>
                 </div>
 
-                <div>
-                  <p className="mb-1 text-xs text-slate-500">分类</p>
-                  <Select
-                    aria-label="分类筛选"
-                    value={categoryValue}
-                    onChange={(event) =>
-                      updateUrl((params) => {
-                        if (event.target.value === 'all') params.delete('categories');
-                        else params.set('categories', event.target.value);
-                      })
-                    }
-                  >
-                    <option value="all">全部</option>
-                    {categoryOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
+                {showSidebarCategoryFilter && categoryOptions.length > 0 ? (
+                  <div>
+                    <p className="mb-1 text-xs text-slate-500">分类</p>
+                    <Select
+                      aria-label="分类筛选"
+                      value={categoryValue}
+                      onChange={(event) =>
+                        updateUrl((params) => {
+                          if (event.target.value === 'all') params.delete('categories');
+                          else params.set('categories', event.target.value);
+                        })
+                      }
+                    >
+                      <option value="all">全部</option>
+                      {categoryOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                ) : null}
 
                 {config.toolOptions && config.toolOptions.length > 0 ? (
                   <div>
@@ -316,6 +330,27 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
         </aside>
 
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          {mediaTabs.length > 0 ? (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {mediaTabs.map((tab) => {
+                const active = tab === mediaTab;
+                return (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => updateUrl((params) => params.set('media', tab))}
+                    className={`rounded-full border px-3 py-1 text-sm transition ${
+                      active
+                        ? 'border-sky-400 bg-sky-50 text-sky-700'
+                        : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
           {loading ? <p className="text-sm text-slate-500">加载中…</p> : null}
           {error ? (
             <div className="flex items-center gap-3">

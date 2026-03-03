@@ -15,7 +15,7 @@ const TOOL_OPTIONS = [
 function promptCategoryMatcher(item: ContentSummaryVM, category: string): boolean {
   const haystack = `${item.title} ${item.one_liner ?? ''} ${item.tag_ids.join(' ')}`.toLowerCase();
   if (category === '视频') return haystack.includes('video') || haystack.includes('sora') || haystack.includes('prompt_video');
-  if (category === '图像') return haystack.includes('image') || haystack.includes('prompt_image');
+  if (category === '图像' || category === '图片') return haystack.includes('image') || haystack.includes('prompt_image');
   return !haystack.includes('video') && !haystack.includes('prompt_video');
 }
 
@@ -30,6 +30,9 @@ export default function PromptsPage() {
       config={{
         type: 'prompt',
         categoryOptions: CATEGORY_OPTIONS,
+        showSidebarCategoryFilter: false,
+        mediaTabs: ['文本', '图片', '视频'],
+        defaultMediaTab: '文本',
         toolOptions: TOOL_OPTIONS,
         matchCategory: promptCategoryMatcher,
         matchTool: promptToolMatcher,
