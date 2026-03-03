@@ -54,13 +54,40 @@ export default function McpDetailPage() {
       <StatusBanner type="mcp" id={id} status={detail.content.status} />
       <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="space-y-4">
+          <SectionCard title="案例展示">
+            {detail.cases.length > 0 ? (
+              <div className="space-y-4">
+                {detail.cases.map((item) => (
+                  <article key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/50 p-4">
+                    <div className="rounded-md border border-slate-200 bg-slate-100 px-4 py-6 text-center text-sm text-slate-600">
+                      案例效果展示区（图片/视频占位，暂无内容）
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">用户输入</h4>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.user_input}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">执行过程</h4>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.execution_process}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">结果输出</h4>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.agent_output}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500">暂无案例</p>
+            )}
+          </SectionCard>
+
           <SectionCard title="如何使用">
             <div className="space-y-3">
               {/* NOTE(decision-3): 按字段文档 A，三段 how_to_use 以原样文本展示。 */}
               <CodeBlock title="标准配置（json_config_text）" value={detail.how_to_use.json_config_text} />
               <CodeBlock title="常用客户端（common_clients_json）" value={detail.how_to_use.common_clients_json} />
               <CodeBlock title="运行形态（runtime_modes_json）" value={detail.how_to_use.runtime_modes_json} />
-              <Placeholder title="Cases 展示占位" todos={['案例列表', '案例媒体画廊']} />
             </div>
           </SectionCard>
           <SectionCard title="评论区">

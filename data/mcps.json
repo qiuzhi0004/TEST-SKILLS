@@ -27,7 +27,17 @@
       "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "mcp-case-seed-servers-001",
+        "title": "快速接入本地文件读写 MCP",
+        "input_text": "我想让助手读取 ~/projects/docs 目录下的 markdown 文件，并能创建会议纪要。请给出最小可用配置和验证步骤。",
+        "process_text": "1) 从 servers 仓库定位 filesystem 服务示例\n2) 生成可直接粘贴的 JSON 配置\n3) 给出启动命令与权限说明\n4) 设计两条验证指令（读取文件/新建纪要）",
+        "output_text": "输出一份可运行配置 + 启动命令 + 验证清单，用户按步骤执行后可让助手安全读写指定目录。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 79800,
       "github_stars_text": "79.8k"
@@ -67,7 +77,17 @@
       "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "mcp-case-seed-playwright-001",
+        "title": "回归测试电商下单主流程",
+        "input_text": "请帮我自动检查商城站点：搜索商品、加入购物车、填写地址、到支付页前一步为止，并导出失败步骤截图。",
+        "process_text": "1) 打开站点并模拟用户搜索\n2) 执行加购与结算流程\n3) 在关键节点断言页面元素\n4) 失败时自动截图并记录报错位置\n5) 汇总测试结果",
+        "output_text": "生成测试执行报告，包含通过/失败步骤、失败截图路径和可复现操作说明。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 28000,
       "github_stars_text": "28k"
@@ -107,7 +127,17 @@
       "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "mcp-case-seed-figma-context-001",
+        "title": "把设计稿转成开发任务清单",
+        "input_text": "读取 Figma 中“注册页”画板，整理颜色、字体、间距和组件结构，并输出给前端的实现任务列表。",
+        "process_text": "1) 读取目标画板与组件树\n2) 提取设计变量（颜色/字号/圆角/间距）\n3) 识别可复用组件与页面区块\n4) 生成按优先级排序的开发任务",
+        "output_text": "输出一份结构化任务单：基础样式变量、组件拆分建议、页面实现顺序与验收点。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 13300,
       "github_stars_text": "13.3k"
@@ -147,7 +177,17 @@
       "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "mcp-case-seed-pal-001",
+        "title": "跨工具自动化发布周报",
+        "input_text": "每周五自动汇总本周 GitHub 提交、Notion 项目进度和日程完成情况，生成团队周报并推送到群里。",
+        "process_text": "1) 拉取多数据源本周变更\n2) 清洗并归并重复事项\n3) 生成“完成/风险/下周计划”三段周报\n4) 推送到指定沟通渠道并留存归档",
+        "output_text": "自动产出标准化周报，减少手工汇总时间，并保留可追溯的发布记录。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 11200,
       "github_stars_text": "11.2k"
@@ -187,7 +227,17 @@
       "common_clients_json": "来自种子数据，仅提供仓库链接，常用客户端配置待补充。",
       "runtime_modes_json": "来自种子数据，仅提供仓库链接，运行形态说明待补充。"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "mcp-case-seed-git-mcp-001",
+        "title": "快速理解陌生仓库并输出改造建议",
+        "input_text": "请读取这个开源仓库，告诉我项目入口、核心模块关系、最近活跃改动，并给出两条可执行的优化建议。",
+        "process_text": "1) 索引仓库目录与关键文件\n2) 识别启动入口和主流程\n3) 分析最近提交与高频变更目录\n4) 基于代码结构给出优化建议与风险说明",
+        "output_text": "返回“项目速览 + 模块图 + 最近改动摘要 + 优化建议”，便于新人 30 分钟内建立全局认知。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 7700,
       "github_stars_text": "7.7k"
