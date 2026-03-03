@@ -30,7 +30,17 @@
       "updated_at": null,
       "synced_at": "2026-03-02T13:55:41.912Z"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "skill_assafelovic-gpt-researcher-case-001",
+        "title": "案例 1",
+        "input_text": "请基于近一年开源 LLM Agent 论文，整理一份包含趋势、代表方法与可落地方向的研究综述。",
+        "process_text": "1. 检索并筛选近一年相关论文与仓库。\n2. 按任务规划、工具调用、评测方法归类。\n3. 提炼关键结论并生成结构化综述提纲。",
+        "output_text": "输出一份中文研究综述草稿，包含 12 篇代表工作对比表和后续实验建议。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 25500,
       "github_stars_text": "25.5k"
@@ -73,7 +83,17 @@
       "updated_at": null,
       "synced_at": "2026-03-02T13:55:41.912Z"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "skill_vercel-labs-agent-skills-case-001",
+        "title": "案例 1",
+        "input_text": "为新的客服 Agent 项目挑选可复用技能，并给出接入顺序。",
+        "process_text": "1. 扫描仓库内可用 skill 清单。\n2. 按客服场景映射到检索、总结、质检等能力。\n3. 生成分阶段接入计划与依赖关系。",
+        "output_text": "得到一份技能接入路线图，首期可直接落地 5 个基础技能。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 21800,
       "github_stars_text": "21.8k"
@@ -116,7 +136,17 @@
       "updated_at": null,
       "synced_at": "2026-03-02T13:55:41.912Z"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "skill_coreyhaines31-marketingskills-case-001",
+        "title": "案例 1",
+        "input_text": "围绕新上线的 AI 产品写一套投放文案，包含落地页标题、卖点和 CTA。",
+        "process_text": "1. 读取产品定位和目标用户画像。\n2. 生成多组营销文案并进行语气区分。\n3. 依据转化目标筛选最佳版本。",
+        "output_text": "产出 3 版中文营销文案组合，可直接用于广告与落地页 A/B 测试。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 10200,
       "github_stars_text": "10.2k"
@@ -159,7 +189,17 @@
       "updated_at": null,
       "synced_at": "2026-03-02T13:55:41.912Z"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "skill_vercel-labs-skills-case-001",
+        "title": "案例 1",
+        "input_text": "我想快速了解并安装适合开发者效率提升的 skills。",
+        "process_text": "1. 调用 find-skills 流程筛选效率类技能。\n2. 生成安装命令与用途说明。\n3. 按优先级给出试用顺序。",
+        "output_text": "返回可直接执行的安装清单，并附带每个 skill 的使用场景。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 7600,
       "github_stars_text": "7.6k"
@@ -202,7 +242,17 @@
       "updated_at": null,
       "synced_at": "2026-03-02T13:55:41.912Z"
     },
-    "cases": [],
+    "cases": [
+      {
+        "id": "skill_panniantong-agent-reach-case-001",
+        "title": "案例 1",
+        "input_text": "为运营团队搭建一个可复用的 Agent 能力包，支持内容整理和自动回复。",
+        "process_text": "1. 分析团队高频任务并拆成技能模块。\n2. 配置能力包并校验依赖。\n3. 产出团队内部使用说明与示例。",
+        "output_text": "完成一套可安装的能力包模板，支持运营场景快速复用。",
+        "media": [],
+        "sort_order": 1
+      }
+    ],
     "metrics": {
       "github_stars": 3600,
       "github_stars_text": "3.6k"
@@ -252,11 +302,11 @@
     },
     "cases": [
       {
-        "id": "skill-case-001",
-        "title": "初始化工程模板",
-        "input_text": "创建 Next + TS + Tailwind 项目",
-        "process_text": "选择模板并生成目录",
-        "output_text": "输出可运行工程骨架",
+        "id": "skill-001-case-001",
+        "title": "案例 1",
+        "input_text": "创建一个带 TypeScript、Tailwind 和测试目录的 Next.js 新项目脚手架。",
+        "process_text": "1. 选择 Next.js + TypeScript 预设模板。\n2. 按约定生成 app、components、lib 与 tests 目录。\n3. 自动补齐基础配置并执行初始化。",
+        "output_text": "得到可直接运行的项目骨架，团队成员可在统一结构上协作开发。",
         "media": [],
         "sort_order": 1
       }
@@ -298,11 +348,11 @@
     },
     "cases": [
       {
-        "id": "skill-case-002",
-        "title": "识别缺失字段",
-        "input_text": "对比 SkillDetail 和前端 VM",
-        "process_text": "读取 schema -> 比较字段 -> 输出差异",
-        "output_text": "发现 install_commands 缺失",
+        "id": "skill-002-case-001",
+        "title": "案例 1",
+        "input_text": "对比后端 OpenAPI 与前端类型定义，找出字段缺失和命名不一致项。",
+        "process_text": "1. 读取 OpenAPI schema 与前端 TypeScript 类型。\n2. 执行字段级 diff 并标记风险等级。\n3. 输出修复建议与优先级。",
+        "output_text": "生成契约差异报告，明确缺失字段与建议修复路径。",
         "media": [],
         "sort_order": 1
       }
@@ -342,11 +392,11 @@
     },
     "cases": [
       {
-        "id": "skill-case-003",
-        "title": "内网离线安装",
-        "input_text": "在无外网环境导入 Prompt 包",
-        "process_text": "解压 zip -> 运行导入脚本",
-        "output_text": "导入 120 条 Prompt",
+        "id": "skill-003-case-001",
+        "title": "案例 1",
+        "input_text": "在离线环境导入一批 Prompt 包，并检查是否全部可被本地系统识别。",
+        "process_text": "1. 解压离线包并校验目录结构。\n2. 执行本地导入脚本写入资源库。\n3. 逐条校验 Prompt 可读性与分类信息。",
+        "output_text": "离线环境成功导入 Prompt 资源，并输出导入结果统计。",
         "media": [],
         "sort_order": 1
       }

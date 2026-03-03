@@ -447,6 +447,11 @@ export default function McpDetailPage() {
                 </div>
 
                 <div className="space-y-1">
+                  <p className="text-xs text-slate-500">类型</p>
+                  <p className="text-sm text-slate-800">MCP</p>
+                </div>
+
+                <div className="space-y-1">
                   <p className="text-xs text-slate-500">提供方</p>
                   <p className="text-sm text-slate-800">{detail.provider_name || '暂无'}</p>
                 </div>
