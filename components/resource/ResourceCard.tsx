@@ -8,6 +8,7 @@ interface ResourceCardProps {
   maxTags?: number;
   showStatus?: boolean;
   showTypeBadge?: boolean;
+  hidePromptMediaTags?: boolean;
 }
 
 function getDetailPath(type: ContentType, id: string): string {
@@ -36,9 +37,12 @@ export function ResourceCard({
   maxTags = 3,
   showStatus = false,
   showTypeBadge = true,
+  hidePromptMediaTags = false,
 }: ResourceCardProps) {
   const href = getDetailPath(item.type, item.id);
-  const tags = toDisplayTags(item.tag_ids, maxTags);
+  const tags = toDisplayTags(item.tag_ids, maxTags).filter((tag) =>
+    hidePromptMediaTags ? !['prompt_text', 'prompt_image', 'prompt_video'].includes(tag.id) : true,
+  );
 
   return (
     <Link

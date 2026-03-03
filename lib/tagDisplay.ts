@@ -13,6 +13,19 @@ const TAG_LABEL_MAP: Record<string, string> = {
   prompt_text: '文本',
   prompt_image: '图像',
   prompt_video: '视频',
+  prompt_plan: '计划',
+  prompt_excel: 'Excel',
+  prompt_timer: '计时',
+  prompt_notion: 'Notion',
+  prompt_report: '日报',
+  prompt_market: '市场',
+  prompt_product: '产品',
+  prompt_automotive: '汽车',
+  prompt_portrait: '肖像',
+  prompt_sports: '体育',
+  prompt_skincare: '护肤',
+  prompt_wildlife: '野生动物',
+  prompt_cinematic: '电影感',
 };
 
 function isHiddenTag(tagId: string): boolean {
@@ -46,4 +59,3 @@ export function toDisplayTags(tagIds: string[], max = 3): DisplayTag[] {
 
   return [...normal, ...promptLike].slice(0, max);
 }
-

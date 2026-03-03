@@ -368,7 +368,13 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
           {!loading && !error && items.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {items.map((item) => (
-                <ResourceCard key={item.id} item={item} showStatus={false} showTypeBadge={false} />
+                <ResourceCard
+                  key={item.id}
+                  item={item}
+                  showStatus={false}
+                  showTypeBadge={false}
+                  hidePromptMediaTags={config.type === 'prompt'}
+                />
               ))}
             </div>
           ) : null}

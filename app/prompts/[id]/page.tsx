@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import { Badge } from '@/components/common/Badge';
 import { CodeBlock } from '@/components/common/CodeBlock';
 import { Placeholder } from '@/components/layout/Placeholder';
@@ -19,6 +20,19 @@ function toDisplayLanguage(language: string): string {
   if (normalized === 'zh-cn' || normalized === 'zh') return '中文';
   if (normalized === 'en' || normalized === 'en-us') return '英文';
   return language;
+}
+
+function toShowcaseSrc(assetId?: string | null, externalUrl?: string | null): string | null {
+  if (externalUrl) return externalUrl;
+  if (!assetId) return null;
+  if (assetId.startsWith('/')) return assetId;
+  if (assetId.startsWith('http://') || assetId.startsWith('https://')) return assetId;
+  if (assetId.startsWith('data/images/')) return `/${assetId.replace(/^data\//, '')}`;
+  if (assetId.startsWith('data/videos/')) return `/${assetId.replace(/^data\//, '')}`;
+  if (assetId.startsWith('images/')) return `/${assetId}`;
+  if (assetId.startsWith('videos/')) return `/${assetId}`;
+  if (assetId.includes('/')) return `/${assetId}`;
+  return `/images/${assetId}`;
 }
 
 export default function PromptDetailPage() {
@@ -58,16 +72,65 @@ export default function PromptDetailPage() {
   }
 
   const displayTags = toDisplayTags(detail.content.tag_ids, 3);
+  const isTextPrompt = detail.content.tag_ids.includes('prompt_text');
 
   return (
     <div className="space-y-4">
       <StatusBanner type="prompt" id={id} status={detail.content.status} />
       <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="space-y-4">
+          {!isTextPrompt ? (
+            <SectionCard title="案例展示">
+              <div className="space-y-4">
+                {(detail.showcases.length > 0 ? detail.showcases : [{ id: 'prompt-showcase-fallback' }]).map((item) => (
+                  <article
+                    key={item.id}
+                    className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/50 p-4"
+                  >
+                    {(() => {
+                      const src = toShowcaseSrc(
+                        'asset_id' in item ? item.asset_id : null,
+                        'external_url' in item ? (item as { external_url?: string | null }).external_url ?? null : null,
+                      );
+                      if (!src) {
+                        return (
+                          <div className="rounded-md border border-slate-200 bg-slate-100 px-4 py-6 text-center text-sm text-slate-600">
+                            案例效果展示区（图片/视频占位，暂无内容）
+                          </div>
+                        );
+                      }
+
+                      const mediaType = 'media_type' in item ? item.media_type : 'image';
+                      return mediaType === 'video' ? (
+                        <div className="overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+                          <video
+                            src={src}
+                            controls
+                            playsInline
+                            className="h-auto w-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+                          <Image
+                            src={src}
+                            alt="案例效果图"
+                            width={1200}
+                            height={700}
+                            className="h-auto w-full object-cover"
+                          />
+                        </div>
+                      );
+                    })()}
+                  </article>
+                ))}
+              </div>
+            </SectionCard>
+          ) : null}
+
           <SectionCard title="获取资源">
             <div className="space-y-3">
               <CodeBlock title="Prompt 正文" value={detail.prompt_text} />
-              <Placeholder title="Showcase 占位" todos={['showcases 媒体渲染', '预览切换']} />
             </div>
           </SectionCard>
           <SectionCard title="评论区">
