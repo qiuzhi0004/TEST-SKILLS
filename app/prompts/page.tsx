@@ -1,32 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { FilterBar } from '@/components/resource/FilterBar';
-import { ResourceList } from '@/components/resource/ResourceList';
-import { ListPageTemplate } from '@/components/page-templates/ListPageTemplate';
-import { listContents } from '@/lib/api';
+import { ResourceListPage } from '@/components/resource/ResourceListPage';
 import type { ContentSummaryVM } from '@/types/content';
 
+const CATEGORY_OPTIONS = ['文本', '图像', '视频'];
+const TOOL_OPTIONS = [
+  'Nano Banana Pro',
+  'Seedance 2.0',
+  'GPT Image 1.5',
+  'Seedream 4.5',
+  'Gemini 3',
+];
+
+function promptCategoryMatcher(item: ContentSummaryVM, category: string): boolean {
+  const haystack = `${item.title} ${item.one_liner ?? ''} ${item.tag_ids.join(' ')}`.toLowerCase();
+  if (category === '视频') return haystack.includes('video') || haystack.includes('sora') || haystack.includes('prompt_video');
+  if (category === '图像') return haystack.includes('image') || haystack.includes('prompt_image');
+  return !haystack.includes('video') && !haystack.includes('prompt_video');
+}
+
+function promptToolMatcher(item: ContentSummaryVM, tool: string): boolean {
+  const haystack = `${item.title} ${item.one_liner ?? ''} ${item.tag_ids.join(' ')}`.toLowerCase();
+  return haystack.includes(tool.toLowerCase());
+}
+
 export default function PromptsPage() {
-  const [items, setItems] = useState<ContentSummaryVM[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void listContents({ type: 'prompt', offset: 0, limit: 50 }).then((res) => {
-      if (!cancelled) setItems(res.items);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   return (
-    <ListPageTemplate
-      title="Prompt 列表"
-      subtitle="低保真块：页内搜索 + 左侧排序筛选 + 卡片区 + 分页"
-      filterSlot={<FilterBar typeLabel="Prompt" />}
-      listSlot={<ResourceList items={items} />}
-      paginationSlot={<p className="text-sm text-slate-500">分页 UI 占位（offset/limit/total）</p>}
+    <ResourceListPage
+      config={{
+        type: 'prompt',
+        categoryOptions: CATEGORY_OPTIONS,
+        toolOptions: TOOL_OPTIONS,
+        matchCategory: promptCategoryMatcher,
+        matchTool: promptToolMatcher,
+      }}
     />
   );
 }
