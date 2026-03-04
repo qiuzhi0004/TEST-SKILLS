@@ -3,7 +3,7 @@
 import { ResourceListPage } from '@/components/resource/ResourceListPage';
 import type { ContentSummaryVM } from '@/types/content';
 
-const CATEGORY_OPTIONS = ['文本', '图像', '视频'];
+const CATEGORY_OPTIONS = ['文本Prompt', '图像Prompt', '视频Prompt'];
 const TOOL_OPTIONS = [
   'Nano Banana Pro',
   'Seedance 2.0',
@@ -14,8 +14,10 @@ const TOOL_OPTIONS = [
 
 function promptCategoryMatcher(item: ContentSummaryVM, category: string): boolean {
   const haystack = `${item.title} ${item.one_liner ?? ''} ${item.tag_ids.join(' ')}`.toLowerCase();
-  if (category === '视频') return haystack.includes('prompt_video') || haystack.includes('video') || haystack.includes('sora');
-  if (category === '图像' || category === '图片') return haystack.includes('prompt_image') || haystack.includes('image');
+  if (category === '视频Prompt')
+    return haystack.includes('prompt_video') || haystack.includes('video') || haystack.includes('sora');
+  if (category === '图像Prompt' || category === '图片Prompt')
+    return haystack.includes('prompt_image') || haystack.includes('image');
   return haystack.includes('prompt_text') && !haystack.includes('prompt_image') && !haystack.includes('prompt_video');
 }
 
@@ -30,10 +32,12 @@ export default function PromptsPage() {
       config={{
         type: 'prompt',
         categoryOptions: CATEGORY_OPTIONS,
-        showSidebarCategoryFilter: false,
-        mediaTabs: ['文本', '图片', '视频'],
-        defaultMediaTab: '文本',
+        categoryLabel: '内容形态',
+        showSidebarCategoryFilter: true,
+        showCategoryCounts: true,
+        defaultMediaTab: '',
         toolOptions: TOOL_OPTIONS,
+        toolLabel: '适用平台/模型',
         matchCategory: promptCategoryMatcher,
         matchTool: promptToolMatcher,
       }}

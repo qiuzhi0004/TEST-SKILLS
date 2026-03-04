@@ -43,6 +43,8 @@ export function ResourceCard({
   const tags = toDisplayTags(item.tag_ids, maxTags).filter((tag) =>
     hidePromptMediaTags ? !['prompt_text', 'prompt_image', 'prompt_video'].includes(tag.id) : true,
   );
+  const upCount = item.stats_7d.up;
+  const favoriteCount = 0;
 
   return (
     <Link
@@ -68,6 +70,10 @@ export function ResourceCard({
           ))}
         </div>
       ) : null}
+      <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+        <span>点赞：{upCount}</span>
+        <span>收藏：{favoriteCount}</span>
+      </div>
 
       <div className="mt-auto pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
         <span>作者：{item.author.nickname}</span>

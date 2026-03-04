@@ -16,10 +16,13 @@ interface ResourceListPageConfig {
   type: ListType;
   categoryOptions?: string[];
   toolOptions?: string[];
+  categoryLabel?: string;
+  toolLabel?: string;
   matchCategory?: (item: ContentSummaryVM, category: string) => boolean;
   matchTool?: (item: ContentSummaryVM, tool: string) => boolean;
   showFilters?: boolean;
   showSidebarCategoryFilter?: boolean;
+  showCategoryCounts?: boolean;
   mediaTabs?: string[];
   defaultMediaTab?: string;
 }
@@ -79,7 +82,10 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
 
   const showFilters = config.showFilters ?? true;
   const showSidebarCategoryFilter = config.showSidebarCategoryFilter ?? true;
-  const categoryOptions = config.categoryOptions ?? [];
+  const showCategoryCounts = config.showCategoryCounts ?? false;
+  const categoryOptions = useMemo(() => config.categoryOptions ?? [], [config.categoryOptions]);
+  const categoryLabel = config.categoryLabel ?? '分类';
+  const toolLabel = config.toolLabel ?? '工具（多选）';
   const mediaTabs = config.mediaTabs ?? [];
   const defaultMediaTab = config.defaultMediaTab ?? mediaTabs[0] ?? '';
 
@@ -106,6 +112,7 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
 
   const [searchInput, setSearchInput] = useState(q);
   const [items, setItems] = useState<ContentSummaryVM[]>([]);
+  const [filterScopeItems, setFilterScopeItems] = useState<ContentSummaryVM[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadTick, setReloadTick] = useState(0);
@@ -157,21 +164,24 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
           filtered = filtered.filter((item) => item.status === VERIFIED_STATUS);
         }
 
+        if (tools.length > 0) {
+          const toolMatcher = config.matchTool ?? defaultToolMatcher;
+          filtered = filtered.filter((item) => tools.some((tool) => toolMatcher(item, tool)));
+        }
+
+        setFilterScopeItems(filtered);
+
         const activeCategory = mediaTab || category;
         if (activeCategory) {
           const categoryMatcher = config.matchCategory ?? defaultCategoryMatcher;
           filtered = filtered.filter((item) => categoryMatcher(item, activeCategory));
         }
 
-        if (tools.length > 0) {
-          const toolMatcher = config.matchTool ?? defaultToolMatcher;
-          filtered = filtered.filter((item) => tools.some((tool) => toolMatcher(item, tool)));
-        }
-
         setItems(sortItems(filtered, sort, order));
       })
       .catch(() => {
         if (cancelled) return;
+        setFilterScopeItems([]);
         setItems([]);
         setError('加载失败');
       })
@@ -186,6 +196,13 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
 
   const statusValue = status || 'all';
   const categoryValue = category || 'all';
+  const categoryCounts = useMemo(() => {
+    if (!showCategoryCounts || categoryOptions.length === 0) return new Map<string, number>();
+    const categoryMatcher = config.matchCategory ?? defaultCategoryMatcher;
+    return new Map(
+      categoryOptions.map((option) => [option, filterScopeItems.filter((item) => categoryMatcher(item, option)).length]),
+    );
+  }, [categoryOptions, config.matchCategory, filterScopeItems, showCategoryCounts]);
 
   return (
     <section className="space-y-4 pb-6">
@@ -274,30 +291,67 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
 
                 {showSidebarCategoryFilter && categoryOptions.length > 0 ? (
                   <div>
-                    <p className="mb-1 text-xs text-slate-500">分类</p>
-                    <Select
-                      aria-label="分类筛选"
-                      value={categoryValue}
-                      onChange={(event) =>
-                        updateUrl((params) => {
-                          if (event.target.value === 'all') params.delete('categories');
-                          else params.set('categories', event.target.value);
-                        })
-                      }
-                    >
-                      <option value="all">全部</option>
-                      {categoryOptions.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </Select>
+                    <p className="mb-1 text-xs text-slate-500">{categoryLabel}</p>
+                    {showCategoryCounts ? (
+                      <div className="space-y-1.5">
+                        <label className="flex items-center gap-2 text-sm text-slate-700">
+                          <input
+                            type="radio"
+                            name="category-filter"
+                            checked={categoryValue === 'all'}
+                            onChange={() => updateUrl((params) => params.delete('categories'))}
+                            className="h-4 w-4 border-slate-300 text-sky-600 focus:ring-sky-500"
+                          />
+                          <span>全部</span>
+                        </label>
+                        {categoryOptions.map((option) => {
+                          const checked = category === option;
+                          const count = categoryCounts.get(option) ?? 0;
+                          return (
+                            <label key={option} className="flex items-center gap-2 text-sm text-slate-700">
+                              <input
+                                type="radio"
+                                name="category-filter"
+                                checked={checked}
+                                onChange={() =>
+                                  updateUrl((params) => {
+                                    params.set('categories', option);
+                                  })
+                                }
+                                className="h-4 w-4 border-slate-300 text-sky-600 focus:ring-sky-500"
+                              />
+                              <span>
+                                {option} <span className="text-slate-400">({count})</span>
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <Select
+                        aria-label="分类筛选"
+                        value={categoryValue}
+                        onChange={(event) =>
+                          updateUrl((params) => {
+                            if (event.target.value === 'all') params.delete('categories');
+                            else params.set('categories', event.target.value);
+                          })
+                        }
+                      >
+                        <option value="all">全部</option>
+                        {categoryOptions.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </Select>
+                    )}
                   </div>
                 ) : null}
 
                 {config.toolOptions && config.toolOptions.length > 0 ? (
                   <div>
-                    <p className="mb-1 text-xs text-slate-500">工具（多选）</p>
+                    <p className="mb-1 text-xs text-slate-500">{toolLabel}</p>
                     <div className="space-y-1.5">
                       {config.toolOptions.map((option) => {
                         const checked = tools.includes(option);
