@@ -55,8 +55,8 @@ components/
   admin/                # 审核队列/动作/审计面板
   forms/                # 发布/编辑表单
 lib/
-  api/                  # 对外 API 门面 + mock/social/authoring/admin_review/audit
-  client/               # localStorage 读写封装（SSR 安全）
+  api/                  # 对外 API 门面 + mock/social/authoring/admin_review/audit/admin_console
+  client/               # localStorage 读写封装（SSR 安全，含后台管理状态）
 data/                   # 静态 mock 数据
   prompts.json
   mcps.json
@@ -146,6 +146,13 @@ pnpm import:seed
 - API：`lib/api/admin_review.ts`
 - 数据源：复用 authoring records
 - 口径：审核状态流转按 `docs/接口契约方案.md` + `docs/DECISIONS.md`，不按冲突状态图改写。
+
+### 后台管理页数据层（Admin Console）
+
+- API：`lib/api/admin_console.ts`
+- 存储：`lib/client/storage_admin.ts`
+- localStorage key：`luzi_admin_console_v1`
+- 覆盖页面：`/admin/categories`、`/admin/tags`、`/admin/users`、`/admin/roles`、`/admin/permissions`、`/admin/role-permissions`、`/admin/events`
 
 ## 路由与页面
 

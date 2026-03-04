@@ -27,8 +27,12 @@ export interface AuditState {
 }
 
 export interface ListAuditLogsParams {
+  action_type?: AuditAction | 'all';
+  actor_user_id?: string | 'all';
   target_type?: ContentType;
   target_id?: string;
+  date_from?: string;
+  date_to?: string;
   limit?: number;
   offset?: number;
 }

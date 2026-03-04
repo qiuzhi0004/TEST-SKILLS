@@ -1,6 +1,8 @@
 # AGENTS.md
 
 ## Changelog
+- 2026-03-04: 新增后台管理本地数据层约定（admin_console API + storage_admin）。
+- 2026-03-04: 明确后台 8 个管理页统一走 `lib/api/admin_console.ts`，禁止页面直读写 localStorage。
 - 2026-03-03: 初始化根目录协作契约文档（首次创建）。
 - 2026-03-03: 固化“每次新任务先确认疑问/冲突，再执行”的最高优先级规则。
 - 2026-03-03: 同步当前仓库可运行命令、目录边界、数据导入规范与 DoD。
@@ -69,8 +71,8 @@
 ### 5.3 Repo Map (High-level)
 - `app/`：路由与页面
 - `components/`：UI/布局/资源卡/社交/后台组件
-- `lib/api/`：统一 API 门面与实现（mock/authoring/social/audit/admin_review）
-- `lib/client/`：localStorage 存取封装（SSR-safe）
+- `lib/api/`：统一 API 门面与实现（mock/authoring/social/audit/admin_review/admin_console）
+- `lib/client/`：localStorage 存取封装（SSR-safe，含 `storage_admin`）
 - `types/`：DTO / ViewModel / adapters
 - `data/`：mock 数据
 - `docs/`：规范、路由、决策与检查清单
@@ -85,6 +87,9 @@
    - 去重键优先级：`repo -> url -> title`
 3. `taxonomies.json` 新增项必须去重且保持稳定排序。
 4. 当前前端口径：`category_ids[]`（多类目），不回退为单值 `category_id` 逻辑。
+5. 后台管理页（分类/标签/用户/角色/权限/权限矩阵/事件日志）统一通过 `lib/api/admin_console.ts` 访问；
+   - 本地存储 key：`luzi_admin_console_v1`
+   - 页面层不得直接读写 `localStorage`。
 
 ## 7. Decision Alignment (Must Keep)
 
