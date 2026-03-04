@@ -60,15 +60,6 @@ function topTags(item: ContentSummaryVM) {
   return labels.slice(0, 3);
 }
 
-function formatDate(date: string) {
-  try {
-    const value = new Date(date);
-    return `${value.getMonth() + 1}-${value.getDate()}`;
-  } catch {
-    return '--';
-  }
-}
-
 function looksLikeVideo(src?: string | null): boolean {
   if (!src) return false;
   const plain = src.split('?')[0]?.toLowerCase() ?? '';
@@ -354,7 +345,6 @@ export default function TutorialsPage() {
                       <div className="min-w-0 flex-1">
                         <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                           <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-slate-600">{getTypeLabel(item)}</span>
-                          <span>{formatDate(item.updated_at)}</span>
                         </div>
 
                         <h3 className="text-lg font-semibold text-slate-900">

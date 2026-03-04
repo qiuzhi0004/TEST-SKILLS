@@ -11,6 +11,16 @@ const RANK_COLUMNS: Array<{ type: Exclude<ContentType, 'all'>; title: string; ac
   { type: 'tutorial', title: '社区', accent: '#7B3DA9', soft: '#F8ECFF' },
 ];
 
+function toRgba(hex: string, alpha: number): string {
+  const value = hex.replace('#', '').trim();
+  if (value.length !== 6) return `rgba(15,23,42,${alpha})`;
+  const num = Number.parseInt(value, 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function scoreOf(item: ContentSummaryVM): number {
   return item.stats_7d.hot_score;
 }
@@ -33,6 +43,13 @@ function detailPath(type: Exclude<ContentType, 'all'>, id: string): string {
   return `/${type}s/${id}`;
 }
 
+function rankMedal(index: number): string {
+  if (index === 0) return '🥇';
+  if (index === 1) return '🥈';
+  if (index === 2) return '🥉';
+  return `${index + 1}`;
+}
+
 export default async function RanksPage() {
   const topLists = await Promise.all(RANK_COLUMNS.map((column) => fetchTop10(column.type)));
   const merged = topLists.flat();
@@ -42,7 +59,10 @@ export default async function RanksPage() {
   const avgHot = merged.length > 0 ? Math.round(merged.reduce((sum, item) => sum + scoreOf(item), 0) / merged.length) : 0;
 
   return (
-    <div className="space-y-4 bg-[#f6f7f9] p-3 sm:p-4">
+    <div className="relative space-y-4 overflow-hidden bg-[radial-gradient(circle_at_12%_8%,rgba(252,102,36,0.12),transparent_36%),radial-gradient(circle_at_88%_24%,rgba(37,99,235,0.14),transparent_42%),radial-gradient(circle_at_50%_94%,rgba(123,61,169,0.12),transparent_38%),linear-gradient(180deg,#f7f8fb_0%,#eef2f8_100%)] p-3 sm:p-4">
+      <div className="pointer-events-none absolute -left-28 top-52 h-72 w-72 rounded-full bg-[#FC6624]/16 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 top-72 h-80 w-80 rounded-full bg-[#2563EB]/16 blur-3xl" />
+      <div className="pointer-events-none absolute left-1/3 top-[58%] h-64 w-64 rounded-full bg-violet-300/16 blur-3xl" />
       <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.08)]">
         <div className="absolute inset-0">
           <Image
@@ -98,16 +118,19 @@ export default async function RanksPage() {
       </section>
 
       {hottest.length > 0 ? (
-        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
-          <p className="mb-2 text-xs font-medium tracking-wide text-slate-500">全站热榜 Top 5</p>
-          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+        <section className="relative overflow-hidden rounded-2xl border border-white/65 bg-white/42 p-4 shadow-[0_18px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl">
+          <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#FC6624]/18 blur-2xl" />
+          <div className="pointer-events-none absolute -left-12 -bottom-20 h-40 w-40 rounded-full bg-sky-300/20 blur-2xl" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0)_45%,rgba(255,255,255,0.22)_100%)]" />
+          <p className="relative mb-2 text-xs font-medium tracking-wide text-slate-500">全站热榜 Top 5</p>
+          <div className="relative grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
             {hottest.map((item, index) => (
               <Link
                 key={`${item.type}:${item.id}`}
                 href={detailPath(item.type, item.id)}
-                className="rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300"
+                className="rounded-lg border border-white/75 bg-white/66 px-3 py-2 text-sm text-slate-700 shadow-[0_8px_20px_rgba(15,23,42,0.09)] backdrop-blur-md transition hover:-translate-y-1 hover:border-white hover:bg-white/86 hover:shadow-[0_14px_28px_rgba(15,23,42,0.14)]"
               >
-                <p className="text-xs text-slate-500">#{index + 1} · {item.type.toUpperCase()}</p>
+                <p className="text-xs text-slate-500">{rankMedal(index)} · {item.type.toUpperCase()}</p>
                 <p className="mt-1 line-clamp-2 font-medium text-slate-900">{item.title}</p>
               </Link>
             ))}
@@ -115,17 +138,26 @@ export default async function RanksPage() {
         </section>
       ) : null}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)] sm:p-5">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="relative overflow-hidden rounded-2xl border border-white/65 bg-white/42 p-4 shadow-[0_18px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl sm:p-5">
+        <div className="pointer-events-none absolute -left-24 top-20 h-52 w-52 rounded-full bg-violet-300/14 blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 bottom-10 h-52 w-52 rounded-full bg-cyan-300/16 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(130deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0)_48%,rgba(255,255,255,0.2)_100%)]" />
+        <div className="relative grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {RANK_COLUMNS.map((column, columnIndex) => {
             const items = topLists[columnIndex];
+            const glow = toRgba(column.accent, 0.22);
             return (
-              <section key={column.type} className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+              <section
+                key={column.type}
+                className="relative overflow-hidden rounded-xl border border-white/70 bg-white/52 p-3 shadow-[0_14px_30px_rgba(15,23,42,0.10)] backdrop-blur-xl"
+              >
+                <div className="pointer-events-none absolute -right-8 -top-10 h-24 w-24 rounded-full blur-2xl" style={{ backgroundColor: glow }} />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.24)_0%,rgba(255,255,255,0)_50%)]" />
                 <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-slate-900">{column.title}</h3>
+                  <h3 className="relative text-sm font-semibold text-slate-900">{column.title}</h3>
                   <span
-                    className="rounded-full border px-2 py-0.5 text-xs"
-                    style={{ borderColor: `${column.accent}66`, backgroundColor: column.soft, color: column.accent }}
+                    className="relative rounded-full border px-2 py-0.5 text-xs font-medium shadow-[0_6px_16px_rgba(15,23,42,0.10)] backdrop-blur-md"
+                    style={{ borderColor: `${column.accent}66`, backgroundColor: `${column.accent}1f`, color: column.accent }}
                   >
                     Top 10
                   </span>
@@ -137,16 +169,20 @@ export default async function RanksPage() {
                       <Link
                         key={item.id}
                         href={detailPath(column.type, item.id)}
-                        className="flex items-start gap-2 rounded-lg border border-transparent bg-white px-2.5 py-2 transition hover:border-slate-300"
+                        className="group relative flex items-start gap-2 overflow-hidden rounded-lg border border-white/80 bg-white/68 px-2.5 py-2 shadow-[0_8px_18px_rgba(15,23,42,0.08)] backdrop-blur-md transition hover:-translate-y-1 hover:border-white hover:bg-white/88 hover:shadow-[0_14px_28px_rgba(15,23,42,0.14)]"
                       >
-                        <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded bg-slate-100 text-xs text-slate-600">
-                          {index + 1}
+                        <div
+                          className="pointer-events-none absolute inset-y-0 left-0 w-1.5 opacity-0 transition group-hover:opacity-100"
+                          style={{ background: `linear-gradient(180deg, ${toRgba(column.accent, 0.95)} 0%, ${toRgba(column.accent, 0.55)} 100%)` }}
+                        />
+                        <span className="mt-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded bg-white/90 px-1 text-xs text-slate-600">
+                          {rankMedal(index)}
                         </span>
                         <span className="line-clamp-2 text-sm text-slate-700">{item.title}</span>
                       </Link>
                     ))
                   ) : (
-                    <p className="rounded-lg border border-dashed border-slate-300 bg-white p-3 text-xs text-slate-500">
+                    <p className="rounded-lg border border-dashed border-white/80 bg-white/66 p-3 text-xs text-slate-500 backdrop-blur-md">
                       暂无上榜内容
                     </p>
                   )}
