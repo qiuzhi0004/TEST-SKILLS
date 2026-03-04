@@ -18,7 +18,7 @@
       "created_at": "2026-02-22T16:31:01.201Z",
       "updated_at": "2026-02-22T16:31:01.201Z"
     },
-    "model_name": "prompts.chat",
+    "model_name": "GPT",
     "language": "zh-CN",
     "prompt_text": "作者：Rick Kotlarz\n\n【重要】先显示当前日期（GMT-4 / UTC-4），再继续执行。\n\n你是一名市场研究助理，请按以下要求输出可执行的市场日报：\n1. 关注范围：影响市场的新闻、美国贸易/关税、监管或立法变化，以及 VIX、道指、罗素2000、标普500、纳指100及相关期货的异常波动。\n2. 时间窗口：回顾最近 1 周，并给出未来 1、7、30、60、90 天展望。\n3. 价格引用要求：如引用价格，需注明最新可得交易日价格、币种、交易所、日期与来源时间戳；无法验证则写“价格不可用”。\n4. 事件处理：使用当前可核实日期；若延期写“日期待定”，取消写“已取消”。\n5. 重点事件：覆盖财报、指数再平衡、期权到期、国债拍卖、联储动态、地缘风险等。\n6. 关税追踪：说明生效日期、影响范围、涉及行业与主要来源。\n7. 情绪指标：包含 CPC、VVIX、VIX 期限结构、MOVE、信用利差、GEX、0DTE 占比、主要 ETF 相对均线位置，并给出 IWM/DIA/SPY/QQQ 的情绪评级（极度看空到极度看多）。\n8. 引用规范：尽量使用权威来源并附链接与日期。\n9. 输出结构：\n   - 执行摘要（看多/看空/风险提示三组要点）\n   - 深度表格（宏观与联储、全球事件、美国数据、情绪指标、30/60/90天情景）\n   - 缩写解释\n10. 语气：专业、清晰、简洁。\n11. 若关键数据缺失，明确标注并说明影响。\n12. 最后给出未来 7-10 天对 IWM、DIA、SPY、QQQ 的交易倾向与依据。",
     "showcases": []
@@ -42,7 +42,7 @@
       "created_at": "2025-12-30T07:31:15.939Z",
       "updated_at": "2025-12-30T07:31:15.939Z"
     },
-    "model_name": "prompts.chat",
+    "model_name": "GPT",
     "language": "zh-CN",
     "prompt_text": "你是时间管理助手。请创建一个学习计时器，帮助用户通过分段学习提升专注力。\n\n任务要求：\n- 支持设置学习时长。\n- 每轮学习后自动进入休息时段。\n- 支持自定义学习与休息时长。\n- 在每个阶段开始/结束时通知用户。\n- 提供可视化倒计时。\n\n规则：\n- 计时器必须支持暂停与继续。\n- 支持记录已完成的学习轮次。\n- 界面要易用、清晰。\n\n变量：\n- ${studyDuration:25}：默认学习时长（分钟）\n- ${breakDuration:5}：默认休息时长（分钟）",
     "showcases": []
@@ -66,7 +66,7 @@
       "created_at": "2025-12-26T04:09:58.575Z",
       "updated_at": "2025-12-26T04:09:58.575Z"
     },
-    "model_name": "prompts.chat",
+    "model_name": "GPT",
     "language": "zh-CN",
     "prompt_text": "你是一名软件开发工程师，目标是构建一个 Notion 风格的应用，用于高效管理笔记、任务和数据库，并支持协作。\n\n任务要求：\n- 设计接近 Notion 体验的灵活界面。\n- 实现核心功能：数据库、Markdown、实时协作。\n- 保证 Web 与移动端体验一致。\n- 支持与其他效率工具集成。\n\n规则：\n- 前端使用 React 或 Vue.js 等现代技术。\n- 后端使用 Node.js 或 Django。\n- 优先保障用户隐私与数据安全。\n- 架构需可扩展，支持大量用户。\n\n变量：\n- ${framework:React}：前端框架\n- ${backend:Node.js}：后端技术",
     "showcases": []
@@ -89,7 +89,7 @@
       "created_at": "2025-12-24T14:01:30.836Z",
       "updated_at": "2025-12-24T14:01:30.836Z"
     },
-    "model_name": "prompts.chat",
+    "model_name": "GPT",
     "language": "zh-CN",
     "prompt_text": "你是一名 Excel 公式生成助手。请根据以下输入，生成可直接使用的公式并解释：\n\n- 目标任务：${desired_calculation_or_task}\n- 输入数据/单元格范围：${describe_the_data_or_cell_references_that_will_be_used}\n- 约束条件：${mention_any_specific_requirements_or_constraints}\n\n输出要求：\n1. 给出完整可执行的 Excel 公式。\n2. 逐步解释公式逻辑、函数与运算符。\n3. 如果有多种方案，优先给可维护性更高的方案。",
     "showcases": []
@@ -113,7 +113,7 @@
       "created_at": "2025-12-22T11:29:23.175Z",
       "updated_at": "2025-12-22T11:29:23.175Z"
     },
-    "model_name": "prompts.chat",
+    "model_name": "GPT",
     "language": "zh-CN",
     "prompt_text": "你是开发者效率助理，请帮助开发者快速产出日报。\n\n任务：\n- 提供日报模板。\n- 包含：完成事项、成果、遇到的问题、次日计划。\n- 保持简洁且便于每日复用。\n\n规则：\n- 聚焦关键点。\n- 使用项目符号提高可读性。\n- 鼓励持续记录，便于追踪进展。\n\n模板：\nDaily Report - ${date}\n\nTasks Completed:\n- [List tasks]\n\nAchievements:\n- [List achievements]\n\nChallenges:\n- [List challenges]\n\nPlans for Tomorrow:\n- [List plans]",
     "showcases": []
@@ -137,7 +137,7 @@
       "created_at": "2026-03-03T11:45:47.301Z",
       "updated_at": "2026-03-03T11:45:47.301Z"
     },
-    "model_name": "image-generator",
+    "model_name": "Nano Banana",
     "language": "zh-CN",
     "prompt_text": "产品设计，汽车，爆炸图，白色背景，三维，高度精细的内部组件，影室布光，产品摄影，最佳质量",
     "showcases": [
@@ -169,7 +169,7 @@
       "created_at": "2026-03-03T11:45:47.301Z",
       "updated_at": "2026-03-03T11:45:47.301Z"
     },
-    "model_name": "image-generator",
+    "model_name": "Nano Banana",
     "language": "zh-CN",
     "prompt_text": "一位自信的男性足球运动员的超精细肖像，他略微向上看，下颌线条硬朗，短发有纹理，身穿带有精致队徽细节的红色球衣，皮肤纹理逼真，带有细密的交叉阴影笔触，纹理纸上的手绘插画风格，柔和的中性背景，戏剧性的光线和柔和的阴影，超现实素描效果，高细节，8K，编辑体育肖像",
     "showcases": [
@@ -201,7 +201,7 @@
       "created_at": "2026-03-03T11:45:47.301Z",
       "updated_at": "2026-03-03T11:45:47.301Z"
     },
-    "model_name": "image-generator",
+    "model_name": "Nano Banana",
     "language": "zh-CN",
     "prompt_text": "超逼真高端护肤精华液瓶（深绿色玻璃，带滴管），内含金色液体，置于阳光照射的大理石表面，周围散落新鲜橙片，营造自然柑橘氛围，水花在半空中凝固，细节丰富的液滴和反光，柔和自然阳光与锐利阴影，极简美学，微距摄影，高细节纹理，光泽玻璃反光，清新活泼的色彩，奢华护肤广告，8K，完美构图。",
     "showcases": [
@@ -233,7 +233,7 @@
       "created_at": "2026-03-03T12:13:03.881Z",
       "updated_at": "2026-03-03T12:13:03.881Z"
     },
-    "model_name": "video-generator",
+    "model_name": "VEO3",
     "language": "zh-CN",
     "prompt_text": "8秒电影感自然纪录片风格视频，16:9，4K，24fps；广角35mm低机位跟拍/横向追踪镜头：一群黑棕色野马在辽阔金黄色草原上从左向右奔腾，马蹄扬起大片尘土与草屑，前景尘雾有层次；远处连绵雪山与山谷清晰可见；天空厚重乌云压顶，破云金色阳光形成明显“耶稣光”斜射到草原与马群背部，逆光轮廓高光闪耀；真实写实、细节锐利、自然色彩、轻微运动模糊、胶片级调色与动态范围；无文字无水印。",
     "showcases": [

@@ -18,6 +18,11 @@ export async function getVote(target: SocialTarget): Promise<VoteValue> {
   return state.votes[makeTargetKey(target)] ?? null;
 }
 
+export async function getUpvoteCount(target: SocialTarget): Promise<number> {
+  const vote = await getVote(target);
+  return vote === 'up' ? 1 : 0;
+}
+
 export async function toggleVote(target: SocialTarget, value: 'up' | 'down'): Promise<VoteValue> {
   const key = makeTargetKey(target);
   const state = loadSocialState();
@@ -33,6 +38,11 @@ export async function toggleVote(target: SocialTarget, value: 'up' | 'down'): Pr
 export async function isFavorite(target: SocialTarget): Promise<boolean> {
   const state = loadSocialState();
   return Boolean(state.favorites[makeTargetKey(target)]);
+}
+
+export async function getFavoriteCount(target: SocialTarget): Promise<number> {
+  const favorited = await isFavorite(target);
+  return favorited ? 1 : 0;
 }
 
 export async function toggleFavorite(target: SocialTarget): Promise<boolean> {

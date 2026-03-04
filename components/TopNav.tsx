@@ -8,7 +8,7 @@ const NAV_ITEMS = [
   { href: "/prompts", label: "Prompt" },
   { href: "/skills", label: "Skill" },
   { href: "/mcps", label: "MCP" },
-  { href: "/tutorials", label: "教程" },
+  { href: "/tutorials", label: "社区" },
   { href: "/ranks", label: "榜单" },
 ];
 

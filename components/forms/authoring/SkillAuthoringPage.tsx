@@ -7,7 +7,6 @@ import { FieldText } from '@/components/forms/FieldText';
 import { FieldTextarea } from '@/components/forms/FieldTextarea';
 import { FormActions } from '@/components/forms/FormActions';
 import { RepeatableListInput } from '@/components/forms/RepeatableListInput';
-import { Placeholder } from '@/components/layout/Placeholder';
 import { FormPageTemplate } from '@/components/page-templates/FormPageTemplate';
 import { categoryOptions, tagOptions } from '@/components/forms/authoring/options';
 import { changeStatus, createDraft, getMyRecord, submitForReview, updateAfterSubmit, updateDraft } from '@/lib/api/authoring';
@@ -137,6 +136,7 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
   const [status, setStatus] = useState<ContentStatus>('Draft');
   const [tip, setTip] = useState('');
   const [loading, setLoading] = useState(mode === 'edit');
+  const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
     if (mode !== 'edit' || !id) return;
@@ -176,7 +176,7 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
 
   const validationError = useMemo(() => {
     if (!form.title.trim()) return '标题必填';
-    if (!form.zip_asset_id.trim()) return 'Zip 文件必传';
+    if (!form.repo_url.trim() && !form.zip_asset_id.trim()) return '仓库地址 与 Zip 上传至少填写一项';
     const commands = form.install_commands.filter((item) => item.trim());
     if (commands.length === 0) return '安装命令至少 1 条';
     if (!form.repo_url.trim() && !form.usage_doc.trim()) {
@@ -184,6 +184,24 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
     }
     return '';
   }, [form]);
+  const validationErrors = useMemo(() => {
+    const errors: string[] = [];
+    if (!form.title.trim()) errors.push('标题未填写');
+    if (!form.repo_url.trim() && !form.zip_asset_id.trim()) errors.push('仓库地址 与 Zip 上传至少填写一项');
+    if (form.install_commands.filter((item) => item.trim()).length === 0) errors.push('安装命令至少 1 条');
+    if (!form.repo_url.trim() && !form.usage_doc.trim()) errors.push('仓库地址为空时，使用文档必填');
+    return errors;
+  }, [form]);
+  const checklist = useMemo(
+    () => [
+      { label: '标题', passed: Boolean(form.title.trim()) },
+      { label: '仓库地址 或 Zip 上传（至少 1 项）', passed: Boolean(form.repo_url.trim() || form.zip_asset_id.trim()) },
+      { label: '安装命令（>=1）', passed: form.install_commands.filter((item) => item.trim()).length > 0 },
+      { label: '仓库地址或使用文档', passed: Boolean(form.repo_url.trim() || form.usage_doc.trim()) },
+      { label: '分类（>=1）', passed: form.category_ids.length > 0 },
+    ],
+    [form],
+  );
 
   async function readFileAsDataUrl(file: File): Promise<string> {
     return await new Promise<string>((resolve, reject) => {
@@ -276,6 +294,47 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
       formSlot={
         loading ? (
           <p className="text-sm text-slate-500">加载中...</p>
+        ) : previewMode ? (
+          <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-slate-900">效果预览</h3>
+              <button
+                type="button"
+                onClick={() => setPreviewMode(false)}
+                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
+              >
+                返回编辑
+              </button>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-white p-4">
+              <h4 className="text-base font-semibold text-slate-900">{form.title || '（未填写标题）'}</h4>
+              <p className="mt-2 text-sm text-slate-600">{form.description || '（暂无一句话描述）'}</p>
+              <div className="mt-4 space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-700">如何使用（安装命令）</p>
+                {form.install_commands.filter((item) => item.trim()).length > 0 ? (
+                  form.install_commands
+                    .filter((item) => item.trim())
+                    .map((cmd, index) => (
+                      <p key={`${cmd}-${index}`} className="font-mono text-xs text-slate-800">
+                        {index + 1}. {cmd}
+                      </p>
+                    ))
+                ) : (
+                  <p className="text-xs text-slate-500">暂无安装命令</p>
+                )}
+              </div>
+              <div className="mt-4 space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-700">案例展示</p>
+                {form.cases.length > 0 ? (
+                  <p className="text-xs text-slate-700">
+                    已配置 {form.cases.length} 条案例，详情页将展示用户输入/执行过程/结果输出。
+                  </p>
+                ) : (
+                  <p className="text-xs text-slate-500">暂无案例</p>
+                )}
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="space-y-4">
             <FieldText label="标题" required value={form.title} onChange={(title) => setForm((p) => ({ ...p, title }))} />
@@ -284,7 +343,7 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
             <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
               <p className="text-sm font-medium text-slate-800">
                 Zip 上传区
-                <span className="ml-1 text-rose-500">*</span>
+                <span className="ml-1 text-slate-500">（与仓库地址二选一）</span>
               </p>
               <input
                 type="file"
@@ -460,8 +519,37 @@ export function SkillAuthoringPage({ mode, id }: SkillAuthoringPageProps) {
           <Badge tone="info">状态：{status}</Badge>
           {recordId ? <p className="text-xs text-slate-500">记录ID：{recordId}</p> : null}
           {tip ? <p className="text-xs text-slate-600">{tip}</p> : null}
-          {/* NOTE(decision-4): Skill install_commands/usage_doc 当前前端补齐，后端契约待补。 */}
-          <Placeholder title="必填项" todos={['标题', 'Zip 文件', '安装命令至少 1 条']} />
+          <button
+            type="button"
+            onClick={() => setPreviewMode((value) => !value)}
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 hover:bg-slate-50"
+          >
+            {previewMode ? '返回编辑表单' : '效果预览'}
+          </button>
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <p className="mb-2 text-xs font-medium text-slate-700">实时检查清单</p>
+            <ul className="space-y-1">
+              {checklist.map((item) => (
+                <li key={item.label} className={`text-xs ${item.passed ? 'text-emerald-700' : 'text-slate-500'}`}>
+                  {item.passed ? '✓' : '○'} {item.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-lg border border-rose-200 bg-rose-50 p-3">
+            <p className="mb-2 text-xs font-medium text-rose-700">错误汇总</p>
+            {validationErrors.length > 0 ? (
+              <ul className="space-y-1">
+                {validationErrors.map((error) => (
+                  <li key={error} className="text-xs text-rose-700">
+                    - {error}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-emerald-700">当前无错误，可保存或提交。</p>
+            )}
+          </div>
         </div>
       }
       actionSlot={

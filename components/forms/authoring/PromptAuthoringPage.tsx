@@ -6,7 +6,6 @@ import { FieldMultiSelect } from '@/components/forms/FieldMultiSelect';
 import { FieldText } from '@/components/forms/FieldText';
 import { FieldTextarea } from '@/components/forms/FieldTextarea';
 import { FormActions } from '@/components/forms/FormActions';
-import { Placeholder } from '@/components/layout/Placeholder';
 import { FormPageTemplate } from '@/components/page-templates/FormPageTemplate';
 import { PromptEffectPreview } from '@/components/prompts/PromptEffectPreview';
 import { categoryOptions, tagOptions } from '@/components/forms/authoring/options';
@@ -32,6 +31,8 @@ interface PromptFormState {
   description: string;
   model_names: string[];
   prompt_body: string;
+  zip_asset_id: string;
+  zip_file_name: string;
   showcases: Array<{
     id: string;
     asset_id: string;
@@ -46,6 +47,8 @@ const EMPTY_FORM: PromptFormState = {
   description: '',
   model_names: [],
   prompt_body: '',
+  zip_asset_id: '',
+  zip_file_name: '',
   showcases: [],
   category_ids: [],
   tag_ids: [],
@@ -99,6 +102,8 @@ function detailToForm(detail: PromptDetailVM): PromptFormState {
     description: detail.content.one_liner ?? '',
     model_names: modelNames,
     prompt_body: detail.prompt_text ?? '',
+    zip_asset_id: '',
+    zip_file_name: '',
     showcases: detail.showcases.map((item, index) => ({
       id: item.id || `showcase-${index + 1}`,
       asset_id: item.asset_id,
@@ -177,6 +182,7 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
       { label: '一句话描述', passed: Boolean(form.description.trim()) },
       { label: '模型名称（>=1）', passed: form.model_names.length > 0 },
       { label: 'Prompt 正文', passed: Boolean(form.prompt_body.trim()) },
+      { label: 'Zip 上传（可选）', passed: true },
       { label: '分类（>=1）', passed: form.category_ids.length > 0 },
       { label: '标签（可选）', passed: true },
     ],
@@ -205,6 +211,26 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
         ),
     );
     setForm((prev) => ({ ...prev, showcases: [...prev.showcases, ...next.filter((item) => item.asset_id)] }));
+  }
+
+  async function readFileAsDataUrl(file: File): Promise<string> {
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ''));
+      reader.onerror = () => reject(new Error('read file failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleUploadZip(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const asset = await readFileAsDataUrl(file);
+    setForm((prev) => ({
+      ...prev,
+      zip_asset_id: asset,
+      zip_file_name: file.name,
+    }));
   }
 
   const persist = async (intent: 'save' | 'submit') => {
@@ -295,6 +321,27 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
               onChange={(description) => setForm((p) => ({ ...p, description }))}
               rows={3}
             />
+            <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+              <p className="text-sm font-medium text-slate-800">Zip 上传区（可选）</p>
+              <input
+                type="file"
+                accept=".zip,application/zip,application/x-zip-compressed"
+                onChange={(event) => void handleUploadZip(event.target.files)}
+                className="block w-full text-sm text-slate-700 file:mr-3 file:rounded-md file:border file:border-slate-300 file:bg-white file:px-3 file:py-1.5 file:text-sm"
+              />
+              {form.zip_file_name ? (
+                <div className="flex items-center justify-between rounded border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
+                  <span>已上传：{form.zip_file_name}</span>
+                  <button
+                    type="button"
+                    onClick={() => setForm((prev) => ({ ...prev, zip_asset_id: '', zip_file_name: '' }))}
+                    className="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700"
+                  >
+                    移除
+                  </button>
+                </div>
+              ) : null}
+            </div>
             <FieldMultiSelect
               label="模型名称（可多选，可手动输入）"
               required
@@ -402,7 +449,6 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
               <p className="text-xs text-emerald-700">当前无错误，可保存或提交。</p>
             )}
           </div>
-          <Placeholder title="必填项" todos={['标题', '模型名称（至少1个）', 'Prompt 正文']} />
         </div>
       }
       actionSlot={

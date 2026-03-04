@@ -156,7 +156,7 @@ export function FavoritesLibrary() {
             { label: 'Prompt', value: 'prompt' as const },
             { label: 'Skill', value: 'skill' as const },
             { label: 'MCP', value: 'mcp' as const },
-            { label: '教程', value: 'tutorial' as const },
+            { label: '帖子', value: 'tutorial' as const },
           ].map((tab) => (
             <button
               key={tab.value}
@@ -187,7 +187,7 @@ export function FavoritesLibrary() {
           { label: 'Prompt', value: 'prompt' as const },
           { label: 'Skill', value: 'skill' as const },
           { label: 'MCP', value: 'mcp' as const },
-          { label: '教程', value: 'tutorial' as const },
+          { label: '帖子', value: 'tutorial' as const },
         ].map((tab) => (
           <button
             key={tab.value}

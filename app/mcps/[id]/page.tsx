@@ -295,16 +295,24 @@ export default function McpDetailPage() {
                       案例效果展示区（图片/视频占位，暂无内容）
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">用户输入</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.user_input}</p>
+                      <h4 className="text-sm font-semibold text-slate-900">场景（我想让 Agent 做什么）</h4>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.title || '暂无'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">执行过程</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.execution_process}</p>
+                      <h4 className="text-sm font-semibold text-slate-900">调用（示例指令/对话）</h4>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
+                        {item.user_input || item.execution_process || '暂无'}
+                      </p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">结果输出</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.agent_output}</p>
+                      <h4 className="text-sm font-semibold text-slate-900">结果（成功标志/返回示例）</h4>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.agent_output || '暂无'}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">风险（权限范围与注意事项）</h4>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
+                        {item.execution_process || '请在最小权限范围内运行，并先在测试环境验证。'}
+                      </p>
                     </div>
                   </article>
                 ))}
