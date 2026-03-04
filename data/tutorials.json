@@ -1,26 +1,336 @@
 [
   {
     "content": {
-      "id": "tutorial-001",
+      "id": "tutorial-community-text-001",
       "type": "tutorial",
       "status": "Listed",
-      "title": "OpenClaw 国内 API 配置指南",
-      "one_liner": "快速配置 OpenClaw 使用 MiniMax/智谱国内 API",
+      "title": "文字帖子：高质量日报模板分享",
+      "one_liner": "一套可复用的日报模板，适合团队日更。",
+      "category_id": "cat-writing",
+      "category_ids": [
+        "cat-writing",
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "post_text",
+        "tag-productivity"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_Ce3wzkvxNHk.png",
+      "created_at": "2026-03-04T09:00:00.000Z",
+      "updated_at": "2026-03-04T09:00:00.000Z"
+    },
+    "body_markdown": "# 文字帖子：高质量日报模板分享\n\n## 适用场景\n- 日常站会同步\n- 周报沉淀与复盘\n- 跨团队信息对齐\n\n## 推荐结构\n1. 今日完成（结果导向）\n2. 风险与阻塞（需要谁支持）\n3. 明日计划（可验收）\n\n## 可复制模板\n```markdown\n# Daily Report - {{date}}\n\n## 今日完成\n- 事项：\n- 结果：\n- 影响：\n\n## 风险与阻塞\n- 风险：\n- 影响范围：\n- 需要支持：\n\n## 明日计划\n- P0：\n- P1：\n```\n\n## 质量检查\n- 每条事项都可验证\n- 不写过程堆砌，只写结果\n- 阻塞必须带 owner\n",
+    "media": [
+      {
+        "id": "tutorial-community-text-001-media-1",
+        "asset_id": "images/unsplash_Ce3wzkvxNHk.png",
+        "media_type": "image",
+        "sort_order": 1
+      },
+      {
+        "id": "tutorial-community-text-001-media-2",
+        "asset_id": "images/unsplash_J3NRFu2QWaw.png",
+        "media_type": "image",
+        "sort_order": 2
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-image-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "图像帖子：电商主图提示词合集",
+      "one_liner": "整理了适配商品主图的图像提示词结构。",
+      "category_id": "cat-design",
+      "category_ids": [
+        "cat-design",
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "post_image",
+        "tag-workflow"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_J3NRFu2QWaw.png",
+      "created_at": "2026-03-04T09:05:00.000Z",
+      "updated_at": "2026-03-04T09:05:00.000Z"
+    },
+    "body_markdown": "# 图像帖子：电商主图提示词合集\n\n## 目标\n提升主图点击率，保证产品信息清晰、风格一致。\n\n## 提示词骨架\n- 主体：产品名 + 材质 + 关键卖点\n- 场景：干净背景 / 生活化场景\n- 光线：柔光/硬光 + 阴影方向\n- 镜头：焦段、视角、构图\n\n## 示例\n```\n极简电商主图，白色无缝背景，产品居中，45°俯拍，\n柔和侧光，真实阴影，8K，高细节，品牌色点缀。\n```\n\n## 常见问题\n- 元素过多导致主体不突出\n- 光线不统一导致质感下降\n- 文字过多影响平台审核\n",
+    "media": [
+      {
+        "id": "tutorial-community-image-001-media-1",
+        "asset_id": "images/unsplash_JDlLaFMVxBA.png",
+        "media_type": "image",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-video-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "视频帖子：短视频脚本到分镜工作流",
+      "one_liner": "从脚本、镜头到生成参数的一体化流程。",
+      "category_id": "cat-design",
+      "category_ids": [
+        "cat-design",
+        "cat-automation"
+      ],
+      "tag_ids": [
+        "post_video",
+        "tag-workflow"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_JDlLaFMVxBA.png",
+      "created_at": "2026-03-04T09:10:00.000Z",
+      "updated_at": "2026-03-04T09:10:00.000Z"
+    },
+    "body_markdown": "# 视频帖子：短视频脚本到分镜工作流\n\n## 四步流程\n1. 目标定义：转化/完播/互动\n2. 脚本拆段：开场钩子-核心信息-行动指令\n3. 分镜设计：镜头运动、景别、节奏点\n4. 生成与复核：画面连贯性、字幕、音画同步\n\n## 分镜模板\n| 段落 | 时长 | 画面 | 台词 |\n|---|---:|---|---|\n| Hook | 0-3s | 快切特写 | 抛出痛点 |\n| Value | 3-18s | 主体演示 | 给出方法 |\n| CTA | 18-22s | 品牌/产品定格 | 引导行动 |\n\n## 交付建议\n- 固定 2-3 套镜头模板\n- 每周回看完播率并调节开场\n",
+    "media": [
+      {
+        "id": "tutorial-community-video-001-media-1",
+        "asset_id": "images/unsplash_OkO9BDH-IEc.png",
+        "media_type": "image",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-audio-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "音频帖子：播客配音 Prompt 实战",
+      "one_liner": "覆盖语气控制、停顿和情绪曲线。",
+      "category_id": "cat-learning",
+      "category_ids": [
+        "cat-learning",
+        "cat-writing"
+      ],
+      "tag_ids": [
+        "post_audio",
+        "tag-beginner"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_L8LwAkEJsDM.png",
+      "created_at": "2026-03-04T09:15:00.000Z",
+      "updated_at": "2026-03-04T09:15:00.000Z"
+    },
+    "body_markdown": "# 音频帖子：播客配音 Prompt 实战\n\n## 核心参数\n- 语速：0.9x / 1.0x / 1.1x\n- 情绪：中性、热情、叙事\n- 停顿：句号 400ms，段落 800ms\n\n## 提示词模板\n```\n请用「温和专业」语气朗读以下文案，\n语速 1.0x，重点词加强重音，\n每段结尾自然停顿 0.8 秒。\n```\n\n## 质检清单\n- 噪声与爆破音\n- 人声与背景乐平衡\n- 专有名词读法一致\n",
+    "media": [
+      {
+        "id": "tutorial-community-audio-001-media-1",
+        "asset_id": "images/unsplash_Rdu4hhYP-0s.png",
+        "media_type": "image",
+        "sort_order": 1
+      },
+      {
+        "id": "tutorial-community-audio-001-media-2",
+        "asset_id": "images/unsplash_UbDdynMmcX0.png",
+        "media_type": "image",
+        "sort_order": 2
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-digital-human-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "数字人帖子：虚拟主播角色设定模板",
+      "one_liner": "包含人设、语气、互动规则和禁忌项。",
+      "category_id": "cat-design",
+      "category_ids": [
+        "cat-design",
+        "cat-writing"
+      ],
+      "tag_ids": [
+        "post_digital_human",
+        "tag-agent"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_OkO9BDH-IEc.png",
+      "created_at": "2026-03-04T09:20:00.000Z",
+      "updated_at": "2026-03-04T09:20:00.000Z"
+    },
+    "body_markdown": "# 数字人帖子：虚拟主播角色设定模板\n\n## 角色定义\n- 人设关键词：专业、亲和、简洁\n- 受众：新手运营/内容团队\n- 禁区：医疗、法律等高风险建议\n\n## 互动规则\n- 回答长度：80-150 字\n- 优先给步骤，不空谈概念\n- 遇到高风险请求先提醒边界\n\n## 运营建议\n- 固定开场语提高识别度\n- 建立 FAQ 词库减少漂移\n- 每周抽样评估口径一致性\n",
+    "media": [
+      {
+        "id": "tutorial-community-digital-human-001-media-1",
+        "asset_id": "images/unsplash_VTV9mpLLGks.png",
+        "media_type": "image",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-browser-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "浏览器帖子：网页自动化抓取实践",
+      "one_liner": "面向浏览器场景的自动化任务拆解。",
+      "category_id": "cat-automation",
+      "category_ids": [
+        "cat-automation",
+        "cat-coding"
+      ],
+      "tag_ids": [
+        "post_browser",
+        "tag-workflow"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_RIrPihVB9R4.png",
+      "created_at": "2026-03-04T09:25:00.000Z",
+      "updated_at": "2026-03-04T09:25:00.000Z"
+    },
+    "body_markdown": "# 浏览器帖子：网页自动化抓取实践\n\n## 推荐流程\n1. 定位稳定选择器\n2. 分页策略与去重规则\n3. 异常重试与限速\n4. 结果落库与校验\n\n## 关键策略\n- 优先 data-testid / aria 属性\n- 设置最大重试次数与回退页\n- 记录抓取时间与来源 URL\n\n## 示例伪代码\n```ts\nfor (const page of pages) {\n  await open(page)\n  const rows = await parseRows()\n  await save(rows)\n}\n```\n",
+    "media": [
+      {
+        "id": "tutorial-community-browser-001-media-1",
+        "asset_id": "images/unsplash_c-BbocC_HJ4.png",
+        "media_type": "image",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-coding-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "编程帖子：从需求到代码评审模板",
+      "one_liner": "帮助团队建立可复用的编码与评审流程。",
+      "category_id": "cat-coding",
+      "category_ids": [
+        "cat-coding",
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "post_coding",
+        "tag-productivity"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_Rdu4hhYP-0s.png",
+      "created_at": "2026-03-04T09:30:00.000Z",
+      "updated_at": "2026-03-04T09:30:00.000Z"
+    },
+    "body_markdown": "# 编程帖子：从需求到代码评审模板\n\n## 需求澄清\n- 输入/输出定义\n- 成功与失败路径\n- 性能与边界条件\n\n## 提交规范\n- 一个提交一个目的\n- 关键逻辑配最小测试\n- PR 描述包含风险与回滚\n\n## Review 清单\n- 正确性\n- 可维护性\n- 安全与权限\n- 测试覆盖\n",
+    "media": [
+      {
+        "id": "tutorial-community-coding-001-media-1",
+        "asset_id": "images/unsplash_dxp8NcWrqGM.png",
+        "media_type": "image",
+        "sort_order": 1
+      },
+      {
+        "id": "tutorial-community-coding-001-media-2",
+        "asset_id": "images/unsplash_ePhpXlJ6H2g.png",
+        "media_type": "image",
+        "sort_order": 2
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-agent-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "Agent 帖子：任务代理协同模式",
+      "one_liner": "介绍单代理与多代理协同分工方式。",
+      "category_id": "cat-automation",
+      "category_ids": [
+        "cat-automation",
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "post_agent",
+        "tag-agent"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_UbDdynMmcX0.png",
+      "created_at": "2026-03-04T09:35:00.000Z",
+      "updated_at": "2026-03-04T09:35:00.000Z"
+    },
+    "body_markdown": "# Agent 帖子：任务代理协同模式\n\n## 常见角色\n- Planner：拆解任务\n- Executor：执行步骤\n- Reviewer：检查结果\n\n## 协同原则\n- 上下文最小化，防止污染\n- 每步定义可验收输出\n- 失败可回滚到上一步\n\n## 适用任务\n- 批量内容生成\n- 代码重构与回归\n- 数据汇总与报告\n",
+    "media": [
+      {
+        "id": "tutorial-community-agent-001-media-1",
+        "asset_id": "images/unsplash_eyOM6BAaCNE.png",
+        "media_type": "image",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-workflow-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "自动工作流帖子：日报全自动发布",
+      "one_liner": "把采集、整理、审核、发布串成流水线。",
+      "category_id": "cat-automation",
+      "category_ids": [
+        "cat-automation",
+        "cat-learning"
+      ],
+      "tag_ids": [
+        "post_workflow",
+        "tag-workflow"
+      ],
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_VTV9mpLLGks.png",
+      "created_at": "2026-03-04T09:40:00.000Z",
+      "updated_at": "2026-03-04T09:40:00.000Z"
+    },
+    "body_markdown": "# 自动工作流帖子：日报全自动发布\n\n## 节点设计\n1. 数据采集\n2. 清洗与结构化\n3. 规则校验\n4. 审核发布\n\n## 失败处理\n- 节点重试（指数退避）\n- 人工兜底审批\n- 回滚到上次稳定版本\n\n## 监控指标\n- 成功率\n- 平均时延\n- 人工介入率\n",
+    "media": [
+      {
+        "id": "tutorial-community-workflow-001-media-1",
+        "asset_id": "images/unsplash_mAuGYtp2vh8.png",
+        "media_type": "image",
+        "sort_order": 1
+      }
+    ]
+  },
+  {
+    "content": {
+      "id": "tutorial-community-knowledge-base-001",
+      "type": "tutorial",
+      "status": "Listed",
+      "title": "知识库帖子：问答语料清洗规范",
+      "one_liner": "介绍知识入库、切片与检索优化方法。",
       "category_id": "cat-learning",
       "category_ids": [
         "cat-learning",
         "cat-coding"
       ],
       "tag_ids": [
-        "tag-workflow",
-        "tag-beginner"
+        "post_knowledge_base",
+        "tag-open-source"
       ],
-      "author_id": "seed-importer",
-      "cover_asset_id": null,
-      "created_at": "2026-03-03T00:00:00.000Z",
-      "updated_at": "2026-03-03T00:00:00.000Z"
+      "author_id": "community-admin",
+      "cover_asset_id": "images/unsplash_XDI4V4lcs5A.png",
+      "created_at": "2026-03-04T09:45:00.000Z",
+      "updated_at": "2026-03-04T09:45:00.000Z"
     },
-    "body_markdown": "# OpenClaw 国内 API 配置指南\n\n本指南帮助用户快速将 OpenClaw 配置为使用国内 LLM API 服务，支持 MiniMax 和智谱（GLM）两个主流国内 API。\n\n> **与旧版教程的区别**：新版 OpenClaw（2026.1.24+）无需手动设置模型，使用配置向导即可自动识别并配置可用模型。\n\n## 目录\n\n- [方法一：使用配置向导（推荐）](#方法一使用配置向导推荐)\n- [方法二：手动配置](#方法二手动配置)\n- [验证配置](#验证配置)\n- [常见问题](#常见问题)\n\n---\n\n## 方法一：使用配置向导（推荐）\n\nOpenClaw 新版本（2026.1.24+）内置配置向导，**无需手动设置模型**，向导会自动识别并配置可用模型，一键完成国内 API 配置。\n\n### 1.1 运行配置向导\n\n```bash\nopenclaw onboard\n```\n\n或使用快捷命令：\n\n```bash\nopenclaw onboard --provider minimax-cn\nopenclaw onboard --provider zhipu-cn\n```\n\n### 1.2 向导操作流程\n\n运行命令后，向导会提示你完成以下步骤：\n\n1. **选择 API 服务商**\n   - 选择 `minimax-cn`（MiniMax 国内版）\n   - 或选择 `zhipu-cn`（智谱 AI）\n\n2. **输入 API Key**\n   - 粘贴从对应平台获取的 API Key\n   - MiniMax: https://www.minimaxi.com → 控制台 → API Keys\n   - 智谱 AI: https://bigmodel.cn → 控制台 → API Keys\n\n3. **选择模型**\n   - MiniMax 推荐: `MiniMax-M2.1`\n   - 智谱推荐: `glm-4.7`\n\n4. **确认配置**\n   - 向导会自动写入配置文件\n   - 自动重启 Gateway\n\n### 1.3 验证配置\n\n配置完成后，验证是否成功：\n\n```bash\nopenclaw models list\n```\n\n**成功输出示例**：\n\n```\nModel                                      Input      Ctx      Local Auth  Tags\nminimax-cn/MiniMax-M2.1                    text       200k     no    yes   default,configured\n```\n\n### 1.4 测试模型\n\n```bash\nopenclaw agent --message \"你好，请介绍一下自己\" --session-id test\n```\n\n---\n\n## 方法二：手动配置\n\n如果需要自定义配置，可以手动编辑配置文件。\n\n### 2.1 查找配置文件\n\n```bash\n~/.openclaw/openclaw.json\n```\n\n### 2.2 备份配置\n\n```bash\ncp ~/.openclaw/openclaw.json ~/.openclaw/openclaw.json.backup\n```\n\n### 2.3 MiniMax 配置示例\n\n```json\n{\n  \"models\": {\n    \"mode\": \"merge\",\n    \"providers\": {\n      \"minimax-cn\": {\n        \"baseUrl\": \"https://api.minimaxi.com/anthropic\",\n        \"apiKey\": \"YOUR_MINIMAX_API_KEY\",\n        \"api\": \"anthropic-messages\",\n        \"models\": [\n          {\n            \"id\": \"MiniMax-M2.1\",\n            \"name\": \"MiniMax M2.1\",\n            \"reasoning\": true,\n            \"input\": [\"text\"],\n            \"contextWindow\": 204800,\n            \"maxTokens\": 131072\n          }\n        ]\n      }\n    }\n  },\n  \"agents\": {\n    \"defaults\": {\n      \"model\": {\n        \"primary\": \"minimax-cn/MiniMax-M2.1\"\n      }\n    }\n  }\n}\n```\n\n### 2.4 智谱配置示例\n\n```json\n{\n  \"models\": {\n    \"mode\": \"merge\",\n    \"providers\": {\n      \"zhipu-cn\": {\n        \"baseUrl\": \"https://open.bigmodel.cn/api/anthropic\",\n        \"apiKey\": \"YOUR_ZHIPU_API_KEY\",\n        \"api\": \"anthropic-messages\",\n        \"models\": [\n          {\n            \"id\": \"glm-4.7\",\n            \"name\": \"GLM-4.7\",\n            \"reasoning\": true,\n            \"input\": [\"text\"],\n            \"contextWindow\": 200000,\n            \"maxTokens\": 8192\n          }\n        ]\n      }\n    }\n  },\n  \"agents\": {\n    \"defaults\": {\n      \"model\": {\n        \"primary\": \"zhipu-cn/glm-4.7\"\n      }\n    }\n  }\n}\n```\n\n### 2.5 重启 Gateway\n\n```bash\nopenclaw gateway restart\n```\n\n---\n\n## 验证配置\n\n### 检查模型列表\n\n```bash\nopenclaw models list\n```\n\n### 检查 Gateway 状态\n\n```bash\nopenclaw gateway status\n```\n\n### 测试 API 连接\n\n```bash\nopenclaw agent --message \"Hello\" --session-id test\n```\n\n---\n\n## 常见问题\n\n### Q1: 向导找不到怎么办？\n\n确保 OpenClaw 版本是最新的：\n\n```bash\nopenclaw --version\n```\n\n如需更新：\n\n```bash\nopenclaw update\n```\n\n### Q2: API Key 获取地址？\n\n| 服务商 | 地址 |\n|--------|------|\n| MiniMax | https://www.minimaxi.com → 控制台 → API Keys |\n| 智谱 AI | https://bigmodel.cn → 控制台 → API Keys |\n\n### Q3: 配置后模型未显示？\n\n1. 重启 Gateway：`openclaw gateway restart`\n2. 检查 API Key 是否正确\n3. 查看日志：`tail -f ~/.openclaw/logs/gateway.log`\n\n### Q4: 如何切换模型？\n\n在对话中使用：\n\n```bash\n/model minimax-cn/MiniMax-M2.1\n# 或\n/model zhipu-cn/glm-4.7\n```\n\n---\n\n## 支持的模型\n\n| 服务商 | 模型 | 上下文 |\n|--------|------|--------|\n| MiniMax | MiniMax-M2.1 | 200k |\n| 智谱 AI | glm-4.7 | 200k |\n\n---\n\n## 相关链接\n\n- [OpenClaw 官方文档](https://docs.clawd.bot)\n- [MiniMax 官网](https://www.minimaxi.com)\n- [智谱 AI 官网](https://bigmodel.cn)\n\n---\n\n## 版本\n\n- 更新日期: 2026-03-02\n- 推荐方法: 使用 `openclaw onboard` 向导\n",
-    "media": []
+    "body_markdown": "# 知识库帖子：问答语料清洗规范\n\n## 入库前处理\n- 去重与格式统一\n- 隐私字段脱敏\n- 语义切片（按段落/主题）\n\n## 检索优化\n- 标题与关键词增强\n- 高频问法同义词扩展\n- 低质量片段淘汰\n\n## 验收标准\n- Top3 命中率\n- 召回覆盖率\n- 幻觉率监控\n",
+    "media": [
+      {
+        "id": "tutorial-community-knowledge-base-001-media-1",
+        "asset_id": "images/unsplash_uwu9UooMVsE.png",
+        "media_type": "image",
+        "sort_order": 1
+      },
+      {
+        "id": "tutorial-community-knowledge-base-001-media-2",
+        "asset_id": "images/unsplash_wNNdhPycLkU.png",
+        "media_type": "image",
+        "sort_order": 2
+      }
+    ]
   }
 ]

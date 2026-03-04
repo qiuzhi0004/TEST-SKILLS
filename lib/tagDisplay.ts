@@ -26,6 +26,16 @@ const TAG_LABEL_MAP: Record<string, string> = {
   prompt_skincare: '护肤',
   prompt_wildlife: '野生动物',
   prompt_cinematic: '电影感',
+  post_text: '文字',
+  post_image: '图像',
+  post_video: '视频',
+  post_audio: '音频',
+  post_digital_human: '数字人',
+  post_browser: '浏览器',
+  post_coding: '编程',
+  post_agent: 'Agent',
+  post_workflow: '自动工作流',
+  post_knowledge_base: '知识库',
 };
 
 function isHiddenTag(tagId: string): boolean {

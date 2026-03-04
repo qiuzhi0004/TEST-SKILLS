@@ -1,16 +1,18 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Badge } from '@/components/common/Badge';
 import { CopyButton } from '@/components/common/CopyButton';
 import { Placeholder } from '@/components/layout/Placeholder';
 import { SectionCard } from '@/components/layout/SectionCard';
+import { StatusBanner } from '@/components/layout/StatusBanner';
 import { CommentThread } from '@/components/social/CommentThread';
 import { SocialBar } from '@/components/social/SocialBar';
-import { StatusBanner } from '@/components/layout/StatusBanner';
 import { getSkill } from '@/lib/api';
 import { toDisplayTags } from '@/lib/tagDisplay';
+import { pickUnsplash, resolveCoverSrc, toAssetSrc } from '@/lib/visualAssets';
 import type { SkillDetailVM } from '@/types/skill';
 
 function parseRepoRef(repoUrl: string | null, title: string): string {
@@ -31,6 +33,23 @@ function parseRepoRef(repoUrl: string | null, title: string): string {
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-_]/g, '');
+}
+
+function looksLikeVideo(src?: string | null): boolean {
+  if (!src) return false;
+  return /\.(mp4|webm|mov)(\?|$)/i.test(src);
+}
+
+function toSourceLabel(source: SkillDetailVM['source']): string {
+  if (source === 'official') return '官方';
+  return '社区';
+}
+
+function resolveCaseMedia(item: SkillDetailVM['cases'][number], seed: string) {
+  const media = item.media[0];
+  const src = media?.external_url ?? toAssetSrc(media?.asset_id) ?? pickUnsplash(seed, 'skill');
+  const isVideo = media?.media_type === 'video' || looksLikeVideo(media?.asset_id) || looksLikeVideo(media?.external_url);
+  return { src, isVideo };
 }
 
 export default function SkillDetailPage() {
@@ -67,41 +86,90 @@ export default function SkillDetailPage() {
     );
   }
 
-  const displayTags = toDisplayTags(detail.content.tag_ids, 3);
+  const displayTags = toDisplayTags(detail.content.tag_ids, 4);
   const repoRef = parseRepoRef(detail.repo_url, detail.content.title);
-  const installCommands = [
-    `npx skills add ${repoRef}`,
-    `bunx skills add ${repoRef}`,
-    `pnpm dlx skills add ${repoRef}`,
-  ];
+  const installCommands = detail.install_commands.length > 0
+    ? detail.install_commands
+    : [
+        `npx skills add ${repoRef}`,
+        `bunx skills add ${repoRef}`,
+        `pnpm dlx skills add ${repoRef}`,
+      ];
+
+  const heroAsset = detail.content.cover_asset_id;
+  const heroSrc = resolveCoverSrc({ assetId: heroAsset, seed: `skill:${detail.content.id}:hero`, type: 'skill' });
+  const heroIsVideo = looksLikeVideo(heroAsset);
 
   return (
     <div className="space-y-4">
       <StatusBanner type="skill" id={id} status={detail.content.status} />
-      <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+
+      <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.08)]">
+        <div className="absolute inset-0">
+          {heroIsVideo ? (
+            <video src={heroSrc} autoPlay muted loop playsInline className="h-full w-full object-cover" />
+          ) : (
+            <Image
+              src={heroSrc}
+              alt={detail.content.title}
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/20" />
+        </div>
+
+        <div className="relative p-5 sm:p-6">
+          <p className="text-xs uppercase tracking-[0.14em] text-[#f8d3bf]">Skill Detail</p>
+          <h1 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">{detail.content.title}</h1>
+          <p className="mt-2 max-w-3xl text-sm text-slate-200">{detail.content.one_liner || '暂无一句话描述'}</p>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-100">
+            <span className="rounded-full border border-white/45 bg-black/20 px-3 py-1">来源：{toSourceLabel(detail.source)}</span>
+            <span className="rounded-full border border-white/45 bg-black/20 px-3 py-1">提供方：{detail.provider_name || '暂无'}</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
-          <SectionCard title="案例展示">
+          <SectionCard title="案例展示" description="展示输入、过程与输出，帮助快速判断可复用性。">
             {detail.cases.length > 0 ? (
               <div className="space-y-4">
-                {detail.cases.map((item) => (
-                  <article key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/50 p-4">
-                    <div className="rounded-md border border-slate-200 bg-slate-100 px-4 py-6 text-center text-sm text-slate-600">
-                      案例效果展示区（图片/视频占位，暂无内容）
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-900">用户输入</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.user_input}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-900">执行过程</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.execution_process}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-900">结果输出</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.agent_output}</p>
-                    </div>
-                  </article>
-                ))}
+                {detail.cases.map((item, index) => {
+                  const media = resolveCaseMedia(item, `skill:${detail.content.id}:case:${item.id || index}`);
+                  return (
+                    <article key={item.id} className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                      {media.isVideo ? (
+                        <video src={media.src} controls playsInline className="aspect-[16/9] h-auto w-full object-cover" />
+                      ) : (
+                        <Image
+                          src={media.src}
+                          alt={item.title || '案例效果图'}
+                          width={1280}
+                          height={720}
+                          className="aspect-[16/9] h-auto w-full object-cover"
+                        />
+                      )}
+
+                      <div className="space-y-3 border-t border-slate-200 bg-white p-4">
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">用户输入</h4>
+                          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.user_input || '暂无'}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">执行过程</h4>
+                          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.execution_process || '暂无'}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">结果输出</h4>
+                          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.agent_output || '暂无'}</p>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             ) : (
               <p className="text-sm text-slate-500">暂无案例</p>
@@ -113,23 +181,23 @@ export default function SkillDetailPage() {
             headerRight={(
               <button
                 type="button"
-                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-100"
+                className="rounded-lg border border-[#f7b79a] bg-[#fff4ee] px-4 py-2 text-sm font-medium text-[#c94f1d] transition hover:bg-[#ffe8dc]"
                 onClick={() => {}}
               >
-                一键下载Zip
+                一键下载 Zip
               </button>
             )}
           >
             <div className="space-y-3 text-sm text-slate-700">
-              <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-600">一键复制安装指令（npx / bunx / pnpm）</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-sm font-medium text-slate-700">一键复制安装指令（npx / bunx / pnpm）</p>
                 <div className="mt-3 space-y-2">
                   {installCommands.map((command, index) => (
                     <div
                       key={command}
-                      className="flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 py-2"
+                      className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2"
                     >
-                      <p className="font-mono text-sm text-slate-800">
+                      <p className="font-mono text-xs text-slate-800 sm:text-sm">
                         {index + 1}. {command}
                       </p>
                       <CopyButton value={command} />
@@ -137,6 +205,13 @@ export default function SkillDetailPage() {
                   ))}
                 </div>
               </div>
+
+              {detail.usage_doc ? (
+                <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-700">
+                  <h4 className="text-sm font-semibold text-slate-900">使用说明</h4>
+                  <p className="mt-2 whitespace-pre-wrap">{detail.usage_doc}</p>
+                </div>
+              ) : null}
             </div>
           </SectionCard>
 
@@ -146,62 +221,65 @@ export default function SkillDetailPage() {
         </div>
 
         <div className="space-y-4">
-          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="space-y-4">
-              <div className="space-y-3 text-sm text-slate-700">
-                <h3 className="text-base font-semibold text-slate-900">基础信息</h3>
+          <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_20px_rgba(15,23,42,0.08)]">
+            <div className="bg-gradient-to-r from-[#fff5ef] via-[#fffaf8] to-white px-5 py-4">
+              <h3 className="text-base font-semibold text-slate-900">基础信息</h3>
+            </div>
 
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">标签</p>
-                  {displayTags.length > 0 ? (
-                    <div className="flex flex-wrap gap-1.5">
-                      {displayTags.map((tag) => (
-                        <Badge key={tag.id} tone="info">
-                          {tag.label}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-slate-600">暂无</p>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">名称</p>
-                  <p className="text-sm text-slate-800">{detail.content.title}</p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">类型</p>
-                  <p className="text-sm text-slate-800">Skill</p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">提供方</p>
-                  <p className="text-sm text-slate-800">{detail.provider_name || '暂无'}</p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">仓库地址</p>
-                  {detail.repo_url ? (
-                    <a
-                      href={detail.repo_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block break-all text-sm text-sky-700 hover:underline"
-                    >
-                      {detail.repo_url}
-                    </a>
-                  ) : (
-                    <p className="text-sm text-slate-800">暂无</p>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">用途一句话</p>
-                  <p className="text-sm text-slate-800">{detail.content.one_liner ?? '暂无'}</p>
-                </div>
+            <div className="space-y-4 p-5 text-sm text-slate-700">
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">标签</p>
+                {displayTags.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {displayTags.map((tag) => (
+                      <Badge key={tag.id} tone="info">
+                        {tag.label}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-600">暂无</p>
+                )}
               </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">名称</p>
+                <p className="text-sm text-slate-800">{detail.content.title}</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">类型</p>
+                <p className="text-sm text-slate-800">Skill</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">提供方</p>
+                <p className="text-sm text-slate-800">{detail.provider_name || '暂无'}</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">仓库地址</p>
+                {detail.repo_url ? (
+                  <a
+                    href={detail.repo_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block break-all text-sm text-sky-700 hover:underline"
+                  >
+                    {detail.repo_url}
+                  </a>
+                ) : (
+                  <p className="text-sm text-slate-800">暂无</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">用途一句话</p>
+                <p className="text-sm text-slate-800">{detail.content.one_liner ?? '暂无'}</p>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-200 p-5">
               <SocialBar target={target} />
             </div>
           </section>

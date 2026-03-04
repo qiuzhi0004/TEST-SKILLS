@@ -19,7 +19,7 @@
 | `/mcps/[id]` | MCP 详情 | 详情 | 1.2 前台资源 |
 | `/mcps/[id]/edit` | MCP 编辑 | 编辑 | 1.2 前台资源 |
 | `/tutorials` | 教程列表 | 列表 | 1.2 前台资源 |
-| `/tutorials/new` | 教程创建 | 发布/创建 | 1.2 前台资源 |
+| `/tutorials/new` | 创建帖子 | 发布/创建 | 1.2 前台资源 |
 | `/tutorials/[id]` | 教程详情 | 详情 | 1.2 前台资源 |
 | `/tutorials/[id]/edit` | 教程编辑 | 编辑 | 1.2 前台资源 |
 | `/ranks` | 榜单页 | 榜单 | 1.3 榜单 |

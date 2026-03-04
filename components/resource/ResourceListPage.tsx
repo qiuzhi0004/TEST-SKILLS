@@ -1,10 +1,13 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { listContents } from '@/lib/api';
 import { ResourceCard } from '@/components/resource/ResourceCard';
 import { Select } from '@/components/ui/Select';
+import { pickUnsplash } from '@/lib/visualAssets';
 import type { ContentSummaryVM, ContentType } from '@/types/content';
 
 type ListType = Extract<ContentType, 'prompt' | 'mcp' | 'skill' | 'tutorial'>;
@@ -27,10 +30,67 @@ interface ResourceListPageConfig {
   defaultMediaTab?: string;
 }
 
+interface ListTheme {
+  accent: string;
+  accentSoft: string;
+  accentText: string;
+  overlay: string;
+}
+
 const SORT_VALUES: SortValue[] = ['hot_score', 'created_at', 'views_7d'];
 const ORDER_VALUES: OrderValue[] = ['asc', 'desc'];
 const VERIFIED_STATUS = 'Listed';
 const PUBLIC_VISIBLE_STATUS = 'Listed';
+
+const LIST_HEADLINE: Record<ListType, { title: string; subtitle: string; badge: string }> = {
+  prompt: {
+    title: 'Prompt 资源库',
+    subtitle: '围绕文本、图像、视频三类 Prompt 聚合高质量范式，支持按场景快速检索。',
+    badge: 'Prompt Gallery',
+  },
+  skill: {
+    title: 'Skill 资源库',
+    subtitle: '聚合可复用的 Agent Skill，覆盖研发、分析、自动化与团队协作场景。',
+    badge: 'Skill Market',
+  },
+  mcp: {
+    title: 'MCP 资源库',
+    subtitle: '发现可落地的 MCP 服务和案例，按业务目标组合你的工具栈。',
+    badge: 'MCP Directory',
+  },
+  tutorial: {
+    title: '帖子广场',
+    subtitle: '查看社区精选帖子，沉淀可复用方法并持续迭代。',
+    badge: 'Community',
+  },
+};
+
+const LIST_THEME: Record<ListType, ListTheme> = {
+  prompt: {
+    accent: '#FC6624',
+    accentSoft: '#FFF1EA',
+    accentText: '#C94F1D',
+    overlay: 'linear-gradient(100deg, rgba(15,23,42,0.84) 0%, rgba(15,23,42,0.58) 48%, rgba(252,102,36,0.28) 100%)',
+  },
+  skill: {
+    accent: '#0F766E',
+    accentSoft: '#EAF9F5',
+    accentText: '#0F5C56',
+    overlay: 'linear-gradient(100deg, rgba(15,23,42,0.86) 0%, rgba(15,23,42,0.58) 48%, rgba(15,118,110,0.30) 100%)',
+  },
+  mcp: {
+    accent: '#2563EB',
+    accentSoft: '#EDF4FF',
+    accentText: '#1D4EB8',
+    overlay: 'linear-gradient(100deg, rgba(15,23,42,0.86) 0%, rgba(15,23,42,0.60) 48%, rgba(37,99,235,0.30) 100%)',
+  },
+  tutorial: {
+    accent: '#FC6624',
+    accentSoft: '#FFF1EA',
+    accentText: '#C94F1D',
+    overlay: 'linear-gradient(100deg, rgba(15,23,42,0.84) 0%, rgba(15,23,42,0.58) 48%, rgba(252,102,36,0.28) 100%)',
+  },
+};
 
 function isSortValue(value: string | null): value is SortValue {
   return value !== null && SORT_VALUES.includes(value as SortValue);
@@ -75,6 +135,18 @@ function sortItems(items: ContentSummaryVM[], sort: SortValue, order: OrderValue
   return sorted;
 }
 
+function formatCompact(value: number): string {
+  if (value >= 10000) return `${(value / 10000).toFixed(1)}w`;
+  return `${value}`;
+}
+
+function toDetailPath(type: ContentType, id: string): string {
+  if (type === 'prompt') return `/prompts/${id}`;
+  if (type === 'mcp') return `/mcps/${id}`;
+  if (type === 'skill') return `/skills/${id}`;
+  return `/tutorials/${id}`;
+}
+
 export function ResourceListPage({ config }: { config: ResourceListPageConfig }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -104,9 +176,12 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
     ? (searchParams.get('media') ?? '')
     : defaultMediaTab;
 
+  const allowedTools = useMemo(() => config.toolOptions ?? [], [config.toolOptions]);
   const tools = useMemo(
-    () => (showFilters ? searchParams.getAll('tool') : []).filter((tool) => config.toolOptions?.includes(tool)),
-    [config.toolOptions, searchParams, showFilters],
+    () => (showFilters && allowedTools.length > 0
+      ? searchParams.getAll('tool').filter((tool) => allowedTools.includes(tool))
+      : []),
+    [allowedTools, searchParams, showFilters],
   );
   const toolsKey = tools.join('|');
 
@@ -194,83 +269,221 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
     };
   }, [category, config, mediaTab, order, q, reloadTick, sort, status, tools, toolsKey]);
 
+  const categoryStats = useMemo(() => {
+    if (categoryOptions.length === 0) return [] as Array<{ label: string; count: number }>;
+    const categoryMatcher = config.matchCategory ?? defaultCategoryMatcher;
+    return categoryOptions
+      .map((option) => ({
+        label: option,
+        count: filterScopeItems.filter((item) => categoryMatcher(item, option)).length,
+      }))
+      .sort((a, b) => b.count - a.count);
+  }, [categoryOptions, config.matchCategory, filterScopeItems]);
+
+  const categoryCounts = useMemo(() => {
+    return new Map(categoryStats.map((item) => [item.label, item.count]));
+  }, [categoryStats]);
+
+  const spotlightItems = useMemo(() => {
+    return [...items].sort((a, b) => calcHotScore(b) - calcHotScore(a)).slice(0, 6);
+  }, [items]);
+
+  const avgHotScore = useMemo(() => {
+    if (filterScopeItems.length === 0) return 0;
+    const total = filterScopeItems.reduce((sum, item) => sum + calcHotScore(item), 0);
+    return Math.round(total / filterScopeItems.length);
+  }, [filterScopeItems]);
+
+  const header = LIST_HEADLINE[config.type];
+  const theme = LIST_THEME[config.type];
+  const heroImage = pickUnsplash(`list:${config.type}`, config.type);
+  const heroAccentImage = pickUnsplash(`list:${config.type}:accent`, config.type);
+
   const statusValue = status || 'all';
   const categoryValue = category || 'all';
-  const categoryCounts = useMemo(() => {
-    if (!showCategoryCounts || categoryOptions.length === 0) return new Map<string, number>();
-    const categoryMatcher = config.matchCategory ?? defaultCategoryMatcher;
-    return new Map(
-      categoryOptions.map((option) => [option, filterScopeItems.filter((item) => categoryMatcher(item, option)).length]),
-    );
-  }, [categoryOptions, config.matchCategory, filterScopeItems, showCategoryCounts]);
+  const dominantCategory = categoryStats[0];
+  const activeFilterCount =
+    (status ? 1 : 0) +
+    (category ? 1 : 0) +
+    tools.length +
+    (mediaTabs.length > 0 && mediaTab !== defaultMediaTab ? 1 : 0);
+  const hasActiveFilters = activeFilterCount > 0;
 
   return (
-    <section className="space-y-4 pb-6">
-      <div className="mx-auto max-w-2xl">
-        <form onSubmit={onSubmitSearch} className="relative">
-          <input
-            value={searchInput}
-            onChange={(event) => setSearchInput(event.target.value)}
-            placeholder="搜索资源"
-            aria-label="页内搜索"
-            className="h-12 w-full rounded-full border border-slate-300 bg-white pl-5 pr-16 text-sm text-slate-900 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
+    <section className="space-y-4 bg-[#f6f7f9] p-3 pb-6 sm:p-4">
+      <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.08)]">
+        <div className="absolute inset-0">
+          <Image
+            src={heroImage}
+            alt={`${header.title} 背景图`}
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority={false}
           />
-          <button
-            type="submit"
-            aria-label="执行搜索"
-            className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4"
-              aria-hidden="true"
-            >
-              <circle cx="11" cy="11" r="7" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </button>
-        </form>
-      </div>
+          <div className="absolute inset-0" style={{ background: theme.overlay }} />
+        </div>
 
-      <div className="grid gap-4 lg:grid-cols-[250px_1fr]">
+        <div className="relative grid gap-4 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-5">
+          <div className="space-y-4">
+            <div>
+              <p
+                className="inline-flex rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-[0.12em]"
+                style={{ borderColor: `${theme.accent}99`, backgroundColor: `${theme.accent}33`, color: '#fff' }}
+              >
+                {header.badge}
+              </p>
+              <h1 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">{header.title}</h1>
+              <p className="mt-2 max-w-3xl text-sm text-slate-200">{header.subtitle}</p>
+            </div>
+
+            <form onSubmit={onSubmitSearch} className="relative max-w-3xl">
+              <input
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="搜索资源"
+                aria-label="页内搜索"
+                className="h-12 w-full rounded-xl border border-white/30 bg-white/92 pl-4 pr-16 text-sm text-slate-900 shadow-sm backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-1"
+              />
+              <button
+                type="submit"
+                aria-label="执行搜索"
+                className="absolute right-2 top-1/2 inline-flex h-8 w-10 -translate-y-1/2 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 transition hover:bg-slate-50"
+              >
+                搜索
+              </button>
+            </form>
+
+            {showSidebarCategoryFilter && categoryStats.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => updateUrl((params) => params.delete('categories'))}
+                  className="rounded-full border px-3 py-1 text-xs"
+                  style={categoryValue === 'all'
+                    ? { borderColor: theme.accent, backgroundColor: theme.accentSoft, color: theme.accentText }
+                    : { borderColor: 'rgba(255,255,255,0.45)', backgroundColor: 'rgba(15,23,42,0.25)', color: '#f1f5f9' }}
+                >
+                  全部 {filterScopeItems.length}
+                </button>
+                {categoryStats.slice(0, 8).map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => updateUrl((params) => params.set('categories', item.label))}
+                    className="rounded-full border px-3 py-1 text-xs"
+                    style={category === item.label
+                      ? { borderColor: theme.accent, backgroundColor: theme.accentSoft, color: theme.accentText }
+                      : { borderColor: 'rgba(255,255,255,0.45)', backgroundColor: 'rgba(15,23,42,0.25)', color: '#f1f5f9' }}
+                  >
+                    {item.label} {item.count}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <aside className="overflow-hidden rounded-2xl border border-white/25 bg-white/12 backdrop-blur-md">
+            <div className="relative h-28 w-full">
+              <Image
+                src={heroAccentImage}
+                alt="数据概览背景"
+                fill
+                sizes="320px"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-slate-950/55" />
+            </div>
+            <div className="space-y-3 p-4 text-white">
+              <p className="text-xs tracking-[0.1em] text-slate-200">DATA SNAPSHOT</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-lg border border-white/20 bg-black/15 p-2.5">
+                  <p className="text-[11px] text-slate-200">已收录</p>
+                  <p className="mt-1 text-lg font-semibold">{formatCompact(filterScopeItems.length)}</p>
+                </div>
+                <div className="rounded-lg border border-white/20 bg-black/15 p-2.5">
+                  <p className="text-[11px] text-slate-200">当前结果</p>
+                  <p className="mt-1 text-lg font-semibold">{formatCompact(items.length)}</p>
+                </div>
+                <div className="rounded-lg border border-white/20 bg-black/15 p-2.5">
+                  <p className="text-[11px] text-slate-200">平均热度</p>
+                  <p className="mt-1 text-lg font-semibold">{formatCompact(avgHotScore)}</p>
+                </div>
+                <div className="rounded-lg border border-white/20 bg-black/15 p-2.5">
+                  <p className="text-[11px] text-slate-200">活跃筛选</p>
+                  <p className="mt-1 text-lg font-semibold">{activeFilterCount}</p>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-200">
+                主分类：{dominantCategory ? `${dominantCategory.label}（${dominantCategory.count}）` : '暂无'}
+              </p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <div className="grid gap-4 xl:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="space-y-4">
-          <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-sm font-semibold text-slate-900">排序区</h2>
-            <div className="space-y-2">
-              <Select
-                aria-label="排序字段"
-                value={sort}
-                onChange={(event) =>
-                  updateUrl((params) => {
-                    params.set('sort', event.target.value);
-                    if (!params.get('order')) params.set('order', 'desc');
-                  })
-                }
-              >
-                <option value="hot_score">热度</option>
-                <option value="created_at">创建时间</option>
-                <option value="views_7d">近7日浏览</option>
-              </Select>
-              <Select
-                aria-label="排序方向"
-                value={order}
-                onChange={(event) => updateUrl((params) => params.set('order', event.target.value))}
-              >
-                <option value="desc">降序</option>
-                <option value="asc">升序</option>
-              </Select>
+          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-slate-900">筛选控制</h2>
+              {hasActiveFilters ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateUrl((params) => {
+                      params.delete('status');
+                      params.delete('categories');
+                      params.delete('tool');
+                      params.delete('media');
+                    })
+                  }
+                  className="rounded-md border px-2 py-1 text-xs"
+                  style={{ borderColor: theme.accent, color: theme.accentText, backgroundColor: theme.accentSoft }}
+                >
+                  清空筛选
+                </button>
+              ) : null}
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <p className="mb-1 text-xs text-slate-500">排序字段</p>
+                <Select
+                  aria-label="排序字段"
+                  value={sort}
+                  onChange={(event) =>
+                    updateUrl((params) => {
+                      params.set('sort', event.target.value);
+                      if (!params.get('order')) params.set('order', 'desc');
+                    })
+                  }
+                >
+                  <option value="hot_score">热度</option>
+                  <option value="created_at">创建时间</option>
+                  <option value="views_7d">近7日浏览</option>
+                </Select>
+              </div>
+
+              <div>
+                <p className="mb-1 text-xs text-slate-500">排序方向</p>
+                <Select
+                  aria-label="排序方向"
+                  value={order}
+                  onChange={(event) => updateUrl((params) => params.set('order', event.target.value))}
+                >
+                  <option value="desc">降序</option>
+                  <option value="asc">升序</option>
+                </Select>
+              </div>
             </div>
           </section>
 
           {showFilters ? (
-            <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-              <h2 className="mb-3 text-sm font-semibold text-slate-900">条件筛选区</h2>
+            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
+              <h2 className="mb-3 text-sm font-semibold text-slate-900">条件筛选</h2>
+
               <div className="space-y-3">
                 <div>
                   <p className="mb-1 text-xs text-slate-500">状态</p>
@@ -300,9 +513,10 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
                             name="category-filter"
                             checked={categoryValue === 'all'}
                             onChange={() => updateUrl((params) => params.delete('categories'))}
-                            className="h-4 w-4 border-slate-300 text-sky-600 focus:ring-sky-500"
+                            className="h-4 w-4 border-slate-300"
+                            style={{ accentColor: theme.accent }}
                           />
-                          <span>全部</span>
+                          <span>全部（{filterScopeItems.length}）</span>
                         </label>
                         {categoryOptions.map((option) => {
                           const checked = category === option;
@@ -318,7 +532,8 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
                                     params.set('categories', option);
                                   })
                                 }
-                                className="h-4 w-4 border-slate-300 text-sky-600 focus:ring-sky-500"
+                                className="h-4 w-4 border-slate-300"
+                                style={{ accentColor: theme.accent }}
                               />
                               <span>
                                 {option} <span className="text-slate-400">({count})</span>
@@ -349,11 +564,11 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
                   </div>
                 ) : null}
 
-                {config.toolOptions && config.toolOptions.length > 0 ? (
+                {allowedTools.length > 0 ? (
                   <div>
                     <p className="mb-1 text-xs text-slate-500">{toolLabel}</p>
                     <div className="space-y-1.5">
-                      {config.toolOptions.map((option) => {
+                      {allowedTools.map((option) => {
                         const checked = tools.includes(option);
                         return (
                           <label key={option} className="flex items-center gap-2 text-sm text-slate-700">
@@ -369,7 +584,8 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
                                   [...next].forEach((tool) => params.append('tool', tool));
                                 })
                               }
-                              className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+                              className="h-4 w-4 rounded border-slate-300"
+                              style={{ accentColor: theme.accent }}
                             />
                             <span>{option}</span>
                           </label>
@@ -383,28 +599,56 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
           ) : null}
         </aside>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          {mediaTabs.length > 0 ? (
-            <div className="mb-3 flex flex-wrap gap-2">
-              {mediaTabs.map((tab) => {
-                const active = tab === mediaTab;
-                return (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => updateUrl((params) => params.set('media', tab))}
-                    className={`rounded-full border px-3 py-1 text-sm transition ${
-                      active
-                        ? 'border-sky-400 bg-sky-50 text-sky-700'
-                        : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
-                    }`}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs text-slate-500">
+              当前结果：<span className="font-medium text-slate-700">{items.length}</span>
+              <span className="mx-1 text-slate-300">|</span>
+              热门候选：<span className="font-medium text-slate-700">{spotlightItems.length}</span>
+            </p>
+
+            {mediaTabs.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {mediaTabs.map((tab) => {
+                  const active = tab === mediaTab;
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => updateUrl((params) => params.set('media', tab))}
+                      className="rounded-full border px-3 py-1 text-sm transition"
+                      style={active
+                        ? { borderColor: theme.accent, backgroundColor: theme.accentSoft, color: theme.accentText }
+                        : { borderColor: '#CBD5E1', backgroundColor: '#fff', color: '#334155' }}
+                    >
+                      {tab}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+
+          {!loading && !error && spotlightItems.length > 0 ? (
+            <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+              <p className="mb-2 text-xs font-medium text-slate-500">热点速览</p>
+              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                {spotlightItems.slice(0, 6).map((item, index) => (
+                  <Link
+                    key={item.id}
+                    href={toDetailPath(item.type, item.id)}
+                    className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-700 transition hover:border-slate-300"
                   >
-                    {tab}
-                  </button>
-                );
-              })}
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-slate-100 text-xs text-slate-600">
+                      {index + 1}
+                    </span>
+                    <span className="line-clamp-1">{item.title}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           ) : null}
+
           {loading ? <p className="text-sm text-slate-500">加载中…</p> : null}
           {error ? (
             <div className="flex items-center gap-3">
@@ -419,8 +663,9 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
             </div>
           ) : null}
           {!loading && !error && items.length === 0 ? <p className="text-sm text-slate-500">无结果</p> : null}
+
           {!loading && !error && items.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
               {items.map((item) => (
                 <ResourceCard
                   key={item.id}

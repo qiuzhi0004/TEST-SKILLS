@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Badge } from '@/components/common/Badge';
@@ -13,6 +14,19 @@ import { toDisplayTags } from '@/lib/tagDisplay';
 import type { TutorialDetailVM } from '@/types/tutorial';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+
+function toAssetSrc(assetId?: string | null): string | null {
+  if (!assetId) return null;
+  if (assetId.startsWith('data:')) return assetId;
+  if (assetId.startsWith('/')) return assetId;
+  if (assetId.startsWith('http://') || assetId.startsWith('https://')) return assetId;
+  if (assetId.startsWith('data/images/')) return `/${assetId.replace(/^data\//, '')}`;
+  if (assetId.startsWith('data/videos/')) return `/${assetId.replace(/^data\//, '')}`;
+  if (assetId.startsWith('images/')) return `/${assetId}`;
+  if (assetId.startsWith('videos/')) return `/${assetId}`;
+  if (assetId.includes('/')) return `/${assetId}`;
+  return `/images/${assetId}`;
+}
 
 export default function TutorialDetailPage() {
   const params = useParams<{ id: string }>();
@@ -49,12 +63,21 @@ export default function TutorialDetailPage() {
   }
 
   const displayTags = toDisplayTags(detail.content.tag_ids, 6);
+  const coverSrc = toAssetSrc(detail.content.cover_asset_id);
 
   return (
     <div className="space-y-4">
       <StatusBanner type="tutorial" id={id} status={detail.content.status} />
       <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="space-y-4">
+          {coverSrc ? (
+            <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+              <div className="relative aspect-[16/7] w-full bg-slate-100">
+                <Image src={coverSrc} alt={detail.content.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 900px" />
+              </div>
+            </section>
+          ) : null}
+
           <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
               <ReactMarkdown
@@ -102,6 +125,29 @@ export default function TutorialDetailPage() {
               </ReactMarkdown>
             </div>
           </section>
+
+          {detail.media.length > 0 ? (
+            <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="mb-3 text-base font-semibold text-slate-900">帖子素材</h3>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {detail.media.map((item) => {
+                  const src = toAssetSrc(item.asset_id);
+                  if (!src) return null;
+                  return (
+                    <article key={item.id} className="overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                      {item.media_type === 'video' ? (
+                        <video src={src} controls playsInline className="h-44 w-full object-cover" />
+                      ) : (
+                        <div className="relative h-44 w-full">
+                          <Image src={src} alt="帖子素材" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
 
           <SectionCard title="评论区">
             <CommentThread target={target} />

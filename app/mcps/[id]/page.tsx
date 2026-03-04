@@ -1,17 +1,19 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Badge } from '@/components/common/Badge';
 import { CopyButton } from '@/components/common/CopyButton';
 import { Placeholder } from '@/components/layout/Placeholder';
 import { SectionCard } from '@/components/layout/SectionCard';
+import { StatusBanner } from '@/components/layout/StatusBanner';
 import { CommentThread } from '@/components/social/CommentThread';
 import { SocialBar } from '@/components/social/SocialBar';
-import { StatusBanner } from '@/components/layout/StatusBanner';
 import { Select } from '@/components/ui/Select';
 import { getMcp } from '@/lib/api';
 import { toDisplayTags } from '@/lib/tagDisplay';
+import { pickUnsplash, resolveCoverSrc, toAssetSrc } from '@/lib/visualAssets';
 import type { McpDetailVM } from '@/types/mcp';
 
 type OsOption = 'generic' | 'mac' | 'windows';
@@ -204,6 +206,23 @@ function buildRemoteUrlConfig({
   );
 }
 
+function looksLikeVideo(src?: string | null): boolean {
+  if (!src) return false;
+  return /\.(mp4|webm|mov)(\?|$)/i.test(src);
+}
+
+function toSourceLabel(source: McpDetailVM['source']): string {
+  if (source === 'official') return '官方';
+  return '社区';
+}
+
+function resolveCaseMedia(item: McpDetailVM['cases'][number], seed: string) {
+  const media = item.media[0];
+  const src = media?.external_url ?? toAssetSrc(media?.asset_id) ?? pickUnsplash(seed, 'mcp');
+  const isVideo = media?.media_type === 'video' || looksLikeVideo(media?.asset_id) || looksLikeVideo(media?.external_url);
+  return { src, isVideo };
+}
+
 export default function McpDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
@@ -281,41 +300,88 @@ export default function McpDetailPage() {
     });
   })();
 
+  const heroAsset = detail.content.cover_asset_id;
+  const heroSrc = resolveCoverSrc({ assetId: heroAsset, seed: `mcp:${detail.content.id}:hero`, type: 'mcp' });
+  const heroIsVideo = looksLikeVideo(heroAsset);
+
   return (
     <div className="space-y-4">
       <StatusBanner type="mcp" id={id} status={detail.content.status} />
-      <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+
+      <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.08)]">
+        <div className="absolute inset-0">
+          {heroIsVideo ? (
+            <video src={heroSrc} autoPlay muted loop playsInline className="h-full w-full object-cover" />
+          ) : (
+            <Image
+              src={heroSrc}
+              alt={detail.content.title}
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/20" />
+        </div>
+
+        <div className="relative p-5 sm:p-6">
+          <p className="text-xs uppercase tracking-[0.14em] text-[#f8d3bf]">MCP Detail</p>
+          <h1 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">{detail.content.title}</h1>
+          <p className="mt-2 max-w-3xl text-sm text-slate-200">{detail.content.one_liner || '暂无一句话描述'}</p>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-100">
+            <span className="rounded-full border border-white/45 bg-black/20 px-3 py-1">来源：{toSourceLabel(detail.source)}</span>
+            <span className="rounded-full border border-white/45 bg-black/20 px-3 py-1">提供方：{detail.provider_name || '暂无'}</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
-          <SectionCard title="案例展示">
+          <SectionCard title="案例展示" description="覆盖场景、调用、结果与风险，便于快速评估落地可行性。">
             {detail.cases.length > 0 ? (
               <div className="space-y-4">
-                {detail.cases.map((item) => (
-                  <article key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/50 p-4">
-                    <div className="rounded-md border border-slate-200 bg-slate-100 px-4 py-6 text-center text-sm text-slate-600">
-                      案例效果展示区（图片/视频占位，暂无内容）
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-900">场景（我想让 Agent 做什么）</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.title || '暂无'}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-900">调用（示例指令/对话）</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
-                        {item.user_input || item.execution_process || '暂无'}
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-900">结果（成功标志/返回示例）</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.agent_output || '暂无'}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-900">风险（权限范围与注意事项）</h4>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
-                        {item.execution_process || '请在最小权限范围内运行，并先在测试环境验证。'}
-                      </p>
-                    </div>
-                  </article>
-                ))}
+                {detail.cases.map((item, index) => {
+                  const media = resolveCaseMedia(item, `mcp:${detail.content.id}:case:${item.id || index}`);
+                  return (
+                    <article key={item.id} className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                      {media.isVideo ? (
+                        <video src={media.src} controls playsInline className="aspect-[16/9] h-auto w-full object-cover" />
+                      ) : (
+                        <Image
+                          src={media.src}
+                          alt={item.title || '案例效果图'}
+                          width={1280}
+                          height={720}
+                          className="aspect-[16/9] h-auto w-full object-cover"
+                        />
+                      )}
+
+                      <div className="space-y-3 border-t border-slate-200 bg-white p-4">
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">场景（我想让 Agent 做什么）</h4>
+                          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.title || '暂无'}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">调用（示例指令/对话）</h4>
+                          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
+                            {item.user_input || item.execution_process || '暂无'}
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">结果（成功标志/返回示例）</h4>
+                          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{item.agent_output || '暂无'}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">风险（权限范围与注意事项）</h4>
+                          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
+                            {item.execution_process || '请在最小权限范围内运行，并先在测试环境验证。'}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             ) : (
               <p className="text-sm text-slate-500">暂无案例</p>
@@ -324,15 +390,15 @@ export default function McpDetailPage() {
 
           <SectionCard title="如何使用">
             <div className="space-y-3">
-              <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
-                <div className="flex items-center justify-between gap-2">
+              <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-xs font-semibold text-slate-700">标准配置</p>
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
                     <Select
                       aria-label="系统选择"
                       value={os}
                       onChange={(event) => setOs(event.target.value as OsOption)}
-                      className="h-8 !w-32 text-xs"
+                      className="h-8 !w-28 text-xs"
                     >
                       <option value="generic">通用</option>
                       <option value="mac">mac</option>
@@ -342,7 +408,7 @@ export default function McpDetailPage() {
                       aria-label="IDE 选择"
                       value={ide}
                       onChange={(event) => setIde(event.target.value as IdeOption)}
-                      className="h-8 !w-32 text-xs"
+                      className="h-8 !w-28 text-xs"
                     >
                       <option value="generic">通用</option>
                       <option value="cursor">cursor</option>
@@ -351,22 +417,25 @@ export default function McpDetailPage() {
                     <CopyButton value={displayConfigText?.trim() ? displayConfigText : '暂无内容'} />
                   </div>
                 </div>
+
                 {(os === 'generic' || ide === 'generic') ? (
                   <p className="text-xs text-slate-500">请选择系统与 IDE 以生成专用配置。</p>
                 ) : null}
-                <pre className="max-h-72 overflow-auto whitespace-pre-wrap rounded bg-white p-3 text-xs leading-relaxed text-slate-700">
+
+                <pre className="max-h-72 overflow-auto whitespace-pre-wrap rounded-lg border border-slate-700 bg-slate-900 p-3 text-xs leading-relaxed text-slate-100">
                   {displayConfigText?.trim() ? displayConfigText : '暂无内容'}
                 </pre>
               </div>
-              <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
-                <div className="flex items-center justify-between gap-2">
+
+              <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-xs font-semibold text-slate-700">常用客户端</p>
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
                     <Select
                       aria-label="客户端系统选择"
                       value={quickOs}
                       onChange={(event) => setQuickOs(event.target.value as QuickOs)}
-                      className="h-8 !w-32 text-xs"
+                      className="h-8 !w-28 text-xs"
                     >
                       <option value="mac">mac</option>
                       <option value="windows">windows</option>
@@ -383,32 +452,34 @@ export default function McpDetailPage() {
                     <CopyButton value={quickCommand} />
                   </div>
                 </div>
-                <pre className="overflow-auto whitespace-pre rounded bg-white p-3 text-xs leading-relaxed text-slate-700">
+
+                <pre className="overflow-auto whitespace-pre rounded-lg border border-slate-700 bg-slate-900 p-3 text-xs leading-relaxed text-slate-100">
                   {quickCommand}
                 </pre>
               </div>
-              <div className="space-y-3 rounded-md border border-slate-200 bg-slate-50 p-3">
+
+              <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
                 <p className="text-xs font-semibold text-slate-700">运行形态补充</p>
 
-                <div className="space-y-2 rounded-md border border-slate-200 bg-white p-3">
+                <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-xs font-semibold text-slate-700">运行：</p>
                     <CopyButton value={runCommand} />
                   </div>
-                  <pre className="overflow-auto whitespace-pre rounded bg-slate-50 p-3 text-xs leading-relaxed text-slate-700">
+                  <pre className="overflow-auto whitespace-pre rounded-lg border border-slate-700 bg-slate-900 p-3 text-xs leading-relaxed text-slate-100">
                     {`# Bash\n${runCommand}`}
                   </pre>
                 </div>
 
-                <div className="space-y-2 rounded-md border border-slate-200 bg-white p-3">
-                  <div className="flex items-center justify-between gap-2">
+                <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-xs font-semibold text-slate-700">配置：</p>
                     <div className="flex shrink-0 items-center gap-2">
                       <Select
                         aria-label="运行形态配置 IDE 选择"
                         value={runtimeIde}
                         onChange={(event) => setRuntimeIde(event.target.value as RuntimeIde)}
-                        className="h-8 !w-32 text-xs"
+                        className="h-8 !w-28 text-xs"
                       >
                         <option value="cursor">Cursor</option>
                         <option value="vscode">VS Code</option>
@@ -416,71 +487,75 @@ export default function McpDetailPage() {
                       <CopyButton value={runtimeConfigText} />
                     </div>
                   </div>
-                  <pre className="max-h-72 overflow-auto whitespace-pre rounded bg-slate-50 p-3 text-xs leading-relaxed text-slate-700">
+                  <pre className="max-h-72 overflow-auto whitespace-pre rounded-lg border border-slate-700 bg-slate-900 p-3 text-xs leading-relaxed text-slate-100">
                     {runtimeConfigText}
                   </pre>
                 </div>
               </div>
             </div>
           </SectionCard>
+
           <SectionCard title="评论区">
             <CommentThread target={target} />
           </SectionCard>
         </div>
 
         <div className="space-y-4">
-          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="space-y-4">
-              <div className="space-y-3 text-sm text-slate-700">
-                <h3 className="text-base font-semibold text-slate-900">基础信息</h3>
+          <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_20px_rgba(15,23,42,0.08)]">
+            <div className="bg-gradient-to-r from-[#fff5ef] via-[#fffaf8] to-white px-5 py-4">
+              <h3 className="text-base font-semibold text-slate-900">基础信息</h3>
+            </div>
 
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">标签</p>
-                  {displayTags.length > 0 ? (
-                    <div className="flex flex-wrap gap-1.5">
-                      {displayTags.map((tag) => (
-                        <Badge key={tag.id} tone="info">
-                          {tag.label}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-slate-600">暂无</p>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">名称</p>
-                  <p className="text-sm text-slate-800">{detail.content.title}</p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">类型</p>
-                  <p className="text-sm text-slate-800">MCP</p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">提供方</p>
-                  <p className="text-sm text-slate-800">{detail.provider_name || '暂无'}</p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">仓库地址</p>
-                  <a
-                    href={detail.repo_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block break-all text-sm text-sky-700 hover:underline"
-                  >
-                    {detail.repo_url || '暂无'}
-                  </a>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">用途一句话</p>
-                  <p className="text-sm text-slate-800">{detail.content.one_liner ?? '暂无'}</p>
-                </div>
+            <div className="space-y-4 p-5 text-sm text-slate-700">
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">标签</p>
+                {displayTags.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {displayTags.map((tag) => (
+                      <Badge key={tag.id} tone="info">
+                        {tag.label}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-600">暂无</p>
+                )}
               </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">名称</p>
+                <p className="text-sm text-slate-800">{detail.content.title}</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">类型</p>
+                <p className="text-sm text-slate-800">MCP</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">提供方</p>
+                <p className="text-sm text-slate-800">{detail.provider_name || '暂无'}</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">仓库地址</p>
+                <a
+                  href={detail.repo_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block break-all text-sm text-sky-700 hover:underline"
+                >
+                  {detail.repo_url || '暂无'}
+                </a>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">用途一句话</p>
+                <p className="text-sm text-slate-800">{detail.content.one_liner ?? '暂无'}</p>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-200 p-5">
               <SocialBar target={target} />
             </div>
           </section>

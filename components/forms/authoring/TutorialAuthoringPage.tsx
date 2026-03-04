@@ -119,19 +119,19 @@ export function TutorialAuthoringPage({ mode, id }: TutorialAuthoringPageProps) 
 
   const validationError = useMemo(() => {
     if (!form.title.trim()) return '标题必填';
-    if (!form.body_markdown.trim()) return '教程正文必填';
+    if (!form.body_markdown.trim()) return '帖子正文必填';
     return '';
   }, [form]);
   const validationErrors = useMemo(() => {
     const errors: string[] = [];
     if (!form.title.trim()) errors.push('标题未填写');
-    if (!form.body_markdown.trim()) errors.push('教程正文未填写');
+    if (!form.body_markdown.trim()) errors.push('帖子正文未填写');
     return errors;
   }, [form]);
   const checklist = useMemo(
     () => [
       { label: '标题', passed: Boolean(form.title.trim()) },
-      { label: '教程正文（Markdown）', passed: Boolean(form.body_markdown.trim()) },
+      { label: '帖子正文（Markdown）', passed: Boolean(form.body_markdown.trim()) },
       { label: 'Zip 上传（可选）', passed: true },
       { label: '分类（>=1）', passed: form.category_ids.length > 0 },
     ],
@@ -200,7 +200,7 @@ export function TutorialAuthoringPage({ mode, id }: TutorialAuthoringPageProps) 
 
   return (
     <FormPageTemplate
-      title={mode === 'new' ? '教程创建' : `教程编辑：${id}`}
+      title={mode === 'new' ? '创建帖子' : `教程编辑：${id}`}
       hideActionTitle
       formSlot={
         loading ? (
@@ -247,7 +247,7 @@ export function TutorialAuthoringPage({ mode, id }: TutorialAuthoringPageProps) 
                   pre: ({ children }) => <pre className="mb-3">{children}</pre>,
                 }}
               >
-                {form.body_markdown || '（教程正文预览区）'}
+                {form.body_markdown || '（帖子正文预览区）'}
               </ReactMarkdown>
             </div>
           </div>
@@ -276,7 +276,7 @@ export function TutorialAuthoringPage({ mode, id }: TutorialAuthoringPageProps) 
                 </div>
               ) : null}
             </div>
-            <FieldTextarea label="教程正文（Markdown）" required value={form.body_markdown} onChange={(body_markdown) => setForm((p) => ({ ...p, body_markdown }))} rows={10} />
+            <FieldTextarea label="帖子正文（Markdown）" required value={form.body_markdown} onChange={(body_markdown) => setForm((p) => ({ ...p, body_markdown }))} rows={10} />
             <FieldMultiSelect label="分类（可多选）" required value={form.category_ids} options={categoryOptions} onChange={(category_ids) => setForm((p) => ({ ...p, category_ids }))} />
             <FieldMultiSelect
               label="标签（可多选）"

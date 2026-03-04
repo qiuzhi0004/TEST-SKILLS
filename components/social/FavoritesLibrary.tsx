@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ResourceCard } from '@/components/resource/ResourceCard';
 import { getMcp, getPrompt, getSkill, getTutorial } from '@/lib/api';
 import { listFavoriteTargets } from '@/lib/api/social';
@@ -143,38 +143,26 @@ export function FavoritesLibrary() {
     };
   }, []);
 
+  const typeCounts = useMemo(() => {
+    return {
+      all: items.length,
+      prompt: items.filter((item) => item.type === 'prompt').length,
+      skill: items.filter((item) => item.type === 'skill').length,
+      mcp: items.filter((item) => item.type === 'mcp').length,
+      tutorial: items.filter((item) => item.type === 'tutorial').length,
+    };
+  }, [items]);
+
+  const tabs = [
+    { label: '全部', value: 'all' as const, count: typeCounts.all },
+    { label: 'Prompt', value: 'prompt' as const, count: typeCounts.prompt },
+    { label: 'Skill', value: 'skill' as const, count: typeCounts.skill },
+    { label: 'MCP', value: 'mcp' as const, count: typeCounts.mcp },
+    { label: '帖子', value: 'tutorial' as const, count: typeCounts.tutorial },
+  ];
+
   if (loading) {
     return <p className="text-sm text-slate-500">加载收藏中...</p>;
-  }
-
-  if (items.length === 0) {
-    return (
-      <div className="space-y-4">
-        <div className="flex flex-wrap gap-2">
-          {[
-            { label: '全部', value: 'all' as const },
-            { label: 'Prompt', value: 'prompt' as const },
-            { label: 'Skill', value: 'skill' as const },
-            { label: 'MCP', value: 'mcp' as const },
-            { label: '帖子', value: 'tutorial' as const },
-          ].map((tab) => (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => setActiveType(tab.value)}
-              className={`rounded-md border px-3 py-1.5 text-sm transition ${
-                activeType === tab.value
-                  ? 'border-sky-300 bg-sky-50 text-sky-700'
-                  : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">暂无收藏内容</p>
-      </div>
-    );
   }
 
   const filteredItems = activeType === 'all' ? items : items.filter((item) => item.type === activeType);
@@ -182,39 +170,41 @@ export function FavoritesLibrary() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
-        {[
-          { label: '全部', value: 'all' as const },
-          { label: 'Prompt', value: 'prompt' as const },
-          { label: 'Skill', value: 'skill' as const },
-          { label: 'MCP', value: 'mcp' as const },
-          { label: '帖子', value: 'tutorial' as const },
-        ].map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab.value}
             type="button"
             onClick={() => setActiveType(tab.value)}
-            className={`rounded-md border px-3 py-1.5 text-sm transition ${
+            className={`rounded-full border px-3 py-1.5 text-sm transition ${
               activeType === tab.value
-                ? 'border-sky-300 bg-sky-50 text-sky-700'
+                ? 'border-[#f8c6af] bg-[#fff2eb] text-[#d44d16]'
                 : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
             }`}
           >
-            {tab.label}
+            {tab.label} {tab.count}
           </button>
         ))}
       </div>
 
-      {filteredItems.length === 0 ? (
-        <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">当前筛选下暂无收藏内容</p>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
+      {items.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">
+          暂无收藏内容
+        </p>
+      ) : null}
+
+      {items.length > 0 && filteredItems.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">
+          当前筛选下暂无收藏内容
+        </p>
+      ) : null}
+
+      {filteredItems.length > 0 ? (
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filteredItems.map((item) => (
-            <div key={`${item.type}:${item.id}`} className="rounded-lg border border-slate-200 bg-white p-4">
-              <ResourceCard item={item} />
-            </div>
+            <ResourceCard key={`${item.type}:${item.id}`} item={item} />
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
