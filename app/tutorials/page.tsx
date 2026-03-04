@@ -69,6 +69,12 @@ function formatDate(date: string) {
   }
 }
 
+function looksLikeVideo(src?: string | null): boolean {
+  if (!src) return false;
+  const plain = src.split('?')[0]?.toLowerCase() ?? '';
+  return plain.endsWith('.mp4') || plain.endsWith('.webm') || plain.endsWith('.mov') || plain.endsWith('.m4v');
+}
+
 export default function TutorialsPage() {
   const [items, setItems] = useState<ContentSummaryVM[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,6 +137,11 @@ export default function TutorialsPage() {
 
   const featured = filteredItems[0] ?? null;
   const featuredSecondary = filteredItems.slice(1, 4);
+  const featuredCoverSrc = featured
+    ? resolveCoverSrc({ assetId: featured.cover_asset_id, seed: `community:featured:${featured.id}`, type: 'tutorial' })
+    : null;
+  const featuredCoverIsVideo =
+    !!featured && (looksLikeVideo(featured.cover_asset_id) || looksLikeVideo(featuredCoverSrc));
   const trending = useMemo(() => {
     return [...items].sort((a, b) => calcHotScore(b) - calcHotScore(a)).slice(0, 8);
   }, [items]);
@@ -265,13 +276,24 @@ export default function TutorialsPage() {
                   className="group relative block overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
                 >
                   <div className="relative h-52 sm:h-64">
-                    <Image
-                      src={resolveCoverSrc({ assetId: featured.cover_asset_id, seed: `community:featured:${featured.id}`, type: 'tutorial' })}
-                      alt={featured.title}
-                      fill
-                      sizes="(max-width: 1280px) 100vw, 900px"
-                      className="object-cover transition duration-300 group-hover:scale-[1.02]"
-                    />
+                    {featuredCoverIsVideo ? (
+                      <video
+                        src={featuredCoverSrc ?? ''}
+                        muted
+                        loop
+                        autoPlay
+                        playsInline
+                        className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                      />
+                    ) : (
+                      <Image
+                        src={featuredCoverSrc ?? ''}
+                        alt={featured.title}
+                        fill
+                        sizes="(max-width: 1280px) 100vw, 900px"
+                        className="object-cover transition duration-300 group-hover:scale-[1.02]"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-4 text-white sm:p-5">
                       <p className="text-xs tracking-wide text-slate-100">今日焦点</p>
@@ -322,6 +344,7 @@ export default function TutorialsPage() {
             <div className="space-y-3">
               {filteredItems.map((item) => {
                 const coverSrc = resolveCoverSrc({ assetId: item.cover_asset_id, seed: `community:list:${item.id}`, type: 'tutorial' });
+                const coverIsVideo = looksLikeVideo(item.cover_asset_id) || looksLikeVideo(coverSrc);
                 return (
                   <article
                     key={item.id}
@@ -362,13 +385,17 @@ export default function TutorialsPage() {
                         href={`/tutorials/${item.id}`}
                         className="relative hidden h-28 w-40 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 sm:block"
                       >
-                        <Image
-                          src={coverSrc}
-                          alt={item.title}
-                          fill
-                          sizes="220px"
-                          className="object-cover"
-                        />
+                        {coverIsVideo ? (
+                          <video src={coverSrc} muted loop autoPlay playsInline className="h-full w-full object-cover" />
+                        ) : (
+                          <Image
+                            src={coverSrc}
+                            alt={item.title}
+                            fill
+                            sizes="220px"
+                            className="object-cover"
+                          />
+                        )}
                       </Link>
                     </div>
                   </article>

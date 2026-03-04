@@ -11,21 +11,15 @@ import { SocialBar } from '@/components/social/SocialBar';
 import { StatusBanner } from '@/components/layout/StatusBanner';
 import { getTutorial } from '@/lib/api';
 import { toDisplayTags } from '@/lib/tagDisplay';
+import { toAssetSrc } from '@/lib/visualAssets';
 import type { TutorialDetailVM } from '@/types/tutorial';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-function toAssetSrc(assetId?: string | null): string | null {
-  if (!assetId) return null;
-  if (assetId.startsWith('data:')) return assetId;
-  if (assetId.startsWith('/')) return assetId;
-  if (assetId.startsWith('http://') || assetId.startsWith('https://')) return assetId;
-  if (assetId.startsWith('data/images/')) return `/${assetId.replace(/^data\//, '')}`;
-  if (assetId.startsWith('data/videos/')) return `/${assetId.replace(/^data\//, '')}`;
-  if (assetId.startsWith('images/')) return `/${assetId}`;
-  if (assetId.startsWith('videos/')) return `/${assetId}`;
-  if (assetId.includes('/')) return `/${assetId}`;
-  return `/images/${assetId}`;
+function looksLikeVideo(src?: string | null): boolean {
+  if (!src) return false;
+  const plain = src.split('?')[0]?.toLowerCase() ?? '';
+  return plain.endsWith('.mp4') || plain.endsWith('.webm') || plain.endsWith('.mov') || plain.endsWith('.m4v');
 }
 
 export default function TutorialDetailPage() {
@@ -64,6 +58,7 @@ export default function TutorialDetailPage() {
 
   const displayTags = toDisplayTags(detail.content.tag_ids, 6);
   const coverSrc = toAssetSrc(detail.content.cover_asset_id);
+  const coverIsVideo = looksLikeVideo(detail.content.cover_asset_id) || looksLikeVideo(coverSrc);
 
   return (
     <div className="space-y-4">
@@ -73,7 +68,17 @@ export default function TutorialDetailPage() {
           {coverSrc ? (
             <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
               <div className="relative aspect-[16/7] w-full bg-slate-100">
-                <Image src={coverSrc} alt={detail.content.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 900px" />
+                {coverIsVideo ? (
+                  <video src={coverSrc} controls playsInline className="h-full w-full object-cover" />
+                ) : (
+                  <Image
+                    src={coverSrc}
+                    alt={detail.content.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 900px"
+                  />
+                )}
               </div>
             </section>
           ) : null}

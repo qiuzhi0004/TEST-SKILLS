@@ -39,6 +39,8 @@ const TYPE_OFFSET: Record<ContentType, number> = {
   tutorial: 21,
 };
 
+const VIDEO_FILE_RE = /\.(mp4|webm|mov|m4v)$/i;
+
 function simpleHash(seed: string): number {
   let hash = 0;
   for (let index = 0; index < seed.length; index += 1) {
@@ -57,6 +59,7 @@ export function toAssetSrc(assetId?: string | null): string | null {
   if (assetId.startsWith('images/')) return `/${assetId}`;
   if (assetId.startsWith('videos/')) return `/${assetId}`;
   if (assetId.includes('/')) return `/${assetId}`;
+  if (VIDEO_FILE_RE.test(assetId)) return `/videos/${assetId}`;
   return `/images/${assetId}`;
 }
 
@@ -76,4 +79,3 @@ export function resolveCoverSrc(options: {
   if (exact) return exact;
   return pickUnsplash(options.seed, options.type);
 }
-

@@ -34,6 +34,12 @@ function formatDate(iso: string) {
   return d.toLocaleDateString('zh-CN');
 }
 
+function looksLikeVideo(src?: string | null): boolean {
+  if (!src) return false;
+  const plain = src.split('?')[0]?.toLowerCase() ?? '';
+  return plain.endsWith('.mp4') || plain.endsWith('.webm') || plain.endsWith('.mov') || plain.endsWith('.m4v');
+}
+
 export function ResourceCard({
   item,
   maxTags = 3,
@@ -43,6 +49,7 @@ export function ResourceCard({
 }: ResourceCardProps) {
   const href = getDetailPath(item.type, item.id);
   const coverSrc = resolveCoverSrc({ assetId: item.cover_asset_id, seed: `${item.type}:${item.id}`, type: item.type });
+  const coverIsVideo = looksLikeVideo(item.cover_asset_id) || looksLikeVideo(coverSrc);
   const tags = toDisplayTags(item.tag_ids, maxTags).filter((tag) =>
     hidePromptMediaTags ? !['prompt_text', 'prompt_image', 'prompt_video'].includes(tag.id) : true,
   );
@@ -55,13 +62,24 @@ export function ResourceCard({
       className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#f2bea7] hover:shadow-[0_10px_20px_rgba(15,23,42,0.09)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2bea7] focus-visible:ring-offset-1"
     >
       <div className="relative h-32 w-full overflow-hidden bg-slate-100">
-        <Image
-          src={coverSrc}
-          alt={item.title}
-          fill
-          sizes="(max-width: 640px) 100vw, 400px"
-          className="object-cover transition duration-300 group-hover:scale-[1.03]"
-        />
+        {coverIsVideo ? (
+          <video
+            src={coverSrc}
+            muted
+            loop
+            autoPlay
+            playsInline
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <Image
+            src={coverSrc}
+            alt={item.title}
+            fill
+            sizes="(max-width: 640px) 100vw, 400px"
+            className="object-cover transition duration-300 group-hover:scale-[1.03]"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
         <div className="absolute left-3 top-3">
           {showTypeBadge ? (
