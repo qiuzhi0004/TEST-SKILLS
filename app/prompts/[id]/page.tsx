@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/common/Badge';
-import { CodeBlock } from '@/components/common/CodeBlock';
 import { Placeholder } from '@/components/layout/Placeholder';
 import { SectionCard } from '@/components/layout/SectionCard';
+import { PromptEffectPreview } from '@/components/prompts/PromptEffectPreview';
 import { CommentThread } from '@/components/social/CommentThread';
 import { SocialBar } from '@/components/social/SocialBar';
 import { StatusBanner } from '@/components/layout/StatusBanner';
@@ -133,9 +133,7 @@ export default function PromptDetailPage() {
           ) : null}
 
           <SectionCard title="获取资源">
-            <div className="space-y-3">
-              <CodeBlock title="Prompt 正文" value={detail.prompt_text} />
-            </div>
+            <PromptEffectPreview detail={detail} />
           </SectionCard>
           <SectionCard title="评论区">
             <CommentThread target={target} />

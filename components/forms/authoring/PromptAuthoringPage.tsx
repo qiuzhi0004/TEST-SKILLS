@@ -8,6 +8,7 @@ import { FieldTextarea } from '@/components/forms/FieldTextarea';
 import { FormActions } from '@/components/forms/FormActions';
 import { Placeholder } from '@/components/layout/Placeholder';
 import { FormPageTemplate } from '@/components/page-templates/FormPageTemplate';
+import { PromptEffectPreview } from '@/components/prompts/PromptEffectPreview';
 import { categoryOptions, tagOptions } from '@/components/forms/authoring/options';
 import {
   changeStatus,
@@ -29,7 +30,7 @@ interface PromptAuthoringPageProps {
 interface PromptFormState {
   title: string;
   description: string;
-  model_name: string;
+  model_names: string[];
   prompt_body: string;
   showcases: Array<{
     id: string;
@@ -43,12 +44,21 @@ interface PromptFormState {
 const EMPTY_FORM: PromptFormState = {
   title: '',
   description: '',
-  model_name: 'Custom',
+  model_names: [],
   prompt_body: '',
   showcases: [],
   category_ids: [],
   tag_ids: [],
 };
+
+const COMMON_MODEL_OPTIONS = [
+  { id: 'GPT-4.1', name: 'GPT-4.1' },
+  { id: 'GPT-4o', name: 'GPT-4o' },
+  { id: 'Claude 3.7 Sonnet', name: 'Claude 3.7 Sonnet' },
+  { id: 'Gemini 2.0 Flash', name: 'Gemini 2.0 Flash' },
+  { id: 'Seedream 4.5', name: 'Seedream 4.5' },
+  { id: 'Sora', name: 'Sora' },
+];
 
 function formToDetail(id: string, status: ContentStatus, form: PromptFormState): PromptDetailVM {
   const now = new Date().toISOString();
@@ -66,7 +76,7 @@ function formToDetail(id: string, status: ContentStatus, form: PromptFormState):
       created_at: now,
       updated_at: now,
     },
-    model_name: form.model_name,
+    model_name: form.model_names.join(', '),
     language: 'zh-CN',
     prompt_text: form.prompt_body,
     showcases: form.showcases.map((item, index) => ({
@@ -80,10 +90,14 @@ function formToDetail(id: string, status: ContentStatus, form: PromptFormState):
 }
 
 function detailToForm(detail: PromptDetailVM): PromptFormState {
+  const modelNames = (detail.model_name ?? '')
+    .split(/[，,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
   return {
     title: detail.content.title ?? '',
     description: detail.content.one_liner ?? '',
-    model_name: detail.model_name || 'Custom',
+    model_names: modelNames,
     prompt_body: detail.prompt_text ?? '',
     showcases: detail.showcases.map((item, index) => ({
       id: item.id || `showcase-${index + 1}`,
@@ -101,6 +115,7 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
   const [status, setStatus] = useState<ContentStatus>('Draft');
   const [tip, setTip] = useState('');
   const [loading, setLoading] = useState(mode === 'edit');
+  const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
     if (mode !== 'edit' || !id) {
@@ -143,10 +158,30 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
 
   const validationError = useMemo(() => {
     if (!form.title.trim()) return '标题必填';
-    if (!form.model_name.trim()) return '模型名称必填';
+    if (form.model_names.length === 0) return '模型名称至少选择或输入 1 个';
     if (!form.prompt_body.trim()) return 'Prompt 正文必填';
     return '';
   }, [form]);
+
+  const validationErrors = useMemo(() => {
+    const errors: string[] = [];
+    if (!form.title.trim()) errors.push('标题未填写');
+    if (form.model_names.length === 0) errors.push('模型名称至少选择或输入 1 个');
+    if (!form.prompt_body.trim()) errors.push('Prompt 正文未填写');
+    return errors;
+  }, [form]);
+
+  const checklist = useMemo(
+    () => [
+      { label: '标题', passed: Boolean(form.title.trim()) },
+      { label: '一句话描述', passed: Boolean(form.description.trim()) },
+      { label: '模型名称（>=1）', passed: form.model_names.length > 0 },
+      { label: 'Prompt 正文', passed: Boolean(form.prompt_body.trim()) },
+      { label: '分类（>=1）', passed: form.category_ids.length > 0 },
+      { label: '标签（可选）', passed: true },
+    ],
+    [form],
+  );
 
   async function handleUploadShowcases(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -219,6 +254,38 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
       formSlot={
         loading ? (
           <p className="text-sm text-slate-500">加载中...</p>
+        ) : previewMode ? (
+          <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-slate-900">效果预览</h3>
+              <button
+                type="button"
+                onClick={() => setPreviewMode(false)}
+                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
+              >
+                返回编辑
+              </button>
+            </div>
+            <PromptEffectPreview
+              detail={{
+                content: {
+                  id: recordId ?? 'preview',
+                  type: 'prompt',
+                  status,
+                  title: form.title,
+                  one_liner: form.description || null,
+                  category_ids: form.category_ids,
+                  tag_ids: form.tag_ids,
+                  author_id: 'user-001',
+                  cover_asset_id: null,
+                  created_at: '',
+                  updated_at: '',
+                },
+                model_name: form.model_names.join(', '),
+                prompt_text: form.prompt_body,
+              }}
+            />
+          </div>
         ) : (
           <div className="space-y-4">
             <FieldText label="标题" required value={form.title} onChange={(title) => setForm((p) => ({ ...p, title }))} />
@@ -228,7 +295,15 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
               onChange={(description) => setForm((p) => ({ ...p, description }))}
               rows={3}
             />
-            <FieldText label="模型名称" required value={form.model_name} onChange={(model_name) => setForm((p) => ({ ...p, model_name }))} />
+            <FieldMultiSelect
+              label="模型名称（可多选，可手动输入）"
+              required
+              value={form.model_names}
+              options={COMMON_MODEL_OPTIONS}
+              onChange={(model_names) => setForm((p) => ({ ...p, model_names }))}
+              allowCustom
+              customPlaceholder="输入模型名称后点击添加"
+            />
             <FieldTextarea
               label="Prompt 正文"
               required
@@ -296,7 +371,38 @@ export function PromptAuthoringPage({ mode, id }: PromptAuthoringPageProps) {
           <Badge tone="info">状态：{status}</Badge>
           {recordId ? <p className="text-xs text-slate-500">记录ID：{recordId}</p> : null}
           {tip ? <p className="text-xs text-slate-600">{tip}</p> : null}
-          <Placeholder title="必填项" todos={['标题', '模型名称', 'Prompt 正文']} />
+          <button
+            type="button"
+            onClick={() => setPreviewMode((value) => !value)}
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 hover:bg-slate-50"
+          >
+            {previewMode ? '返回编辑表单' : '效果预览'}
+          </button>
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <p className="mb-2 text-xs font-medium text-slate-700">实时检查清单</p>
+            <ul className="space-y-1">
+              {checklist.map((item) => (
+                <li key={item.label} className={`text-xs ${item.passed ? 'text-emerald-700' : 'text-slate-500'}`}>
+                  {item.passed ? '✓' : '○'} {item.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-lg border border-rose-200 bg-rose-50 p-3">
+            <p className="mb-2 text-xs font-medium text-rose-700">错误汇总</p>
+            {validationErrors.length > 0 ? (
+              <ul className="space-y-1">
+                {validationErrors.map((error) => (
+                  <li key={error} className="text-xs text-rose-700">
+                    - {error}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-emerald-700">当前无错误，可保存或提交。</p>
+            )}
+          </div>
+          <Placeholder title="必填项" todos={['标题', '模型名称（至少1个）', 'Prompt 正文']} />
         </div>
       }
       actionSlot={
