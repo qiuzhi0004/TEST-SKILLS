@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { listContents } from '@/lib/api';
@@ -12,6 +13,18 @@ type SupportedType = Extract<ContentType, 'prompt' | 'skill' | 'mcp'>;
 
 const SUPPORTED_TYPES: SupportedType[] = ['prompt', 'skill', 'mcp'];
 const PUBLIC_VISIBLE_STATUS = 'Listed';
+const HOME_CHANNELS: Array<{ type: ContentType; label: string; subtitle: string; href: string; accent: string }> = [
+  { type: 'prompt', label: 'Prompt', subtitle: '文本 / 图像 / 视频提示词', href: '/prompts', accent: '#FC6624' },
+  { type: 'skill', label: 'Skill', subtitle: '可复用能力组件', href: '/skills', accent: '#0F766E' },
+  { type: 'mcp', label: 'MCP', subtitle: '工具协议与服务接入', href: '/mcps', accent: '#2563EB' },
+  { type: 'tutorial', label: '社区', subtitle: '帖子与实战经验', href: '/tutorials', accent: '#7C3AED' },
+];
+const TYPE_LABEL: Record<ContentType, string> = {
+  prompt: 'Prompt',
+  skill: 'Skill',
+  mcp: 'MCP',
+  tutorial: '社区',
+};
 
 function isSupportedType(type: ContentType): type is SupportedType {
   return SUPPORTED_TYPES.includes(type as SupportedType);
@@ -21,6 +34,28 @@ function mapToPublicSearchItems(items: ContentSummaryVM[]): ContentSummaryVM[] {
   return items.filter(
     (item) => isSupportedType(item.type) && item.status === PUBLIC_VISIBLE_STATUS,
   );
+}
+
+function calcHotScore(item: ContentSummaryVM): number {
+  return item.stats_7d.views + item.stats_7d.up * 5 + item.stats_7d.comments * 3;
+}
+
+function formatCompact(value: number): string {
+  if (value >= 10000) return `${(value / 10000).toFixed(1)}w`;
+  return `${value}`;
+}
+
+function formatDateLabel(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '--';
+  return `${date.getMonth() + 1}.${date.getDate()}`;
+}
+
+function detailPath(item: ContentSummaryVM): string {
+  if (item.type === 'prompt') return `/prompts/${item.id}`;
+  if (item.type === 'skill') return `/skills/${item.id}`;
+  if (item.type === 'mcp') return `/mcps/${item.id}`;
+  return `/tutorials/${item.id}`;
 }
 
 export function HomeSearchPage() {
@@ -34,6 +69,8 @@ export function HomeSearchPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(Boolean(queryInUrl));
+  const [discoverItems, setDiscoverItems] = useState<ContentSummaryVM[]>([]);
+  const [discoverLoading, setDiscoverLoading] = useState(false);
 
   useEffect(() => {
     setInputValue(queryInUrl);
@@ -72,6 +109,28 @@ export function HomeSearchPage() {
     };
   }, [queryInUrl]);
 
+  useEffect(() => {
+    let cancelled = false;
+    setDiscoverLoading(true);
+
+    void listContents({ type: 'all', offset: 0, limit: 120 })
+      .then((res) => {
+        if (cancelled) return;
+        setDiscoverItems(res.items.filter((item) => item.status === PUBLIC_VISIBLE_STATUS));
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setDiscoverItems([]);
+      })
+      .finally(() => {
+        if (!cancelled) setDiscoverLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const submitSearch = useCallback(
     (e?: FormEvent<HTMLFormElement>) => {
       e?.preventDefault();
@@ -101,6 +160,27 @@ export function HomeSearchPage() {
     ],
     [],
   );
+
+  const channelCounts = useMemo(() => {
+    const map = new Map<ContentType, number>([
+      ['prompt', 0],
+      ['skill', 0],
+      ['mcp', 0],
+      ['tutorial', 0],
+    ]);
+    discoverItems.forEach((item) => {
+      map.set(item.type, (map.get(item.type) ?? 0) + 1);
+    });
+    return map;
+  }, [discoverItems]);
+
+  const featuredItems = useMemo(() => {
+    return [...discoverItems].sort((a, b) => calcHotScore(b) - calcHotScore(a)).slice(0, 6);
+  }, [discoverItems]);
+
+  const latestItems = useMemo(() => {
+    return [...discoverItems].sort((a, b) => b.updated_at.localeCompare(a.updated_at)).slice(0, 8);
+  }, [discoverItems]);
 
   return (
     <section className="mx-auto w-full max-w-6xl space-y-6 pb-10 pt-8 sm:pt-12">
@@ -179,6 +259,87 @@ export function HomeSearchPage() {
               ))}
             </div>
           ) : null}
+        </section>
+      ) : null}
+
+      {!hasSearched ? (
+        <section className="space-y-4">
+          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_4px_12px_rgba(15,23,42,0.06)] sm:p-5">
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+              <div>
+                <p className="text-xs uppercase tracking-[0.12em] text-slate-500">Quick Access</p>
+                <h2 className="mt-1 text-base font-semibold text-slate-900">从入口快速浏览资源</h2>
+              </div>
+              <p className="text-xs text-slate-500">已收录：{formatCompact(discoverItems.length)} 条</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {HOME_CHANNELS.map((channel) => (
+                <Link
+                  key={channel.type}
+                  href={channel.href}
+                  className="group rounded-xl border p-3 transition hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)]"
+                  style={{ borderColor: `${channel.accent}4d`, background: `linear-gradient(165deg, ${channel.accent}1f 0%, #ffffff 62%)` }}
+                >
+                  <p className="text-base font-semibold text-slate-900">{channel.label}</p>
+                  <p className="mt-1 text-xs text-slate-600">{channel.subtitle}</p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-xs text-slate-500">已收录 {channelCounts.get(channel.type) ?? 0}</span>
+                    <span className="text-xs font-medium" style={{ color: channel.accent }}>
+                      进入 →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_4px_12px_rgba(15,23,42,0.06)] sm:p-5">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className="text-base font-semibold text-slate-900">热门精选</h2>
+                <p className="text-xs text-slate-500">按热度综合排序</p>
+              </div>
+              {discoverLoading ? <p className="text-sm text-slate-500">内容加载中...</p> : null}
+              {!discoverLoading && featuredItems.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">暂时没有可展示的资源。</p>
+              ) : null}
+              {!discoverLoading && featuredItems.length > 0 ? (
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {featuredItems.map((item) => (
+                    <ResourceCard key={`${item.type}:${item.id}`} item={item} showStatus={false} maxTags={3} />
+                  ))}
+                </div>
+              ) : null}
+            </section>
+
+            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_4px_12px_rgba(15,23,42,0.06)] sm:p-5">
+              <h2 className="text-base font-semibold text-slate-900">最新动态</h2>
+              <p className="mt-1 text-xs text-slate-500">最近更新的内容</p>
+              {discoverLoading ? <p className="mt-4 text-sm text-slate-500">内容加载中...</p> : null}
+              {!discoverLoading && latestItems.length === 0 ? (
+                <p className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">暂无动态</p>
+              ) : null}
+              {!discoverLoading && latestItems.length > 0 ? (
+                <ol className="mt-3 space-y-2">
+                  {latestItems.map((item, index) => (
+                    <li key={`${item.type}:${item.id}`} className="flex gap-2">
+                      <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded bg-slate-100 text-xs text-slate-600">
+                        {index + 1}
+                      </span>
+                      <Link href={detailPath(item)} className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50/70 px-2.5 py-2 transition hover:border-slate-300 hover:bg-white">
+                        <p className="line-clamp-1 text-sm font-medium text-slate-800">{item.title}</p>
+                        <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">
+                          <span className="rounded-full border border-slate-200 px-1.5 py-0.5">{TYPE_LABEL[item.type]}</span>
+                          <span>{formatDateLabel(item.updated_at)}</span>
+                          <span>热度 {formatCompact(calcHotScore(item))}</span>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              ) : null}
+            </section>
+          </div>
         </section>
       ) : null}
     </section>

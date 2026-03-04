@@ -140,6 +140,16 @@ function formatCompact(value: number): string {
   return `${value}`;
 }
 
+function hexToRgba(hex: string, alpha: number): string {
+  const raw = hex.replace('#', '').trim();
+  if (raw.length !== 6) return `rgba(148, 163, 184, ${alpha})`;
+  const value = Number.parseInt(raw, 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function toDetailPath(type: ContentType, id: string): string {
   if (type === 'prompt') return `/prompts/${id}`;
   if (type === 'mcp') return `/mcps/${id}`;
@@ -298,6 +308,15 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
   const theme = LIST_THEME[config.type];
   const heroImage = pickUnsplash(`list:${config.type}`, config.type);
   const heroAccentImage = pickUnsplash(`list:${config.type}:accent`, config.type);
+  const panelHeaderGlow = `linear-gradient(180deg, ${hexToRgba(theme.accent, 0.11)} 0%, rgba(255,255,255,0) 100%)`;
+  const panelShellBorder = '#d5dee9';
+  const panelGroupBorder = '#d7e0eb';
+  const panelItemBorder = '#d7e0eb';
+  const panelSubtleBg = '#ffffff';
+  const panelActiveBg = hexToRgba(theme.accent, 0.1);
+  const panelActiveBorder = hexToRgba(theme.accent, 0.42);
+  const selectClassName =
+    'h-11 rounded-xl border-slate-300 bg-white px-3 text-[15px] font-medium text-slate-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.98)] transition focus-visible:border-slate-400 focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:ring-offset-0';
 
   const statusValue = status || 'all';
   const categoryValue = category || 'all';
@@ -425,175 +444,222 @@ export function ResourceListPage({ config }: { config: ResourceListPageConfig })
 
       <div className="grid gap-4 xl:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="space-y-4">
-          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <h2 className="text-sm font-semibold text-slate-900">筛选控制</h2>
-              {hasActiveFilters ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    updateUrl((params) => {
-                      params.delete('status');
-                      params.delete('categories');
-                      params.delete('tool');
-                      params.delete('media');
-                    })
-                  }
-                  className="rounded-md border px-2 py-1 text-xs"
-                  style={{ borderColor: theme.accent, color: theme.accentText, backgroundColor: theme.accentSoft }}
-                >
-                  清空筛选
-                </button>
-              ) : null}
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <p className="mb-1 text-xs text-slate-500">排序字段</p>
-                <Select
-                  aria-label="排序字段"
-                  value={sort}
-                  onChange={(event) =>
-                    updateUrl((params) => {
-                      params.set('sort', event.target.value);
-                      if (!params.get('order')) params.set('order', 'desc');
-                    })
-                  }
-                >
-                  <option value="hot_score">热度</option>
-                  <option value="created_at">创建时间</option>
-                  <option value="views_7d">近7日浏览</option>
-                </Select>
+          <section
+            className="relative overflow-hidden rounded-2xl border bg-gradient-to-b from-white to-slate-50/75 p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)]"
+            style={{ borderColor: panelShellBorder }}
+          >
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-12" style={{ background: panelHeaderGlow }} />
+            <div className="relative">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className="text-sm font-semibold text-slate-900">结果排序</h2>
+                {hasActiveFilters ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateUrl((params) => {
+                        params.delete('status');
+                        params.delete('categories');
+                        params.delete('tool');
+                        params.delete('media');
+                      })
+                    }
+                    className="rounded-full border px-2.5 py-1 text-xs font-medium transition hover:-translate-y-0.5 hover:shadow-sm"
+                    style={{ borderColor: panelActiveBorder, color: theme.accentText, backgroundColor: panelActiveBg }}
+                  >
+                    清空筛选
+                  </button>
+                ) : null}
               </div>
 
-              <div>
-                <p className="mb-1 text-xs text-slate-500">排序方向</p>
-                <Select
-                  aria-label="排序方向"
-                  value={order}
-                  onChange={(event) => updateUrl((params) => params.set('order', event.target.value))}
-                >
-                  <option value="desc">降序</option>
-                  <option value="asc">升序</option>
-                </Select>
+              <div className="space-y-2.5">
+                <div className="rounded-xl border p-3" style={{ borderColor: panelGroupBorder, backgroundColor: panelSubtleBg }}>
+                  <p className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-500">排序字段</p>
+                  <Select
+                    aria-label="排序字段"
+                    value={sort}
+                    className={selectClassName}
+                    onChange={(event) =>
+                      updateUrl((params) => {
+                        params.set('sort', event.target.value);
+                        if (!params.get('order')) params.set('order', 'desc');
+                      })
+                    }
+                  >
+                    <option value="hot_score">热度</option>
+                    <option value="created_at">创建时间</option>
+                    <option value="views_7d">近7日浏览</option>
+                  </Select>
+                </div>
+
+                <div className="rounded-xl border p-3" style={{ borderColor: panelGroupBorder, backgroundColor: panelSubtleBg }}>
+                  <p className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-500">排序方向</p>
+                  <Select
+                    aria-label="排序方向"
+                    value={order}
+                    className={selectClassName}
+                    onChange={(event) => updateUrl((params) => params.set('order', event.target.value))}
+                  >
+                    <option value="desc">降序</option>
+                    <option value="asc">升序</option>
+                  </Select>
+                </div>
               </div>
             </div>
           </section>
 
           {showFilters ? (
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
-              <h2 className="mb-3 text-sm font-semibold text-slate-900">条件筛选</h2>
+            <section
+              className="relative overflow-hidden rounded-2xl border bg-gradient-to-b from-white to-slate-50/75 p-4 shadow-[0_6px_16px_rgba(15,23,42,0.06)]"
+              style={{ borderColor: panelShellBorder }}
+            >
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-12" style={{ background: panelHeaderGlow }} />
+              <div className="relative">
+                <h2 className="mb-3 text-sm font-semibold text-slate-900">条件筛选</h2>
 
-              <div className="space-y-3">
-                <div>
-                  <p className="mb-1 text-xs text-slate-500">状态</p>
-                  <Select
-                    aria-label="状态筛选"
-                    value={statusValue}
-                    onChange={(event) =>
-                      updateUrl((params) => {
-                        if (event.target.value === 'verified') params.set('status', 'verified');
-                        else params.delete('status');
-                      })
-                    }
-                  >
-                    <option value="all">全部</option>
-                    <option value="verified">已认证</option>
-                  </Select>
-                </div>
+                <div className="space-y-2.5">
+                  <div className="rounded-xl border p-3" style={{ borderColor: panelGroupBorder, backgroundColor: panelSubtleBg }}>
+                    <p className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-500">状态</p>
+                    <Select
+                      aria-label="状态筛选"
+                      value={statusValue}
+                      className={selectClassName}
+                      onChange={(event) =>
+                        updateUrl((params) => {
+                          if (event.target.value === 'verified') params.set('status', 'verified');
+                          else params.delete('status');
+                        })
+                      }
+                    >
+                      <option value="all">全部</option>
+                      <option value="verified">已认证</option>
+                    </Select>
+                  </div>
 
-                {showSidebarCategoryFilter && categoryOptions.length > 0 ? (
-                  <div>
-                    <p className="mb-1 text-xs text-slate-500">{categoryLabel}</p>
-                    {showCategoryCounts ? (
-                      <div className="space-y-1.5">
-                        <label className="flex items-center gap-2 text-sm text-slate-700">
-                          <input
-                            type="radio"
-                            name="category-filter"
-                            checked={categoryValue === 'all'}
-                            onChange={() => updateUrl((params) => params.delete('categories'))}
-                            className="h-4 w-4 border-slate-300"
-                            style={{ accentColor: theme.accent }}
-                          />
-                          <span>全部（{filterScopeItems.length}）</span>
-                        </label>
-                        {categoryOptions.map((option) => {
-                          const checked = category === option;
-                          const count = categoryCounts.get(option) ?? 0;
-                          return (
-                            <label key={option} className="flex items-center gap-2 text-sm text-slate-700">
+                  {showSidebarCategoryFilter && categoryOptions.length > 0 ? (
+                    <div className="rounded-xl border p-3" style={{ borderColor: panelGroupBorder, backgroundColor: panelSubtleBg }}>
+                      <p className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-500">{categoryLabel}</p>
+                      {showCategoryCounts ? (
+                        <div className="space-y-1.5">
+                          <label
+                            className="flex items-center justify-between gap-2 rounded-lg border px-2.5 py-2 text-sm transition hover:border-slate-300"
+                            style={categoryValue === 'all'
+                              ? { borderColor: panelActiveBorder, backgroundColor: panelActiveBg, boxShadow: `inset 0 0 0 1px ${hexToRgba(theme.accent, 0.14)}` }
+                              : { borderColor: panelItemBorder, backgroundColor: '#fff' }}
+                          >
+                            <span className="flex items-center gap-2 text-slate-700">
                               <input
                                 type="radio"
                                 name="category-filter"
-                                checked={checked}
-                                onChange={() =>
-                                  updateUrl((params) => {
-                                    params.set('categories', option);
-                                  })
-                                }
+                                checked={categoryValue === 'all'}
+                                onChange={() => updateUrl((params) => params.delete('categories'))}
                                 className="h-4 w-4 border-slate-300"
                                 style={{ accentColor: theme.accent }}
                               />
-                              <span>
-                                {option} <span className="text-slate-400">({count})</span>
+                              全部
+                            </span>
+                            <span className="text-xs text-slate-400">{filterScopeItems.length}</span>
+                          </label>
+                          {categoryOptions.map((option) => {
+                            const checked = category === option;
+                            const count = categoryCounts.get(option) ?? 0;
+                            return (
+                              <label
+                                key={option}
+                                className="flex items-center justify-between gap-2 rounded-lg border px-2.5 py-2 text-sm transition hover:border-slate-300"
+                                style={checked
+                                  ? { borderColor: panelActiveBorder, backgroundColor: panelActiveBg, boxShadow: `inset 0 0 0 1px ${hexToRgba(theme.accent, 0.14)}` }
+                                  : { borderColor: panelItemBorder, backgroundColor: '#fff' }}
+                              >
+                                <span className="flex items-center gap-2 text-slate-700">
+                                  <input
+                                    type="radio"
+                                    name="category-filter"
+                                    checked={checked}
+                                    onChange={() =>
+                                      updateUrl((params) => {
+                                        params.set('categories', option);
+                                      })
+                                    }
+                                    className="h-4 w-4 border-slate-300"
+                                    style={{ accentColor: theme.accent }}
+                                  />
+                                  {option}
+                                </span>
+                                <span className="text-xs text-slate-400">{count}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <Select
+                          aria-label="分类筛选"
+                          value={categoryValue}
+                          className={selectClassName}
+                          onChange={(event) =>
+                            updateUrl((params) => {
+                              if (event.target.value === 'all') params.delete('categories');
+                              else params.set('categories', event.target.value);
+                            })
+                          }
+                        >
+                          <option value="all">全部</option>
+                          {categoryOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </Select>
+                      )}
+                    </div>
+                  ) : null}
+
+                  {allowedTools.length > 0 ? (
+                    <div className="rounded-xl border p-3" style={{ borderColor: panelGroupBorder, backgroundColor: panelSubtleBg }}>
+                      <p className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-500">{toolLabel}</p>
+                      <div className="space-y-1.5">
+                        {allowedTools.map((option) => {
+                          const checked = tools.includes(option);
+                          return (
+                            <label
+                              key={option}
+                              className="flex items-center justify-between gap-2 rounded-lg border px-2.5 py-2 text-sm transition hover:border-slate-300"
+                              style={checked
+                                ? { borderColor: panelActiveBorder, backgroundColor: panelActiveBg, boxShadow: `inset 0 0 0 1px ${hexToRgba(theme.accent, 0.14)}` }
+                                : { borderColor: panelItemBorder, backgroundColor: '#fff' }}
+                            >
+                              <span className="flex items-center gap-2 text-slate-700">
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() =>
+                                    updateUrl((params) => {
+                                      const next = new Set(params.getAll('tool'));
+                                      if (checked) next.delete(option);
+                                      else next.add(option);
+                                      params.delete('tool');
+                                      [...next].forEach((tool) => params.append('tool', tool));
+                                    })
+                                  }
+                                  className="h-4 w-4 rounded border-slate-300"
+                                  style={{ accentColor: theme.accent }}
+                                />
+                                {option}
                               </span>
+                              {checked ? (
+                                <span
+                                  className="rounded-full px-2 py-0.5 text-[11px] font-medium"
+                                  style={{ color: theme.accentText, backgroundColor: theme.accentSoft }}
+                                >
+                                  已选
+                                </span>
+                              ) : null}
                             </label>
                           );
                         })}
                       </div>
-                    ) : (
-                      <Select
-                        aria-label="分类筛选"
-                        value={categoryValue}
-                        onChange={(event) =>
-                          updateUrl((params) => {
-                            if (event.target.value === 'all') params.delete('categories');
-                            else params.set('categories', event.target.value);
-                          })
-                        }
-                      >
-                        <option value="all">全部</option>
-                        {categoryOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </Select>
-                    )}
-                  </div>
-                ) : null}
-
-                {allowedTools.length > 0 ? (
-                  <div>
-                    <p className="mb-1 text-xs text-slate-500">{toolLabel}</p>
-                    <div className="space-y-1.5">
-                      {allowedTools.map((option) => {
-                        const checked = tools.includes(option);
-                        return (
-                          <label key={option} className="flex items-center gap-2 text-sm text-slate-700">
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={() =>
-                                updateUrl((params) => {
-                                  const next = new Set(params.getAll('tool'));
-                                  if (checked) next.delete(option);
-                                  else next.add(option);
-                                  params.delete('tool');
-                                  [...next].forEach((tool) => params.append('tool', tool));
-                                })
-                              }
-                              className="h-4 w-4 rounded border-slate-300"
-                              style={{ accentColor: theme.accent }}
-                            />
-                            <span>{option}</span>
-                          </label>
-                        );
-                      })}
                     </div>
-                  </div>
-                ) : null}
+                  ) : null}
+                </div>
               </div>
             </section>
           ) : null}
