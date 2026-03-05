@@ -1,6 +1,7 @@
 # AGENTS.md
 
 ## Changelog
+- 2026-03-05: 后端补齐 Render 非容器化部署配置（`build.sh`、gunicorn、WhiteNoise、环境变量驱动 `settings`）。
 - 2026-03-05: 后端数据库支持 `DATABASE_URL`（Neon Postgres），默认 `DB_CONN_MAX_AGE=0`，未配置时回退 SQLite。
 - 2026-03-05: 新增普通用户手机号验证码登录/注册（`/login`、`/register`）与 `lib/api/auth.ts`。
 - 2026-03-05: `/me/**` 新增用户态登录跳转（未登录重定向到 `/login`），顶部“个人中心”入口联动登录态。
@@ -81,6 +82,7 @@
 - `cd backend && python manage.py migrate`
 - `cd backend && python manage.py seed_local_data`
 - `cd backend && python manage.py runserver 127.0.0.1:8000`
+- `cd backend && ./build.sh`（Render build 阶段：安装依赖、collectstatic、migrate）
 
 无全局 `pnpm` 时可使用：
 - `NPM_CONFIG_CACHE=.npm-cache npx pnpm <command>`
