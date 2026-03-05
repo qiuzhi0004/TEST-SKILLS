@@ -2,7 +2,7 @@
 
 ## 1. Requirements
 
-- Python 3.9+
+- Python 3.9+（Render 推荐显式锁定 `3.12.x`）
 - pip
 
 ## 2. Setup
@@ -98,3 +98,26 @@ source .venv/bin/activate
 python manage.py test api.tests.test_admin_console_contract -v 2
 python manage.py test api.tests.test_auth_phone_contract -v 2
 ```
+
+## 8. Deploy to Render (Non-Docker)
+
+1. Render Web Service 建议使用 `Root Directory=backend`（monorepo 场景）。
+2. Build Command 使用 `./build.sh`（会安装依赖、collectstatic、migrate）。
+3. Start Command 使用 `python -m gunicorn config.wsgi:application --bind 0.0.0.0:$PORT`。
+
+推荐在 Render 环境变量中设置：
+
+- `PYTHON_VERSION=3.12.8`
+- `SECRET_KEY=<render-generate>`
+- `DEBUG=0`
+- `WEB_CONCURRENCY=4`
+- `ALLOWED_HOSTS=<your-service>.onrender.com`
+- `CORS_ALLOWED_ORIGINS=https://test-skills-seven.vercel.app`
+- `CORS_ALLOW_CREDENTIALS=1`
+- `CSRF_TRUSTED_ORIGINS=https://test-skills-seven.vercel.app`
+- `DATABASE_URL=<neon-connection-url>`
+- `DB_CONN_MAX_AGE=0`
+
+说明：
+- Render 会自动注入 `RENDER_EXTERNAL_HOSTNAME`，`settings.py` 已自动并入 `ALLOWED_HOSTS`。
+- 若后续启用 Vercel Preview 域名，可改用 `CORS_ALLOWED_ORIGIN_REGEXES`。
