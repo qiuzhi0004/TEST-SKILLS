@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { getAuthSession, onAuthChanged } from "@/lib/client/auth";
+import { AUTH_SESSION_CHANGE_EVENT, loadAuthSession } from "@/lib/client/auth";
 
 const NAV_ITEMS = [
   { href: "/prompts", label: "Prompt" },
@@ -13,16 +13,25 @@ const NAV_ITEMS = [
   { href: "/ranks", label: "榜单" },
 ];
 
+const DJANGO_ADMIN_URL =
+  process.env.NEXT_PUBLIC_DJANGO_ADMIN_URL ?? "http://127.0.0.1:8000/admin/";
+
 export function TopNav() {
   const [open, setOpen] = useState(false);
-  const [nickname, setNickname] = useState<string | null>(null);
+  const [meHref, setMeHref] = useState("/login?next=%2Fme%2Ffavorites");
 
   useEffect(() => {
-    const sync = () => {
-      setNickname(getAuthSession()?.nickname ?? null);
+    const syncHref = () => {
+      const isLoggedIn = Boolean(loadAuthSession());
+      setMeHref(isLoggedIn ? "/me/favorites" : "/login?next=%2Fme%2Ffavorites");
     };
-    sync();
-    return onAuthChanged(sync);
+    syncHref();
+    window.addEventListener("storage", syncHref);
+    window.addEventListener(AUTH_SESSION_CHANGE_EVENT, syncHref);
+    return () => {
+      window.removeEventListener("storage", syncHref);
+      window.removeEventListener(AUTH_SESSION_CHANGE_EVENT, syncHref);
+    };
   }, []);
 
   return (
@@ -46,17 +55,17 @@ export function TopNav() {
 
         <div className="hidden items-center gap-2 text-sm md:flex">
           <Link
-            href="/me/favorites"
+            href={meHref}
             className="rounded-md px-2 py-1 text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
           >
-            {nickname ?? "个人中心"}
+            个人中心
           </Link>
-          <Link
-            href="/admin"
+          <a
+            href={DJANGO_ADMIN_URL}
             className="rounded-md border border-slate-300 px-2 py-1 text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
           >
-            后台
-          </Link>
+            管理登录
+          </a>
         </div>
 
         <Button
@@ -83,12 +92,12 @@ export function TopNav() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/me/favorites" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-sm text-slate-700 hover:bg-slate-100">
-              {nickname ?? "个人中心"}
+            <Link href={meHref} onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-sm text-slate-700 hover:bg-slate-100">
+              个人中心
             </Link>
-            <Link href="/admin" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-sm text-slate-700 hover:bg-slate-100">
-              后台
-            </Link>
+            <a href={DJANGO_ADMIN_URL} onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-sm text-slate-700 hover:bg-slate-100">
+              管理登录
+            </a>
           </div>
         </div>
       ) : null}

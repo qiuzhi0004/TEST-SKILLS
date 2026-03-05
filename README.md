@@ -3,9 +3,11 @@
 基于 Next.js + TypeScript + Tailwind 的资源站点原型，覆盖 Prompt / MCP / Skill / Tutorial 四类内容，包含：
 
 - 前台列表/详情渲染（mock 数据驱动）
+- 普通用户手机号+验证码登录/注册（测试验证码固定 `123456`）
 - Authoring（新建/编辑/提交）本地工作区
 - 社交互动（投票/收藏/评论）本地持久化
 - 后台审核控制台 + 审计日志本地落库
+- Django + DRF 后端（首期 API，支持内容读取与后台管理相关接口）
 - 第 7 步发布级收尾：统一 UI、加载/错误/空态、SEO、响应式与文档化
 
 > 冲突口径唯一真相源：`docs/DECISIONS.md`
@@ -15,6 +17,7 @@
 - Next.js 16（App Router）
 - TypeScript
 - Tailwind CSS（`@import "tailwindcss"`）
+- Django 4.2 LTS + DRF（`backend/`，可选启用）
 
 ## 本地启动
 
@@ -33,6 +36,34 @@ NPM_CONFIG_CACHE=.npm-cache npx pnpm dev
 ```
 
 默认地址：`http://localhost:3000`
+
+### 后端启动（Django + DRF）
+
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py seed_local_data
+python manage.py runserver 127.0.0.1:8000
+```
+
+手机号登录/注册联调说明（当前为测试模式）：
+- 验证码固定为 `123456`（仅接口占位，未接入真实短信网关）
+- 仅当 `NEXT_PUBLIC_API_MODE=http` 时，注册用户会写入 Django `auth.User`，可在管理后台查看
+
+启用前端 HTTP 模式（对接后端）：
+
+```bash
+NEXT_PUBLIC_API_MODE=http NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000/api/v1 pnpm dev
+```
+
+可选：指定前端“管理登录”按钮跳转地址（默认 `http://127.0.0.1:8000/admin/`）：
+
+```bash
+NEXT_PUBLIC_DJANGO_ADMIN_URL=http://127.0.0.1:8000/admin/
+```
 
 构建检查：
 
@@ -57,6 +88,7 @@ components/
 lib/
   api/                  # 对外 API 门面 + mock/social/authoring/admin_review/audit/admin_console
   client/               # localStorage 读写封装（SSR 安全，含后台管理状态）
+backend/                # Django + DRF 后端工程（SQLite + seed + API）
 data/                   # 静态 mock 数据
   prompts.json
   mcps.json
@@ -118,7 +150,7 @@ pnpm import:seed
 - `getSkill(id)`
 - `getTutorial(id)`
 
-当前默认 `mock` 模式（`NEXT_PUBLIC_API_MODE !== "http"`）。
+当前默认 `mock` 模式（`NEXT_PUBLIC_API_MODE !== "http"`）；当 `NEXT_PUBLIC_API_MODE=http` 时，`lib/api/http.ts` 走 Django + DRF。
 
 ### 本地作者工作区（Authoring）
 
@@ -150,14 +182,23 @@ pnpm import:seed
 ### 后台管理页数据层（Admin Console）
 
 - API：`lib/api/admin_console.ts`
-- 存储：`lib/client/storage_admin.ts`
+- HTTP 优先：当 `NEXT_PUBLIC_API_MODE=http` 时，请求 Django/DRF `admin/console` 端点
+- fallback：HTTP 失败时自动回退 `lib/client/storage_admin.ts`（本地可用性兜底）
 - localStorage key：`luzi_admin_console_v1`
-- 覆盖页面：`/admin/categories`、`/admin/tags`、`/admin/users`、`/admin/roles`、`/admin/permissions`、`/admin/role-permissions`、`/admin/events`
+- 覆盖页面：`/admin/categories`、`/admin/tags`、`/admin/events`
+
+### 登录与权限管理（Django 原生）
+
+- 普通用户前台登录：`/login`（手机号+验证码，验证码固定 `123456`）
+- 普通用户前台注册：`/register`（昵称+手机号+验证码）
+- Django Admin 登录入口：`http://127.0.0.1:8000/admin/login/`
+- 用户管理：Django Admin 的 Users（`auth.User`，前台注册成功后可见）
+- 权限管理：Django Admin 的 Groups / Permissions
 
 ## 路由与页面
 
 - 全量路径清单：`docs/ROUTES.md`
-- 本阶段（按 DECISIONS）：`/admin/**`、`/me/**`、`/new`、`/edit` 均可直接访问，不做守卫。
+- 当前用户态规则：未登录访问 `/me/**` 会跳转 `/login`；其余历史“无守卫”口径保持不变。
 
 ## SEO 与站点基础信息
 

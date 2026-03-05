@@ -1,4 +1,4 @@
-// NOTE: 当前阶段不做守卫（见 /docs/DECISIONS.md）。
+// 登录守卫放在客户端布局中执行（MeLayoutClient），未登录重定向到 /login。
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { MeLayoutClient } from "@/components/me/MeLayoutClient";

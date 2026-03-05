@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local Python virtualenv for Django backend.
+    "backend/.venv/**",
   ]),
 ]);
 

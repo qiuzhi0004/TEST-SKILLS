@@ -2,24 +2,48 @@
 
 import Image from 'next/image';
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useSyncExternalStore } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { SideNav } from '@/components/layout/SideNav';
+import { loadAuthSession, subscribeAuthSession } from "@/lib/client/auth";
 import { pickUnsplash } from '@/lib/visualAssets';
-import { getAuthSession, logout, onAuthChanged } from '@/lib/client/auth';
+
+const DJANGO_ADMIN_URL =
+  process.env.NEXT_PUBLIC_DJANGO_ADMIN_URL ?? 'http://127.0.0.1:8000/admin/';
+
+function getServerAuthSessionSnapshot(): null {
+  return null;
+}
 
 export function MeLayoutClient({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
   const router = useRouter();
-  const [loggedIn, setLoggedIn] = useState(false);
+  const pathname = usePathname();
+  const session = useSyncExternalStore(
+    subscribeAuthSession,
+    loadAuthSession,
+    getServerAuthSessionSnapshot,
+  );
 
   useEffect(() => {
-    const sync = () => {
-      setLoggedIn(Boolean(getAuthSession()));
-    };
-    sync();
-    return onAuthChanged(sync);
-  }, []);
+    if (!session) {
+      // Hydration first pass may use server snapshot; re-check localStorage before redirect.
+      if (loadAuthSession()) {
+        return;
+      }
+      const nextPath = pathname || "/me/favorites";
+      router.replace(`/login?next=${encodeURIComponent(nextPath)}`);
+    }
+  }, [pathname, router, session]);
+
+  if (!session) {
+    return (
+      <div className="space-y-4 bg-[#f6f7f9] p-3 sm:p-4">
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+          正在检查登录状态...
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 bg-[#f6f7f9] p-3 sm:p-4">
@@ -39,23 +63,17 @@ export function MeLayoutClient({ children }: { children: ReactNode }) {
           <div>
             <p className="text-xs uppercase tracking-[0.12em] text-[#ffd7c5]">Personal Center</p>
             <h1 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">个人中心</h1>
-            <p className="mt-2 text-sm text-slate-200">管理收藏与发布内容，持续沉淀你的作品资产。</p>
+            <p className="mt-2 text-sm text-slate-200">
+              {session.user.nickname}，欢迎回来。管理收藏与发布内容，持续沉淀你的作品资产。
+            </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              if (loggedIn) {
-                logout();
-                router.refresh();
-                return;
-              }
-              router.push(`/login?returnTo=${encodeURIComponent(pathname || '/me/favorites')}`);
-            }}
+          <a
+            href={DJANGO_ADMIN_URL}
             className="rounded-lg border border-[#f7b79a] bg-[#fff4ee] px-4 py-2 text-sm font-medium text-[#c94f1d] transition hover:bg-[#ffe8dc]"
           >
-            {loggedIn ? '退出登录' : '登录'}
-          </button>
+            管理登录
+          </a>
         </div>
       </section>
 

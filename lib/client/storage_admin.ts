@@ -5,10 +5,6 @@ const KEY = 'luzi_admin_console_v1';
 const EMPTY_STATE: AdminConsoleState = {
   categories: [],
   tags: [],
-  users: [],
-  roles: [],
-  permissions: [],
-  role_permissions: {},
   events: [],
 };
 
@@ -16,31 +12,14 @@ function cloneEmptyState(): AdminConsoleState {
   return {
     categories: [],
     tags: [],
-    users: [],
-    roles: [],
-    permissions: [],
-    role_permissions: {},
     events: [],
   };
 }
 
 function normalizeState(parsed: Partial<AdminConsoleState>): AdminConsoleState {
-  const rolePermissions = parsed.role_permissions && typeof parsed.role_permissions === 'object'
-    ? Object.fromEntries(
-        Object.entries(parsed.role_permissions).map(([roleId, permissionIds]) => [
-          roleId,
-          Array.isArray(permissionIds) ? permissionIds.filter((item): item is string => typeof item === 'string') : [],
-        ]),
-      )
-    : {};
-
   return {
     categories: Array.isArray(parsed.categories) ? parsed.categories : [],
     tags: Array.isArray(parsed.tags) ? parsed.tags : [],
-    users: Array.isArray(parsed.users) ? parsed.users : [],
-    roles: Array.isArray(parsed.roles) ? parsed.roles : [],
-    permissions: Array.isArray(parsed.permissions) ? parsed.permissions : [],
-    role_permissions: rolePermissions,
     events: Array.isArray(parsed.events) ? parsed.events : [],
   };
 }

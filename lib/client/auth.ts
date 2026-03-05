@@ -1,59 +1,114 @@
-const KEY = 'luzi_auth_v1';
-const AUTH_CHANGED_EVENT = 'luzi:auth-changed';
+import type { AuthResultVM, AuthSession } from "@/types/auth";
 
-export interface AuthSession {
-  nickname: string;
+const AUTH_SESSION_KEY = "luzi_auth_session_v1";
+export const AUTH_SESSION_CHANGE_EVENT = "luzi-auth-session-change";
+
+let hasSnapshotCache = false;
+let cachedSnapshotRaw: string | null = null;
+let cachedSnapshotValue: AuthSession | null = null;
+
+function emitAuthChange(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.dispatchEvent(new Event(AUTH_SESSION_CHANGE_EVENT));
 }
 
-function read(): AuthSession | null {
-  if (typeof window === 'undefined') return null;
-  const raw = window.localStorage.getItem(KEY);
-  if (!raw) return null;
+function isValidSession(value: unknown): value is AuthSession {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const parsed = value as Partial<AuthSession>;
+  return Boolean(
+    typeof parsed.token === "string" &&
+      parsed.token &&
+      parsed.user &&
+      typeof parsed.user.id === "string" &&
+      typeof parsed.user.phone === "string" &&
+      typeof parsed.user.nickname === "string" &&
+      typeof parsed.logged_in_at === "string",
+  );
+}
+
+export function loadAuthSession(): AuthSession | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  const raw = window.localStorage.getItem(AUTH_SESSION_KEY);
+  if (hasSnapshotCache && raw === cachedSnapshotRaw) {
+    return cachedSnapshotValue;
+  }
+
+  if (!raw) {
+    cachedSnapshotRaw = raw;
+    cachedSnapshotValue = null;
+    hasSnapshotCache = true;
+    return null;
+  }
+
   try {
-    return JSON.parse(raw) as AuthSession;
+    const parsed = JSON.parse(raw) as unknown;
+    const value = isValidSession(parsed) ? parsed : null;
+    cachedSnapshotRaw = raw;
+    cachedSnapshotValue = value;
+    hasSnapshotCache = true;
+    return value;
   } catch {
+    cachedSnapshotRaw = raw;
+    cachedSnapshotValue = null;
+    hasSnapshotCache = true;
     return null;
   }
 }
 
-function write(session: AuthSession | null) {
-  if (typeof window === 'undefined') return;
-  if (session) {
-    window.localStorage.setItem(KEY, JSON.stringify(session));
-  } else {
-    window.localStorage.removeItem(KEY);
+export function saveAuthSession(session: AuthSession): void {
+  if (typeof window === "undefined") {
+    return;
   }
-  window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+  const raw = JSON.stringify(session);
+  window.localStorage.setItem(AUTH_SESSION_KEY, raw);
+  cachedSnapshotRaw = raw;
+  cachedSnapshotValue = session;
+  hasSnapshotCache = true;
+  emitAuthChange();
 }
 
-export function getAuthSession(): AuthSession | null {
-  return read();
-}
-
-export function login(nickname: string) {
-  const trimmed = nickname.trim();
-  if (!trimmed) {
-    throw new Error('nickname is required');
+export function clearAuthSession(): void {
+  if (typeof window === "undefined") {
+    return;
   }
-  write({ nickname: trimmed });
+  window.localStorage.removeItem(AUTH_SESSION_KEY);
+  cachedSnapshotRaw = null;
+  cachedSnapshotValue = null;
+  hasSnapshotCache = true;
+  emitAuthChange();
 }
 
-export function logout() {
-  write(null);
-}
+export function subscribeAuthSession(onStoreChange: () => void): () => void {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
 
-export function onAuthChanged(handler: () => void): () => void {
-  if (typeof window === 'undefined') return () => {};
-
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === KEY) handler();
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key && event.key !== AUTH_SESSION_KEY) {
+      return;
+    }
+    onStoreChange();
   };
-
-  window.addEventListener('storage', onStorage);
-  window.addEventListener(AUTH_CHANGED_EVENT, handler);
+  const handleAuthChange = () => onStoreChange();
+  window.addEventListener("storage", handleStorage);
+  window.addEventListener(AUTH_SESSION_CHANGE_EVENT, handleAuthChange);
 
   return () => {
-    window.removeEventListener('storage', onStorage);
-    window.removeEventListener(AUTH_CHANGED_EVENT, handler);
+    window.removeEventListener("storage", handleStorage);
+    window.removeEventListener(AUTH_SESSION_CHANGE_EVENT, handleAuthChange);
+  };
+}
+
+export function buildAuthSession(payload: AuthResultVM): AuthSession {
+  return {
+    token: payload.token,
+    user: payload.user,
+    logged_in_at: new Date().toISOString(),
   };
 }

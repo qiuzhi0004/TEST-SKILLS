@@ -20,63 +20,9 @@ export interface AdminTag {
   updated_at: string;
 }
 
-export type AdminUserStatus = 'active' | 'invited' | 'suspended';
+export type AdminEventTarget = 'category' | 'tag' | 'system';
 
-export interface AdminUser {
-  id: string;
-  nickname: string;
-  email: string;
-  status: AdminUserStatus;
-  role_ids: string[];
-  created_at: string;
-  last_active_at: string;
-  notes?: string;
-}
-
-export type AdminRoleStatus = 'active' | 'inactive';
-
-export interface AdminRole {
-  id: string;
-  name: string;
-  description: string;
-  builtin: boolean;
-  status: AdminRoleStatus;
-  created_at: string;
-  updated_at: string;
-}
-
-export type AdminPermissionRisk = 'low' | 'medium' | 'high';
-export type AdminPermissionStatus = 'active' | 'inactive';
-
-export interface AdminPermission {
-  id: string;
-  key: string;
-  name: string;
-  group: string;
-  risk: AdminPermissionRisk;
-  description: string;
-  status: AdminPermissionStatus;
-  created_at: string;
-  updated_at: string;
-}
-
-export type AdminEventTarget = 'category' | 'tag' | 'user' | 'role' | 'permission' | 'matrix' | 'system';
-
-export type AdminEventType =
-  | 'taxonomy.create'
-  | 'taxonomy.update'
-  | 'taxonomy.toggle'
-  | 'user.status'
-  | 'user.roles'
-  | 'role.create'
-  | 'role.update'
-  | 'role.toggle'
-  | 'permission.create'
-  | 'permission.update'
-  | 'permission.toggle'
-  | 'matrix.save'
-  | 'matrix.toggle'
-  | 'system.seed';
+export type AdminEventType = 'taxonomy.create' | 'taxonomy.update' | 'taxonomy.toggle' | 'system.seed';
 
 export interface AdminEventLog {
   id: string;
@@ -92,35 +38,12 @@ export interface AdminEventLog {
 export interface AdminConsoleState {
   categories: AdminCategory[];
   tags: AdminTag[];
-  users: AdminUser[];
-  roles: AdminRole[];
-  permissions: AdminPermission[];
-  role_permissions: Record<string, string[]>;
   events: AdminEventLog[];
 }
 
 export interface ListAdminTaxonomiesParams {
   q?: string;
   status?: AdminTaxonomyStatus | 'all';
-}
-
-export interface ListAdminUsersParams {
-  q?: string;
-  status?: AdminUserStatus | 'all';
-  role_id?: string | 'all';
-  offset?: number;
-  limit?: number;
-}
-
-export interface ListAdminRolesParams {
-  q?: string;
-  status?: AdminRoleStatus | 'all';
-}
-
-export interface ListAdminPermissionsParams {
-  q?: string;
-  group?: string | 'all';
-  status?: AdminPermissionStatus | 'all';
 }
 
 export interface ListAdminEventsParams {

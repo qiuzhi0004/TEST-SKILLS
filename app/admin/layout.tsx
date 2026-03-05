@@ -27,23 +27,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="relative p-5 sm:p-6">
           <p className="text-xs uppercase tracking-[0.12em] text-blue-100">Admin Console</p>
           <h1 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">后台管理</h1>
-          <p className="mt-2 text-sm text-slate-200">统一管理审核队列、权限矩阵、用户与审计日志。</p>
+          <p className="mt-2 text-sm text-slate-200">统一管理审核队列、分类标签与审计日志。</p>
         </div>
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[280px_minmax(0,1fr)]">
         <SideNav
           title="管理导航"
-          subtitle="审核、权限、运营"
+          subtitle="审核、分类、日志"
           accent="#2563EB"
           items={[
             { label: '内容审核', href: '/admin/moderation/cases' },
             { label: '分类管理', href: '/admin/categories' },
             { label: '标签管理', href: '/admin/tags' },
-            { label: '用户管理', href: '/admin/users' },
-            { label: '角色管理', href: '/admin/roles' },
-            { label: '权限管理', href: '/admin/permissions' },
-            { label: '权限矩阵', href: '/admin/role-permissions' },
             { label: '事件日志', href: '/admin/events' },
             { label: '审计日志', href: '/admin/audit-logs' },
           ]}

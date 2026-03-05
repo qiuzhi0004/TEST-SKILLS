@@ -7,6 +7,9 @@ import { PageShell } from '@/components/layout/PageShell';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { listReviewQueue } from '@/lib/api/admin_review';
 
+const DJANGO_ADMIN_URL =
+  process.env.NEXT_PUBLIC_DJANGO_ADMIN_URL ?? 'http://127.0.0.1:8000/admin/';
+
 interface Stats {
   pending: number;
   approved: number;
@@ -80,14 +83,14 @@ export default function AdminHomePage() {
           <Link href="/admin/moderation/cases" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
             内容审核队列
           </Link>
-          <Link href="/admin/users" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
-            用户管理
-          </Link>
-          <Link href="/admin/role-permissions" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
-            权限矩阵
-          </Link>
+          <a href={DJANGO_ADMIN_URL} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
+            Django 用户与权限管理
+          </a>
           <Link href="/admin/audit-logs" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
             审计日志
+          </Link>
+          <Link href="/admin/events" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
+            事件日志
           </Link>
         </div>
       </SectionCard>

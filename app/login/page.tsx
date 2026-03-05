@@ -1,75 +1,163 @@
-'use client';
+"use client";
 
-import { FormEvent, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { login } from '@/lib/client/auth';
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, useMemo, useState } from "react";
+import { InlineNotice } from "@/components/feedback/InlineNotice";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { loginWithPhoneCode, sendPhoneCode } from "@/lib/api/auth";
+import { buildAuthSession, saveAuthSession } from "@/lib/client/auth";
+import type { AuthApiError } from "@/types/auth";
+
+const DEFAULT_NEXT = "/me/favorites";
+const PHONE_PATTERN = /^1\d{10}$/;
+
+function resolveNextPath(rawNext: string | null): string {
+  if (!rawNext) {
+    return DEFAULT_NEXT;
+  }
+  return rawNext.startsWith("/") ? rawNext : DEFAULT_NEXT;
+}
+
+function validatePhone(phone: string): boolean {
+  return PHONE_PATTERN.test(phone.trim());
+}
 
 export default function LoginPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [nickname, setNickname] = useState('');
-  const [phone, setPhone] = useState('');
-  const [code, setCode] = useState('');
-  const [tip, setTip] = useState('');
+  const router = useRouter();
 
-  const returnTo = searchParams.get('returnTo') || '/me/favorites';
+  const nextPath = useMemo(() => resolveNextPath(searchParams.get("next")), [searchParams]);
+  const [phone, setPhone] = useState(searchParams.get("phone") ?? "");
+  const [code, setCode] = useState("");
+  const [notice, setNotice] = useState<string>("");
+  const [errorText, setErrorText] = useState<string>("");
+  const [errorCode, setErrorCode] = useState<string>("");
+  const [sending, setSending] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const onSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    try {
-      login(nickname || phone || '用户');
-      router.push(returnTo);
-      router.refresh();
-    } catch {
-      setTip('登录失败，请重试');
+  const registerHref = `/register?phone=${encodeURIComponent(phone.trim())}&next=${encodeURIComponent(nextPath)}`;
+
+  async function handleSendCode() {
+    setNotice("");
+    setErrorText("");
+    setErrorCode("");
+    if (!validatePhone(phone)) {
+      setErrorText("请输入 11 位手机号。");
+      return;
     }
-  };
+
+    setSending(true);
+    try {
+      await sendPhoneCode(phone.trim(), "login");
+      setNotice("验证码已发送（测试环境固定为 123456）。");
+    } catch (error) {
+      const authError = error as AuthApiError;
+      setErrorText(authError.message || "验证码发送失败，请稍后重试。");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNotice("");
+    setErrorText("");
+    setErrorCode("");
+
+    if (!validatePhone(phone)) {
+      setErrorText("请输入 11 位手机号。");
+      return;
+    }
+    if (!code.trim()) {
+      setErrorText("请输入验证码。");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const result = await loginWithPhoneCode(phone.trim(), code.trim());
+      saveAuthSession(buildAuthSession(result));
+      router.replace(nextPath);
+    } catch (error) {
+      const authError = error as AuthApiError;
+      setErrorCode(authError.code ?? "");
+      setErrorText(authError.message || "登录失败，请稍后重试。");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-sky-50 p-6 shadow-sm">
-      <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-sky-200/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 -left-20 h-60 w-60 rounded-full bg-cyan-200/30 blur-3xl" />
+    <div className="mx-auto w-full max-w-md space-y-4 px-4 py-10">
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_22px_rgba(15,23,42,0.08)]">
+        <p className="text-xs uppercase tracking-[0.12em] text-slate-500">Phone Login</p>
+        <h1 className="mt-2 text-2xl font-semibold text-slate-900">手机号登录</h1>
+        <p className="mt-2 text-sm text-slate-600">请输入手机号和验证码登录。验证码测试值固定为 123456。</p>
 
-      <div className="relative mx-auto max-w-xl rounded-2xl border border-slate-200/80 bg-white/90 p-6 shadow-lg backdrop-blur">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">登录</h1>
-        <p className="mt-2 text-sm text-slate-600">继续访问你的个人中心与发布管理。</p>
-
-        <form onSubmit={onSubmit} className="mt-6 grid gap-3 text-sm text-slate-700">
-          <input
-            value={nickname}
-            onChange={(event) => setNickname(event.target.value)}
-            className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            placeholder="用户名称（推荐）"
-          />
-          <input
-            value={phone}
-            onChange={(event) => setPhone(event.target.value)}
-            className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            placeholder="手机号"
-          />
-          <div className="flex gap-2">
-            <input
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
-              className="h-11 flex-1 rounded-xl border border-slate-300 bg-white px-3 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              placeholder="验证码"
+        <form className="mt-5 space-y-3" onSubmit={handleSubmit}>
+          <div className="space-y-1">
+            <label htmlFor="phone" className="text-sm font-medium text-slate-700">
+              手机号
+            </label>
+            <Input
+              id="phone"
+              placeholder="请输入 11 位手机号"
+              inputMode="numeric"
+              maxLength={11}
+              value={phone}
+              onChange={(event) => setPhone(event.target.value.replace(/\D+/g, ""))}
             />
-            <button
-              className="h-11 rounded-xl border border-slate-300 bg-white px-4 text-slate-700 transition hover:bg-slate-50"
-              type="button"
-            >
-              发送验证码
-            </button>
           </div>
-          <button
-            className="mt-1 h-11 rounded-xl bg-slate-900 px-4 font-medium text-white transition hover:bg-slate-800"
-            type="submit"
-          >
-            登录
-          </button>
-          {tip ? <p className="text-xs text-rose-600">{tip}</p> : null}
+
+          <div className="space-y-1">
+            <label htmlFor="code" className="text-sm font-medium text-slate-700">
+              验证码
+            </label>
+            <div className="flex gap-2">
+              <Input
+                id="code"
+                placeholder="请输入验证码"
+                inputMode="numeric"
+                maxLength={6}
+                value={code}
+                onChange={(event) => setCode(event.target.value.replace(/\D+/g, ""))}
+              />
+              <Button type="button" variant="secondary" onClick={handleSendCode} disabled={sending}>
+                {sending ? "发送中..." : "获取验证码"}
+              </Button>
+            </div>
+          </div>
+
+          {notice ? <InlineNotice title={notice} tone="success" /> : null}
+
+          {errorText ? (
+            <InlineNotice
+              title={errorText}
+              tone="danger"
+              actionSlot={
+                errorCode === "PHONE_NOT_REGISTERED" ? (
+                  <Link href={registerHref} className="text-xs underline">
+                    手机号未注册，去注册
+                  </Link>
+                ) : null
+              }
+            />
+          ) : null}
+
+          <Button type="submit" variant="primary" className="w-full" disabled={submitting}>
+            {submitting ? "登录中..." : "登录"}
+          </Button>
         </form>
-      </div>
+
+        <p className="mt-4 text-sm text-slate-600">
+          还没有账号？{" "}
+          <Link href={registerHref} className="font-medium text-sky-700 underline">
+            去注册
+          </Link>
+        </p>
+      </section>
     </div>
   );
 }

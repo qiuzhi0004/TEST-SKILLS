@@ -8,3 +8,4 @@ export * from "@/types/tutorial";
 export * from "@/types/authoring";
 export * from "@/types/audit";
 export * from "@/types/admin";
+export * from "@/types/auth";

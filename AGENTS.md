@@ -1,6 +1,16 @@
 # AGENTS.md
 
 ## Changelog
+- 2026-03-05: 新增普通用户手机号验证码登录/注册（`/login`、`/register`）与 `lib/api/auth.ts`。
+- 2026-03-05: `/me/**` 新增用户态登录跳转（未登录重定向到 `/login`），顶部“个人中心”入口联动登录态。
+- 2026-03-05: 后端新增 `auth/send-code|login|register` 端点与手机号鉴权 contract tests。
+- 2026-03-05: 后端新增 `AdminCategory`/`AdminTag` 模型，Django Admin 可直接管理分类与标签。
+- 2026-03-05: `admin/console` 分类与标签接口改为读写数据库模型，事件日志仍走 `StateDocument(admin_console_state)`。
+- 2026-03-05: `admin_console` 改为 `NEXT_PUBLIC_API_MODE=http` 时优先走 Django/DRF，失败自动回退 localStorage。
+- 2026-03-05: 新增后台 Admin Console API contract tests（categories/tags/events）。
+- 2026-03-05: 登录、用户管理、权限管理切换为 Django Admin 原生能力，删除前端对应页面。
+- 2026-03-05: 引入 `backend/` Django + DRF 后端工程（首期 API + SQLite + seed 命令）。
+- 2026-03-05: 新增后端启动/迁移/seed 协作命令约定。
 - 2026-03-04: 新增后台管理本地数据层约定（admin_console API + storage_admin）。
 - 2026-03-04: 明确后台 8 个管理页统一走 `lib/api/admin_console.ts`，禁止页面直读写 localStorage。
 - 2026-03-03: 初始化根目录协作契约文档（首次创建）。
@@ -58,12 +68,17 @@
 - Next.js 16 (App Router)
 - TypeScript
 - Tailwind CSS v4
+- Django 4.2 LTS + Django REST Framework（`backend/`，首期后端）
 
 ### 5.2 Key Commands
 - `pnpm dev`
 - `pnpm build`
 - `pnpm lint`
 - `pnpm import:seed`（从 `docs/数据源信息.md` 导入种子数据）
+- `cd backend && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`
+- `cd backend && python manage.py migrate`
+- `cd backend && python manage.py seed_local_data`
+- `cd backend && python manage.py runserver 127.0.0.1:8000`
 
 无全局 `pnpm` 时可使用：
 - `NPM_CONFIG_CACHE=.npm-cache npx pnpm <command>`
@@ -72,7 +87,8 @@
 - `app/`：路由与页面
 - `components/`：UI/布局/资源卡/社交/后台组件
 - `lib/api/`：统一 API 门面与实现（mock/authoring/social/audit/admin_review/admin_console）
-- `lib/client/`：localStorage 存取封装（SSR-safe，含 `storage_admin`）
+- `lib/client/`：localStorage 存取封装（SSR-safe，含 `storage_admin` 与用户会话 `auth`）
+- `backend/`：Django + DRF 后端（`api/` 应用、SQLite、seed 命令）
 - `types/`：DTO / ViewModel / adapters
 - `data/`：mock 数据
 - `docs/`：规范、路由、决策与检查清单
@@ -87,14 +103,27 @@
    - 去重键优先级：`repo -> url -> title`
 3. `taxonomies.json` 新增项必须去重且保持稳定排序。
 4. 当前前端口径：`category_ids[]`（多类目），不回退为单值 `category_id` 逻辑。
-5. 后台管理页（分类/标签/用户/角色/权限/权限矩阵/事件日志）统一通过 `lib/api/admin_console.ts` 访问；
+5. 后台管理页（分类/标签/事件日志）统一通过 `lib/api/admin_console.ts` 访问；
+   - `NEXT_PUBLIC_API_MODE=http` 时优先请求 Django/DRF：`/admin/console/*`
+   - HTTP 请求失败自动回退到本地存储实现（`lib/client/storage_admin.ts`）
    - 本地存储 key：`luzi_admin_console_v1`
    - 页面层不得直接读写 `localStorage`。
+6. 普通用户登录/注册采用手机号+验证码（当前验证码固定 `123456`）：
+   - 前端页面：`/login`、`/register`
+   - 前端接口：`lib/api/auth.ts`（`NEXT_PUBLIC_API_MODE=http` 时走 Django/DRF；非 http 走本地 mock）
+   - 前端会话：`lib/client/auth.ts`（localStorage key: `luzi_auth_session_v1`）
+7. 后台用户管理、权限管理仍使用 Django Admin 原生能力：
+   - 登录入口：`/admin/login/`（Django 内置）
+   - 用户/组/权限管理：Django Admin 默认页面（`auth.User` / `auth.Group` / permissions）
+   - 当前注册用户写入 `auth.User`，可在 Django Admin 直接查看。
+8. 后端分类与标签管理使用数据库模型：
+   - 模型：`AdminCategory`（`admin_categories`）、`AdminTag`（`admin_tags`）
+   - Django Admin 可直接维护分类与标签；`admin/console` API 与其共用同一数据源。
 
 ## 7. Decision Alignment (Must Keep)
 
 执行时必须保持以下已固化口径：
-- 不做鉴权守卫（`/admin/**`、`/me/**`、`/new`、`/edit` 可访问）
+- 默认不做鉴权守卫（`/admin/**`、`/new`、`/edit` 可访问）；`/me/**` 例外：未登录需跳转 `/login`
 - 状态流转冲突按接口契约口径执行
 - MCP `how_to_use` 使用三段原样文本
 - Skill 缺失字段由前端补齐并保留 TODO
@@ -107,6 +136,9 @@
 - `pnpm build` 通过
 - `pnpm lint` 无 error（warning 可单独说明）
 - `pnpm exec tsc --noEmit` 通过
+- 若改动 `backend/`：`cd backend && python manage.py check` 至少通过
+- 若改动 Admin Console API 契约：`cd backend && python manage.py test api.tests.test_admin_console_contract` 通过
+- 若改动手机号登录注册：`cd backend && python manage.py test api.tests.test_auth_phone_contract` 通过
 - 变更与 `README.md` / `docs/*` 一致
 
 ## 9. Documentation Boundaries

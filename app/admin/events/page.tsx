@@ -20,16 +20,6 @@ const EVENT_TYPE_VALUES: AdminEventType[] = [
   'taxonomy.create',
   'taxonomy.update',
   'taxonomy.toggle',
-  'user.status',
-  'user.roles',
-  'role.create',
-  'role.update',
-  'role.toggle',
-  'permission.create',
-  'permission.update',
-  'permission.toggle',
-  'matrix.save',
-  'matrix.toggle',
   'system.seed',
 ];
 
