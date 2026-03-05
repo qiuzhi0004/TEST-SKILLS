@@ -1,6 +1,7 @@
 # AGENTS.md
 
 ## Changelog
+- 2026-03-05: 后端数据库支持 `DATABASE_URL`（Neon Postgres），默认 `DB_CONN_MAX_AGE=0`，未配置时回退 SQLite。
 - 2026-03-05: 新增普通用户手机号验证码登录/注册（`/login`、`/register`）与 `lib/api/auth.ts`。
 - 2026-03-05: `/me/**` 新增用户态登录跳转（未登录重定向到 `/login`），顶部“个人中心”入口联动登录态。
 - 2026-03-05: 后端新增 `auth/send-code|login|register` 端点与手机号鉴权 contract tests。
@@ -76,6 +77,7 @@
 - `pnpm lint`
 - `pnpm import:seed`（从 `docs/数据源信息.md` 导入种子数据）
 - `cd backend && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`
+- `cd backend && cp .env.example .env`（填入 `DATABASE_URL`，可接 Neon）
 - `cd backend && python manage.py migrate`
 - `cd backend && python manage.py seed_local_data`
 - `cd backend && python manage.py runserver 127.0.0.1:8000`

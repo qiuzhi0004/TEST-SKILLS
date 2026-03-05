@@ -12,11 +12,16 @@ cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+# 首次配置：复制环境变量模板并填入 Neon 连接串
+cp .env.example .env
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py seed_local_data
 python manage.py runserver 127.0.0.1:8000
 ```
+
+数据库连接优先读取 `DATABASE_URL`（例如 Neon Postgres），未配置时自动回退到本地 `sqlite`。
+Neon 建议保持 `DB_CONN_MAX_AGE=0`（默认已设置）。
 
 ## 3. API Base URL
 

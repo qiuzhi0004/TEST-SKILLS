@@ -5,11 +5,8 @@ import type { ReactNode } from 'react';
 import { useEffect, useSyncExternalStore } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { SideNav } from '@/components/layout/SideNav';
-import { loadAuthSession, subscribeAuthSession } from "@/lib/client/auth";
+import { clearAuthSession, loadAuthSession, subscribeAuthSession } from "@/lib/client/auth";
 import { pickUnsplash } from '@/lib/visualAssets';
-
-const DJANGO_ADMIN_URL =
-  process.env.NEXT_PUBLIC_DJANGO_ADMIN_URL ?? 'http://127.0.0.1:8000/admin/';
 
 function getServerAuthSessionSnapshot(): null {
   return null;
@@ -68,12 +65,16 @@ export function MeLayoutClient({ children }: { children: ReactNode }) {
             </p>
           </div>
 
-          <a
-            href={DJANGO_ADMIN_URL}
+          <button
+            type="button"
+            onClick={() => {
+              clearAuthSession();
+              router.replace("/login");
+            }}
             className="rounded-lg border border-[#f7b79a] bg-[#fff4ee] px-4 py-2 text-sm font-medium text-[#c94f1d] transition hover:bg-[#ffe8dc]"
           >
-            管理登录
-          </a>
+            退出登录
+          </button>
         </div>
       </section>
 
