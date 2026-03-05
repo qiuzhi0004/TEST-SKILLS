@@ -36,7 +36,7 @@ export function TopNav() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4">
+      <div className="mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between px-5 sm:px-6 lg:px-8">
         <Link href="/" className="text-sm font-semibold tracking-wide text-slate-900">
           AI资源站
         </Link>
@@ -81,7 +81,7 @@ export function TopNav() {
 
       {open ? (
         <div className="border-t border-slate-200 bg-white md:hidden">
-          <div className="mx-auto grid max-w-6xl gap-1 px-4 py-3">
+          <div className="mx-auto grid max-w-[1360px] gap-1 px-5 py-3 sm:px-6 lg:px-8">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}

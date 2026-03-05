@@ -39,7 +39,7 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TopNav />
-        <main className="mx-auto w-full max-w-6xl px-4 py-6">{children}</main>
+        <main className="mx-auto w-full max-w-[1360px] px-5 py-8 sm:px-6 lg:px-8">{children}</main>
       </body>
     </html>
   );
