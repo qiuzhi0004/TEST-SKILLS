@@ -1,6 +1,7 @@
 # AGENTS.md
 
 ## Changelog
+- 2026-03-05: Render 部署支持通过 `DJANGO_SUPERUSER_*` 在 `build.sh` 自动创建/同步 Django 超级管理员（免 Render Shell）。
 - 2026-03-05: 后端补齐 Render 非容器化部署配置（`build.sh`、gunicorn、WhiteNoise、环境变量驱动 `settings`）。
 - 2026-03-05: 后端数据库支持 `DATABASE_URL`（Neon Postgres），默认 `DB_CONN_MAX_AGE=0`，未配置时回退 SQLite。
 - 2026-03-05: 新增普通用户手机号验证码登录/注册（`/login`、`/register`）与 `lib/api/auth.ts`。

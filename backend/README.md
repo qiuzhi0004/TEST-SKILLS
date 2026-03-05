@@ -117,7 +117,11 @@ python manage.py test api.tests.test_auth_phone_contract -v 2
 - `CSRF_TRUSTED_ORIGINS=https://test-skills-seven.vercel.app`
 - `DATABASE_URL=<neon-connection-url>`
 - `DB_CONN_MAX_AGE=0`
+- `DJANGO_SUPERUSER_USERNAME=admin`（可选，自动初始化/同步管理员）
+- `DJANGO_SUPERUSER_EMAIL=admin@example.com`（可选）
+- `DJANGO_SUPERUSER_PASSWORD=<strong-password>`（可选）
 
 说明：
 - Render 会自动注入 `RENDER_EXTERNAL_HOSTNAME`，`settings.py` 已自动并入 `ALLOWED_HOSTS`。
 - 若后续启用 Vercel Preview 域名，可改用 `CORS_ALLOWED_ORIGIN_REGEXES`。
+- 若设置了 `DJANGO_SUPERUSER_*` 三个变量，`build.sh` 每次部署都会确保该超管存在且密码与环境变量一致，无需 Render Shell。
